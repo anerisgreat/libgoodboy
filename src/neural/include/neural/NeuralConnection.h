@@ -1,19 +1,18 @@
 #include "libGoodBoyConfig.h"
+#include "neural/NeuralConfig.h"
 
 namespace PROJECT_NAMESPACE
 {
-    class NeuralConnection
+    virtual class NeuralConnection
     {
         public:
-            Neuron();
-            ~Neuron();
+            NeuralConnection(Neuron* neuronToConnect, Neuron* parent);
+            ~NeuralConnection();
 
-            float GetOutput(unsigned char nIter);
-            void Endorphinize(float val) = 0;
-
-            String GetJson() = 0;
-
+            void Endorphinize(t_neural_val amount);
+            t_neural_val GetWeightedOutput();
         private:
-            virtual float calcOutput(nIter) = 0;
-    };
+            t_neural_val m_weight;
+            t_neural_val inertia;
+    }
 }

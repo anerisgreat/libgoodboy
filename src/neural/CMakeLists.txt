@@ -7,6 +7,6 @@ include_directories(${${PROJECT_NAME}_INCLUDE_DIR})
 include_directories("${CMAKE_SOURCE_DIR}")
 
 add_library(${PROJECT_NAME}
-    src/neuron.cxx
+    src/Neuron.cxx
     )
 

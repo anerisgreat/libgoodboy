@@ -1,20 +1,24 @@
 #include "libGoodBoyConfig.h"
+#include "neural/NeuralConfig.h"
+#include "neural/Neuron.h"
 
 namespace PROJECT_NAMESPACE
 {
     class InputNeuron : public Neuron
     {
         public:
-            Neuron();
-            ~Neuron();
+            InputNeuron();
+            ~InputNeuron();
 
-            float GetOutput(unsigned char nIter);
-            void Endorphinize(float val) = 0;
-
-            String GetJson() = 0;
-
+            void SetOutput(OUTP_TYPE next_input);
+            
+            //JSON GetJson()
         protected:
             OUTP_TYPE calcOutput();
+            void postResetOutput();
+            void postRestProbe();
+            void endorphinizeSelf();
+            void postFlush();
         private:
             OUTP_TYPE calcOutput();
             OUTP_TYPE mLatestOutputss;

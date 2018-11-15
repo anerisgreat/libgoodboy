@@ -4,22 +4,22 @@
 
 namespace PROJECT_NAMESPACE
 {
-    virtual class OutputableNeuron : virtual public Neuron
+    virtual class Connectable : virtual public Neuron
     {
         public:
-            ConnectedNeuron(/*PREFILT_SHIFTREG,
+            ConnectableNeuron(/*PREFILT_SHIFTREG,
                               FILTER,
                               POSTFILT_SHIFTREG,
                               ENDORPH_TAPS*/);
-            ~ConnectedNeuron();
+            ~ConnectableNeuron();
 
             void Connect(Neuron* neuronToConnect);
 
         protected:
-            OUTP_TYPE calcOutput();
+            t_neural_val calcOutput();
             void postResetOutput();
             void postResetProbe();
-            void endorphinizeSelf();
+            void endorphinizeSelf(t_neural_val amount);
             void postFlush();
         private:
             /*vector<NEURAL_CONNECTION>*/ m_input_connections_vec;
