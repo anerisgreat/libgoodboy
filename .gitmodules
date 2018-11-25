@@ -1,0 +1,6 @@
+[submodule "dependencies/iir1"]
+	path = dependencies/iir1
+	url = https://github.com/berndporr/iir1
+[submodule "dependencies/json"]
+	path = dependencies/json
+	url = https://github.com/nlohmann/json
