@@ -9,7 +9,7 @@ include_directories("${CMAKE_SOURCE_DIR}")
 include_directories(${libGoodBoy.Neural_INCLUDE_DIR})
 
 add_executable(${PROJECT_NAME}
-    src/test.cxx
+    src/Test.cxx
     )
 
 target_link_libraries(${PROJECT_NAME} libGoodBoy.Neural)

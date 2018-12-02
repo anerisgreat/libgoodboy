@@ -1,34 +1,35 @@
-#include "libGoodBoyConfig.h"
-#include "neural/NeuralConfig.h"
-#include "neural/Neuron.h"
+#include "libGoodBoyConfig.hxx"
+#include "neural/NeuralConfig.hxx"
+#include "neural/Neuron.hxx"
 
 #include <vector>
+#include <memory>
+#include <list>
+#include <algorithm>
 
+#include <boost/circular_buffer.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
-#include <boost/circular_buffer.hpp>
 
-namespace PROJECT_NAMESPACE
+namespace lib_good_boy::neural
 {
-    //Public:
-    //Constructor & Destructor__________________________________________________
-    Neuron::Neuron( std::vector<t_neural_val>* output_filter_taps_ptr,
-                    std::vector<t_neural_val>* endorphinization_filter_taps_ptr)
+    //Public_____________________________________________________________
+    //Constructor & Destructor_____________________________________
+    Neuron::Neuron( const std::vector<neuralVal_t>& outputFilterTaps,
+                    const std::vector<neuralVal_t>& evolveFilterTaps)
         :
             m_checkedOutputFlag(false),
             m_forwardProbedFlag(false),
             m_backwardProbedFlag(false),
-            m_endorphinizationFlag(false),
+            m_evolveFlag(false),
 
-            m_output_pre_filter_buffer(output_filter_taps_ptr->size()),
-            m_output_post_filter_buffer(
-                    endorphinization_filter_taps_ptr->size()),
+            m_outputConnectionsList(),
 
-            m_output_filter_taps_ptr(output_filter_taps_ptr),
-            m_endorphinization_filter_taps_ptr(
-                    endorphinization_filter_taps_ptr),
+            m_outputPreFilterBuffer(outputFilterTaps.size()),
+            m_outputPostFilterBuffer(evolveFilterTaps.size()),
 
-            m_output_connections_vec(),
+            m_outputFilterTaps(outputFilterTaps),
+            m_evolveFilterTaps(evolveFilterTaps),
 
             m_id(boost::uuids::random_generator()())
     {
@@ -38,23 +39,23 @@ namespace PROJECT_NAMESPACE
     {
     }
 
-    //Output____________________________________________________________________
-    t_neural_val Neuron::GetOutput()
+    //Output_______________________________________________________
+    neuralVal_t Neuron::GetOutput()
     {
         if(!m_checkedOutputFlag)
         {
             m_checkedOutputFlag = true;
-            t_neural_val pre_filt_output = calcOutput();
-            m_output_pre_filter_buffer.push_back(pre_filt_output);
+            neuralVal_t pre_filt_output = calcOutput();
+            m_outputPreFilterBuffer.push_back(pre_filt_output);
 
-            t_neural_val post_filter = taps_circ_buff_inner(
-                    m_output_filter_taps_ptr,
-                    &m_output_pre_filter_buffer);
+            neuralVal_t post_filter = tapsCircBuffInner(
+                    m_outputFilterTaps,
+                    m_outputPreFilterBuffer);
 
-            m_output_post_filter_buffer.push_back(post_filter);
+            m_outputPostFilterBuffer.push_back(post_filter);
         }
 
-        return m_output_post_filter_buffer[0];
+        return m_outputPostFilterBuffer[0];
     }
 
     void Neuron::ResetOutputFlag()
@@ -62,40 +63,59 @@ namespace PROJECT_NAMESPACE
         m_checkedOutputFlag = false;
     }
 
-    //Connection Management_____________________________________________________
-    void Neuron::OnConnectedToOutput(Neuron* connected)
+    //Connection Management________________________________________
+    void Neuron::PurgeConnections(
+        const std::list<const std::shared_ptr<Neuron>>& toPurge)
     {
-        //TODO:Implement
-    }
-
-    void Neuron::OnRemovedFromOutput(Neuron* removed)
-    {
-        //TODO:Implement
-    }
-
-    //Endorphinization__________________________________________________________
-    void Neuron::Endorphinize(t_neural_val amount)
-    {
-        if(!m_endorphinizationFlag)
+        for(std::list<const std::shared_ptr<Neuron>>::const_iterator iter =
+                toPurge.begin();
+            iter != toPurge.end(); ++iter)
         {
-            m_endorphinizationFlag = true;
-            endorphinizeSelf(amount);
+            std::list<std::shared_ptr<Neuron>>::const_iterator find_iter
+                = find(m_outputConnectionsList.begin(),
+                        m_outputConnectionsList.end(), *iter);
+            if(find_iter != m_outputConnectionsList.end())
+            {
+                m_outputConnectionsList.erase(find_iter); 
+            }
+        }
+
+        postPurgeConnections(toPurge);
+    }
+
+    void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron> connected)
+    {
+        m_outputConnectionsList.push_back(connected);
+    }
+
+    void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron> removed)
+    {
+        //TODO:Implement
+    }
+
+    //Endorphinization____________________________________________
+    void Neuron::Evolve(neuralVal_t endorph)
+    {
+        if(!m_evolveFlag)
+        {
+            m_evolveFlag = true;
+            evolveSelf(endorph);
         }
     }
 
-    void Neuron::ResetEndorphinizationFlag()
+    void Neuron::ResetEvolveFlag()
     {
-        m_endorphinizationFlag = false;
+        m_evolveFlag = false;
     }
 
-    t_neural_val Neuron::CalcContribution()
+    neuralVal_t Neuron::GetContribution() const
     {
-        return taps_circ_buff_inner(
-                m_endorphinization_filter_taps_ptr,
-                &m_output_post_filter_buffer);
+        return tapsCircBuffInner(
+                m_evolveFilterTaps,
+                m_outputPostFilterBuffer);
     }
 
-    //Probe_____________________________________________________________________
+    //Probe________________________________________________________
     void Neuron::BackProbe()
     {
         if(!m_backwardProbedFlag)
@@ -110,16 +130,18 @@ namespace PROJECT_NAMESPACE
         if(!m_forwardProbedFlag)
         {
             m_forwardProbedFlag = true;
-            for(std::vector<Neuron*>::iterator iter =
-                    m_output_connections_vec.begin();
-                iter != m_output_connections_vec.end(); ++iter)
+            for(std::list<std::shared_ptr<Neuron>>::iterator iter =
+                    m_outputConnectionsList.begin();
+                iter != m_outputConnectionsList.end(); ++iter)
             {
                 (*iter)->ForwardProbe();
             }
+
+            postForwardProbe();
         }
     }
 
-    bool Neuron::GetWasFullyProbed()
+    bool Neuron::GetWasFullyProbed() const
     {
         return m_forwardProbedFlag && m_backwardProbedFlag;
     }
@@ -131,42 +153,41 @@ namespace PROJECT_NAMESPACE
     }
 
 
-    //Flushing__________________________________________________________________
+    //Flushing_____________________________________________________
 
     void Neuron::Flush()
     {
         m_checkedOutputFlag = false;
         m_forwardProbedFlag = false;
         m_backwardProbedFlag = false;
-        m_endorphinizationFlag = false;
+        m_evolveFlag = false;
 
-        m_output_pre_filter_buffer.clear();
-        m_output_post_filter_buffer.clear();
+        m_outputPreFilterBuffer.clear();
+        m_outputPostFilterBuffer.clear();
 
         m_id = boost::uuids::random_generator()();
-        m_output_connections_vec.clear();
+        m_outputConnectionsList.clear();
 
         postFlush();
     }
 
-    //Protected:
-    t_neural_val taps_circ_buff_inner(
-            std::vector<t_neural_val>* taps,
-            boost::circular_buffer<t_neural_val>* samps)
+    //Protected__________________________________________________________
+    neuralVal_t Neuron::tapsCircBuffInner(
+            const std::vector<neuralVal_t>& taps,
+            const boost::circular_buffer<neuralVal_t>& samps) const
     {
-        t_neural_val ret_val = 0;
-        std::vector<t_neural_val>::iterator tap_iter;
-        boost::circular_buffer<t_neural_val>::iterator samp_iter;
-        for(tap_iter = taps->begin(), samp_iter = samps->begin();
-            tap_iter != taps->end() && samp_iter != samps->end();
-            ++tap_iter, ++samp_iter)
+        neuralVal_t retVal = 0;
+        std::vector<neuralVal_t>::const_iterator tapIter;
+        boost::circular_buffer<neuralVal_t>::const_iterator sampIter;
+        for(tapIter = taps.begin(), sampIter = samps.begin();
+            tapIter != taps.end() && sampIter != samps.end();
+            ++tapIter, ++sampIter)
         {
-            ret_val += *tap_iter * *samp_iter;
+            retVal += *tapIter * *sampIter;
         }
 
-        return ret_val;
+        return retVal;
     }
 
-    //Private:
-
+    //Private____________________________________________________________
 }
