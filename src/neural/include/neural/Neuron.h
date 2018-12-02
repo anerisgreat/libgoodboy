@@ -6,10 +6,9 @@
 #include <boost/circular_buffer.hpp>
 #include <boost/uuid/uuid.hpp>
 
-
 namespace PROJECT_NAMESPACE
 {
-    virtual class Neuron
+    class Neuron
     {
         public:
             //Constructor & Destructor____________________
@@ -24,7 +23,7 @@ namespace PROJECT_NAMESPACE
 
             //Endorphinization____________________________
             void Endorphinize(t_neural_val amount);
-            void ResetEndorphiniztionFlag();
+            void ResetEndorphinizationFlag();
             t_neural_val CalcContribution();
             
             //Connection Management_______________________
@@ -42,7 +41,7 @@ namespace PROJECT_NAMESPACE
             void Flush();
 
             //Getting Properties__________________________
-            boost::uuids:uuid GetUUID();
+            boost::uuids::uuid GetUUID();
             //JSON GetJson();
             //STRING ToString();
         protected:
@@ -57,7 +56,7 @@ namespace PROJECT_NAMESPACE
 
             t_neural_val taps_circ_buff_inner(
                     std::vector<t_neural_val>* taps,
-                    boost:circular_buffer<t_neural_val>* samps);
+                    boost::circular_buffer<t_neural_val>* samps);
 
         private:
             bool m_checkedOutputFlag;
@@ -71,7 +70,7 @@ namespace PROJECT_NAMESPACE
             std::vector<t_neural_val>* m_output_filter_taps_ptr;
             std::vector<t_neural_val>* m_endorphinization_filter_taps_ptr;
 
-            boost::uuids:uuid m_id;
-            vector<Neuron*> m_output_connections_vec;
+            boost::uuids::uuid m_id;
+            std::vector<Neuron*> m_output_connections_vec;
     };
 }
