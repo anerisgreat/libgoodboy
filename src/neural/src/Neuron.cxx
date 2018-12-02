@@ -71,13 +71,7 @@ namespace lib_good_boy::neural
                 toPurge.begin();
             iter != toPurge.end(); ++iter)
         {
-            std::list<std::shared_ptr<Neuron>>::const_iterator find_iter
-                = find(m_outputConnectionsList.begin(),
-                        m_outputConnectionsList.end(), *iter);
-            if(find_iter != m_outputConnectionsList.end())
-            {
-                m_outputConnectionsList.erase(find_iter); 
-            }
+            m_outputConnectionsList.remove(*iter); 
         }
 
         postPurgeConnections(toPurge);
