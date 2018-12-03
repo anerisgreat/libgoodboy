@@ -25,14 +25,14 @@ namespace lib_good_boy::neural
             neuralVal_t GetOutput();
             void ResetOutputFlag();
 
-            //Endorphinization____________________________
+            //Evolving____________________________________
             void Evolve(neuralVal_t amount);
             void ResetEvolveFlag();
             neuralVal_t GetContribution() const;
             
             //Connection Management_______________________
             void PurgeConnections(
-                    const std::list<const std::shared_ptr<Neuron>>& toPurge);
+                    const std::list<std::shared_ptr<Neuron>>& toPurge);
 
             void OnConnectedToOutput(const std::shared_ptr<Neuron> connected);
             void OnRemovedFromOutput(const std::shared_ptr<Neuron> removed);
@@ -46,21 +46,20 @@ namespace lib_good_boy::neural
             //Flushing____________________________________
             void Flush();
 
-            //Getting Properties__________________________
+            //Properties__________________________________
             boost::uuids::uuid GetUUID();
             //JSON GetJson();
             //STRING ToString();
         protected:
             virtual neuralVal_t calcOutput() = 0;
 
-            //Consider why this exists
             virtual void postBackProbe() = 0;
             virtual void postForwardProbe() = 0;
             
-            virtual void evolveSelf(neuralVal_t endorph) = 0;
+            virtual void evolveSelf(neuralVal_t amount) = 0;
             
             virtual void postPurgeConnections(
-                    const std::list<const std::shared_ptr<Neuron>>& toPurge) = 0;
+                    const std::list<std::shared_ptr<Neuron>>& toPurge) = 0;
 
             virtual void postFlush() = 0;
 

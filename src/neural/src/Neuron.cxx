@@ -65,9 +65,9 @@ namespace lib_good_boy::neural
 
     //Connection Management________________________________________
     void Neuron::PurgeConnections(
-        const std::list<const std::shared_ptr<Neuron>>& toPurge)
+        const std::list<std::shared_ptr<Neuron>>& toPurge)
     {
-        for(std::list<const std::shared_ptr<Neuron>>::const_iterator iter =
+        for(std::list<std::shared_ptr<Neuron>>::const_iterator iter =
                 toPurge.begin();
             iter != toPurge.end(); ++iter)
         {
@@ -84,10 +84,17 @@ namespace lib_good_boy::neural
 
     void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron> removed)
     {
-        //TODO:Implement
+        std::list<std::shared_ptr<Neuron>>::const_iterator iter
+            = find(m_outputConnectionsList.begin(), 
+                    m_outputConnectionsList.end(),
+                    removed);
+        if(iter != m_outputConnectionsList.end())
+        {
+            m_outputConnectionsList.erase(iter);
+        }
     }
 
-    //Endorphinization____________________________________________
+    //Evolving____________________________________________________
     void Neuron::Evolve(neuralVal_t endorph)
     {
         if(!m_evolveFlag)

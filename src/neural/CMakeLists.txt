@@ -8,5 +8,6 @@ include_directories("${CMAKE_SOURCE_DIR}")
 
 add_library(${PROJECT_NAME}
     src/Neuron.cxx
+    src/InputNeuron.cxx
     )
 
