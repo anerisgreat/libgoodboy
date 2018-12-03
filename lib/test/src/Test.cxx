@@ -1,5 +1,6 @@
-#include "test/Test.hxx"
-#include "neural/Neuron.hxx"
+#include "Test.hxx"
+#include "Neuron.hxx"
+#include "ObjectPool.hxx"
 
 #include <stdio.h>
 #include <iostream>

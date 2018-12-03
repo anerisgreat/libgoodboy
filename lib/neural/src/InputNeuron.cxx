@@ -1,18 +1,18 @@
 #include "libGoodBoyConfig.hxx"
-#include "neural/NeuralConfig.hxx"
-#include "neural/InputNeuron.hxx"
+#include "NeuralConfig.hxx"
+#include "InputNeuron.hxx"
 
 #include <vector>
 
-namespace lib_good_boy::neural
+namespace LibGoodBoy
 {
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
     InputNeuron::InputNeuron( 
-            const std::vector<neuralVal_t>& outputFilterTaps,
-            const std::vector<neuralVal_t>& evolveFilterTaps)
+            const std::vector<neuralVal_t>& p_outputFilterTaps,
+            const std::vector<neuralVal_t>& p_evolveFilterTaps)
         :
-            Neuron(outputFilterTaps, evolveFilterTaps),
+            Neuron(p_outputFilterTaps, p_evolveFilterTaps),
             m_nextInput(0)
     {
     }
@@ -21,9 +21,9 @@ namespace lib_good_boy::neural
     {
     }
 
-    void InputNeuron::FeedInput(neuralVal_t input)
+    void InputNeuron::FeedInput(neuralVal_t p_input)
     {
-        m_nextInput = input; 
+        m_nextInput = p_input; 
     }
 
     neuralVal_t InputNeuron::calcOutput()
@@ -33,9 +33,9 @@ namespace lib_good_boy::neural
 
     void InputNeuron::postBackProbe(){}
     void InputNeuron::postForwardProbe(){}
-    void InputNeuron::evolveSelf(neuralVal_t amount){}
+    void InputNeuron::evolveSelf(neuralVal_t p_amount){}
     void InputNeuron::postPurgeConnections(
-            const std::list<std::shared_ptr<Neuron>>& toPurge){}
+            const std::list<std::shared_ptr<Neuron>>& p_toPurge){}
 
     void InputNeuron::postFlush()
     {

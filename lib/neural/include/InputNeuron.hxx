@@ -2,20 +2,20 @@
 #define NEURAL_INPUT_NEURON_HXX
 
 #include "libGoodBoyConfig.hxx"
-#include "neural/NeuralConfig.hxx"
-#include "neural/Neuron.hxx"
+#include "NeuralConfig.hxx"
+#include "Neuron.hxx"
 
-namespace lib_good_boy::neural
+namespace LibGoodBoy
 {
     class InputNeuron : public Neuron
     {
         public:
-            InputNeuron(const std::vector<neuralVal_t>& outputFilterTaps,
-                        const std::vector<neuralVal_t>& evolveFilterTaps);
+            InputNeuron(const std::vector<neuralVal_t>& p_outputFilterTaps,
+                        const std::vector<neuralVal_t>& p_evolveFilterTaps);
 
             ~InputNeuron();
 
-            void FeedInput(neuralVal_t input);
+            void FeedInput(neuralVal_t p_input);
             
             //JSON GetJson()
         protected:
@@ -24,10 +24,10 @@ namespace lib_good_boy::neural
             void postBackProbe();
             void postForwardProbe();
             
-            void evolveSelf(neuralVal_t amount);
+            void evolveSelf(neuralVal_t p_amount);
             
             void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& toPurge);
+                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 
             void postFlush();
         private:

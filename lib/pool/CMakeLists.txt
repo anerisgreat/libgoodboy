@@ -1,4 +1,4 @@
-project(libGoodBoy.Test)
+project(libGoodBoy.Pool)
 
 set(${PROJECT_NAME}_INCLUDE_DIR
     "${PROJECT_SOURCE_DIR}/include" CACHE TYPE STRING)
@@ -6,10 +6,7 @@ set(${PROJECT_NAME}_INCLUDE_DIR
 include_directories(${${PROJECT_NAME}_INCLUDE_DIR})
 include_directories("${CMAKE_SOURCE_DIR}")
 
-include_directories(${libGoodBoy.Neural_INCLUDE_DIR})
-
-add_executable(${PROJECT_NAME}
-    src/Test.cxx
+add_library(${PROJECT_NAME}
+    src/Poolable.cxx
     )
 
-target_link_libraries(${PROJECT_NAME} libGoodBoy.Neural)

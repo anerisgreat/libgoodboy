@@ -2,7 +2,7 @@
 #define NEURAL_NEURON_HXX
 
 #include "libGoodBoyConfig.hxx"
-#include "neural/NeuralConfig.hxx"
+#include "NeuralConfig.hxx"
 
 #include <vector>
 #include <memory>
@@ -11,14 +11,14 @@
 #include <boost/circular_buffer.hpp>
 #include <boost/uuid/uuid.hpp>
 
-namespace lib_good_boy::neural
+namespace LibGoodBoy
 {
     class Neuron
     {
         public:
             //Constructor & Destructor____________________
-            Neuron( const std::vector<neuralVal_t>& outputFilterTaps,
-                    const std::vector<neuralVal_t>& evolveFilterTaps);
+            Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
+                    const std::vector<neuralVal_t>& p_evolveFilterTaps);
             ~Neuron();
 
             //Output______________________________________
@@ -26,16 +26,16 @@ namespace lib_good_boy::neural
             void ResetOutputFlag();
 
             //Evolving____________________________________
-            void Evolve(neuralVal_t amount);
+            void Evolve(neuralVal_t p_amount);
             void ResetEvolveFlag();
             neuralVal_t GetContribution() const;
             
             //Connection Management_______________________
             void PurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& toPurge);
+                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 
-            void OnConnectedToOutput(const std::shared_ptr<Neuron> connected);
-            void OnRemovedFromOutput(const std::shared_ptr<Neuron> removed);
+            void OnConnectedToOutput(const std::shared_ptr<Neuron> p_connected);
+            void OnRemovedFromOutput(const std::shared_ptr<Neuron> p_removed);
 
             //Probe_______________________________________
             void BackProbe();
@@ -56,16 +56,16 @@ namespace lib_good_boy::neural
             virtual void postBackProbe() = 0;
             virtual void postForwardProbe() = 0;
             
-            virtual void evolveSelf(neuralVal_t amount) = 0;
+            virtual void evolveSelf(neuralVal_t p_amount) = 0;
             
             virtual void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& toPurge) = 0;
+                    const std::list<std::shared_ptr<Neuron>>& p_toPurge) = 0;
 
             virtual void postFlush() = 0;
 
             neuralVal_t tapsCircBuffInner(
-                    const std::vector<neuralVal_t>& taps,
-                    const boost::circular_buffer<neuralVal_t>& samps) const;
+                    const std::vector<neuralVal_t>& p_taps,
+                    const boost::circular_buffer<neuralVal_t>& p_samps) const;
 
         private:
             bool m_checkedOutputFlag;

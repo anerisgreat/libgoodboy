@@ -1,6 +1,6 @@
 #include "libGoodBoyConfig.hxx"
-#include "neural/NeuralConfig.hxx"
-#include "neural/Neuron.hxx"
+#include "NeuralConfig.hxx"
+#include "Neuron.hxx"
 
 #include <vector>
 #include <memory>
@@ -11,12 +11,12 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 
-namespace lib_good_boy::neural
+namespace LibGoodBoy
 {
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
-    Neuron::Neuron( const std::vector<neuralVal_t>& outputFilterTaps,
-                    const std::vector<neuralVal_t>& evolveFilterTaps)
+    Neuron::Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
+                    const std::vector<neuralVal_t>& p_evolveFilterTaps)
         :
             m_checkedOutputFlag(false),
             m_forwardProbedFlag(false),
@@ -25,11 +25,11 @@ namespace lib_good_boy::neural
 
             m_outputConnectionsList(),
 
-            m_outputPreFilterBuffer(outputFilterTaps.size()),
-            m_outputPostFilterBuffer(evolveFilterTaps.size()),
+            m_outputPreFilterBuffer(p_outputFilterTaps.size()),
+            m_outputPostFilterBuffer(p_evolveFilterTaps.size()),
 
-            m_outputFilterTaps(outputFilterTaps),
-            m_evolveFilterTaps(evolveFilterTaps),
+            m_outputFilterTaps(p_outputFilterTaps),
+            m_evolveFilterTaps(p_evolveFilterTaps),
 
             m_id(boost::uuids::random_generator()())
     {
@@ -65,16 +65,16 @@ namespace lib_good_boy::neural
 
     //Connection Management________________________________________
     void Neuron::PurgeConnections(
-        const std::list<std::shared_ptr<Neuron>>& toPurge)
+        const std::list<std::shared_ptr<Neuron>>& p_toPurge)
     {
         for(std::list<std::shared_ptr<Neuron>>::const_iterator iter =
-                toPurge.begin();
-            iter != toPurge.end(); ++iter)
+                p_toPurge.begin();
+            iter != p_toPurge.end(); ++iter)
         {
             m_outputConnectionsList.remove(*iter); 
         }
 
-        postPurgeConnections(toPurge);
+        postPurgeConnections(p_toPurge);
     }
 
     void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron> connected)
@@ -82,12 +82,12 @@ namespace lib_good_boy::neural
         m_outputConnectionsList.push_back(connected);
     }
 
-    void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron> removed)
+    void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron> p_removed)
     {
         std::list<std::shared_ptr<Neuron>>::const_iterator iter
             = find(m_outputConnectionsList.begin(), 
                     m_outputConnectionsList.end(),
-                    removed);
+                    p_removed);
         if(iter != m_outputConnectionsList.end())
         {
             m_outputConnectionsList.erase(iter);
@@ -95,12 +95,12 @@ namespace lib_good_boy::neural
     }
 
     //Evolving____________________________________________________
-    void Neuron::Evolve(neuralVal_t endorph)
+    void Neuron::Evolve(neuralVal_t p_amount)
     {
         if(!m_evolveFlag)
         {
             m_evolveFlag = true;
-            evolveSelf(endorph);
+            evolveSelf(p_amount);
         }
     }
 
@@ -174,14 +174,14 @@ namespace lib_good_boy::neural
 
     //Protected__________________________________________________________
     neuralVal_t Neuron::tapsCircBuffInner(
-            const std::vector<neuralVal_t>& taps,
-            const boost::circular_buffer<neuralVal_t>& samps) const
+            const std::vector<neuralVal_t>& p_taps,
+            const boost::circular_buffer<neuralVal_t>& p_samps) const
     {
         neuralVal_t retVal = 0;
         std::vector<neuralVal_t>::const_iterator tapIter;
         boost::circular_buffer<neuralVal_t>::const_iterator sampIter;
-        for(tapIter = taps.begin(), sampIter = samps.begin();
-            tapIter != taps.end() && sampIter != samps.end();
+        for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
+            tapIter != p_taps.end() && sampIter != p_samps.end();
             ++tapIter, ++sampIter)
         {
             retVal += *tapIter * *sampIter;
