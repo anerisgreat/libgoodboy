@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <list>
+#include <boost/random/uniform_real.hpp>
 
 namespace LibGoodBoy
 {
@@ -19,11 +20,16 @@ namespace LibGoodBoy
                     const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps,
                     ObjectPool<NeuralConnection>& p_connectionPool,
-                    neuralVal_t p_degrFactor);
+                    neuralVal_t p_degrFactor,
+                    neuralVal_t p_maxStartWeight,
+                    neuralVal_t p_defaultAlpha);
 
             ~ConnectableNeuron();
 
             void Connect(std::shared_ptr<Neuron>& p_toConnect);
+            void Connect(std::shared_ptr<Neuron>& p_toConnect,
+                    neuralVal_t p_weight,
+                    neuralVal_t p_alpha);
 
             //JSON GetJson()
         protected:
@@ -44,11 +50,10 @@ namespace LibGoodBoy
             ObjectPool<NeuralConnection>& m_connectionPool;
 
             neuralVal_t m_degrFactor;
+            neuralVal_t m_maxStartWeight;
+            neuralVal_t m_defaultAlpha;
 
-            static inline neuralVal_t sigmoid(neuralVal_t p_a);
-            void releaseAllConnections();
-            void removeConnection(
-                    const std::shared_ptr<NeuralConnection> p_toRemove);
+            void releaseAllInputs();
     };
 }
 
