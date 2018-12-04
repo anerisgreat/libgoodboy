@@ -88,7 +88,7 @@ namespace LibGoodBoy{
     }
 
     void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron>& connected){
-        m_outputConnectionsList.push_back(connected);
+        m_outputConnectionsList.emplace_back(connected);
     }
 
     void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron>& p_removed){

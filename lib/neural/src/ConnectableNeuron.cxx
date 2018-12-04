@@ -12,8 +12,7 @@ namespace LibGoodBoy
     ConnectableNeuron::ConnectableNeuron(
             const std::vector<neuralVal_t>& p_outputFilterTaps,
             const std::vector<neuralVal_t>& p_evolveFilterTaps,
-            const std::shared_ptr<ObjectPool<NeuralConnection>>& 
-                p_connectionPool,
+            ObjectPool<NeuralConnection>& p_connectionPool,
             neuralVal_t p_degrFactor)
         :
             Neuron(p_outputFilterTaps, p_evolveFilterTaps),
@@ -21,6 +20,20 @@ namespace LibGoodBoy
             m_inConnectionList(std::list<std::weak_ptr<NeuralConnection>>()),
             m_degrFactor(p_degrFactor)
     {}
+
+
+    ConnectableNeuron::~ConnectableNeuron(){
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
+        {
+            m_connectionPool.Release((*connectIter).lock());
+        }
+    }
+
+    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect){
+        std::shared_ptr<NeuralConnection> connection = 
+            m_connectionPool.AllocElement();
+    }
 
     neuralVal_t ConnectableNeuron::calcOutput(){
         neuralVal_t sum = 0;
@@ -36,18 +49,7 @@ namespace LibGoodBoy
         return sigmoid(sum);
     }
 
-    ConnectableNeuron::~ConnectableNeuron()
-    {
-        auto connectPoolPtr = m_connectionPool.lock();
-        for(auto connectIter = m_inConnectionList.begin();
-            connectIter != m_inConnectionList.end(); ++connectIter)
-        {
-            connectPoolPtr->Release((*connectIter).lock());
-        }
-    }
-
-    void ConnectableNeuron::postBackProbe()
-    { 
+    void ConnectableNeuron::postBackProbe(){ 
         for(auto connectIter = m_inConnectionList.begin();
             connectIter != m_inConnectionList.end(); ++connectIter)
         {
@@ -55,11 +57,11 @@ namespace LibGoodBoy
         }
          
     }
+
     void ConnectableNeuron::postForwardProbe(){}
 
     void ConnectableNeuron::evolveSelf(neuralVal_t p_amount){
         auto connectIter = m_inConnectionList.begin();
-        auto connectPoolPtr = m_connectionPool.lock();
 
         while(connectIter != m_inConnectionList.end()){
             auto connectPtr = (*connectIter).lock();
@@ -69,14 +71,13 @@ namespace LibGoodBoy
             neuralVal_t finalAlpha = connectPtr->Alpha + p_amount; 
             if(finalAlpha <= 0){
                 connectIter = m_inConnectionList.erase(connectIter);
-                connectPoolPtr->Release(connectPtr);
+                m_connectionPool.Release(connectPtr);
             }
             else{
                 connectPtr->Alpha = finalAlpha;
                 ++connectIter;
             }
         }
-        
     }
 
     void ConnectableNeuron::postPurgeConnections(

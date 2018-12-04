@@ -72,7 +72,7 @@ namespace LibGoodBoy{
                         }
                         for(typename std::vector<T>::size_type i = 0; 
                                 i < amountToAdd; ++i){
-                            m_pool.push_back((*m_allocFunc)());
+                            m_pool.emplace_back((*m_allocFunc)());
                         }
                         
                         m_iter = m_pool.begin() + prevSize;
@@ -80,12 +80,11 @@ namespace LibGoodBoy{
                     }
                 }while(!found);
 
-                return *m_iter;
+                return (*m_iter).Ptr;
             }
 
             void Release(const std::shared_ptr<T>& p_elementPtr){
-                typename std::vector<BoolPtrPair<T>>::iterator iter 
-                    = m_pool.begin();
+                auto iter = m_pool.begin();
                 bool found = false;
                 while(!found && iter != m_pool.end()){
                     if((*iter).Ptr == p_elementPtr){

@@ -18,11 +18,12 @@ namespace LibGoodBoy
             ConnectableNeuron(
                     const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps,
-                    const std::shared_ptr<ObjectPool<NeuralConnection>>&
-                        p_connectionPool,
+                    ObjectPool<NeuralConnection>& p_connectionPool,
                     neuralVal_t p_degrFactor);
 
             ~ConnectableNeuron();
+
+            void Connect(std::shared_ptr<Neuron>& p_toConnect);
 
             //JSON GetJson()
         protected:
@@ -40,7 +41,7 @@ namespace LibGoodBoy
             void postReset();
         private:
             std::list<std::weak_ptr<NeuralConnection>> m_inConnectionList;
-            std::weak_ptr<ObjectPool<NeuralConnection>> m_connectionPool;
+            ObjectPool<NeuralConnection>& m_connectionPool;
 
             neuralVal_t m_degrFactor;
 
