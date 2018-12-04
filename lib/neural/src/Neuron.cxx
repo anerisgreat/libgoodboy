@@ -12,14 +12,14 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 
-namespace LibGoodBoy
-{
+namespace LibGoodBoy{
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
     Neuron::Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps)
         :
             Resetable(),
+
             m_checkedOutputFlag(false),
             m_forwardProbedFlag(false),
             m_backwardProbedFlag(false),
@@ -33,23 +33,18 @@ namespace LibGoodBoy
             m_outputPreFilterBuffer(p_outputFilterTaps.size()),
             m_outputPostFilterBuffer(p_evolveFilterTaps.size()),
 
-
             m_outputFilterTaps(p_outputFilterTaps),
             m_evolveFilterTaps(p_evolveFilterTaps),
 
             m_id(boost::uuids::random_generator()())
-    {
-    }
+    {}
 
-    Neuron::~Neuron()
-    {
-    }
+
+    Neuron::~Neuron(){}
 
     //Output_______________________________________________________
-    neuralVal_t Neuron::GetOutput()
-    {
-        if(!m_checkedOutputFlag)
-        {
+    neuralVal_t Neuron::GetOutput(){
+        if(!m_checkedOutputFlag){
             m_checkedOutputFlag = true;
             neuralVal_t pre_filt_output = calcOutput();
             m_outputPreFilterBuffer.push_back(pre_filt_output);
@@ -64,23 +59,23 @@ namespace LibGoodBoy
         return m_outputPostFilterBuffer[0];
     }
 
-    void Neuron::ResetOutputFlag()
-    {
+    void Neuron::ResetOutputFlag(){
         m_checkedOutputFlag = false;
+        m_contributionFlag = false;
     }
 
     //Connection Management________________________________________
     void Neuron::PurgeConnections(
-            const std::list<std::weak_ptr<Neuron>>& p_toPurge)
+        const std::list<std::shared_ptr<Neuron>>& p_toPurge)
     {
-        for(std::list<std::weak_ptr<Neuron>>::const_iterator iter =
+        for(std::list<std::shared_ptr<Neuron>>::const_iterator iter =
                 p_toPurge.begin();
             iter != p_toPurge.end(); ++iter)
         {
             std::list<std::weak_ptr<Neuron>>::const_iterator eraseIter
                 = m_outputConnectionsList.begin();
             do{
-                if((*eraseIter).lock()==(*iter).lock()){
+                if((*eraseIter).lock()==(*iter)){
                     eraseIter = m_outputConnectionsList.erase(eraseIter);
                 }
                 else{
@@ -92,21 +87,18 @@ namespace LibGoodBoy
         postPurgeConnections(p_toPurge);
     }
 
-    void Neuron::OnConnectedToOutput(const std::weak_ptr<Neuron> connected)
-    {
+    void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron>& connected){
         m_outputConnectionsList.push_back(connected);
     }
 
-    void Neuron::OnRemovedFromOutput(const std::weak_ptr<Neuron> p_removed)
-    {
-
+    void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron>& p_removed){
         std::list<std::weak_ptr<Neuron>>::const_iterator iter
             = m_outputConnectionsList.begin();
         bool found = false;
         while(!found && iter != m_outputConnectionsList.end()){
-            if((*iter).lock() == p_removed.lock()){
+            if((*iter).lock() == p_removed){
                 found = true;
-                m_outputConnectionsList.remove(p_removed);
+                m_outputConnectionsList.erase(iter);
             }
         }
     }
@@ -124,7 +116,7 @@ namespace LibGoodBoy
     }
 
     neuralVal_t Neuron::GetContribution(){
-        if(!m_contributionFlag){
+        if(!m_contributionFlag && m_checkedOutputFlag){
             m_lastContribution =  tapsCircBuffInner(
                                     m_evolveFilterTaps,
                                     m_outputPostFilterBuffer);

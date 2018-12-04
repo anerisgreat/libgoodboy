@@ -18,7 +18,7 @@ namespace LibGoodBoy
             ConnectableNeuron(
                     const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps,
-                    const std::weak_ptr<ObjectPool<NeuralConnection>>&
+                    const std::shared_ptr<ObjectPool<NeuralConnection>>&
                         p_connectionPool,
                     neuralVal_t p_degrFactor);
 
@@ -35,7 +35,7 @@ namespace LibGoodBoy
             void evolveSelf(neuralVal_t p_amount);
             
             void postPurgeConnections(
-                    std::list<std::weak_ptr<Neuron>>& p_toPurge);
+                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 
             void postReset();
         private:
@@ -47,7 +47,7 @@ namespace LibGoodBoy
             static inline neuralVal_t sigmoid(neuralVal_t p_a);
             void releaseAllConnections();
             void removeConnection(
-                    const std::weak_ptr<NeuralConnection> p_toRemove);
+                    const std::shared_ptr<NeuralConnection> p_toRemove);
     };
 }
 

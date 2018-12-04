@@ -11,7 +11,7 @@ namespace LibGoodBoy
     ConnectableNeuron::ConnectableNeuron(
             const std::vector<neuralVal_t>& p_outputFilterTaps,
             const std::vector<neuralVal_t>& p_evolveFilterTaps,
-            const std::weak_ptr<ObjectPool<NeuralConnection>>& p_connectionPool)
+            const std::shared_ptr<ObjectPool<NeuralConnection>>& p_connectionPool)
         :
             Neuron(p_outputFilterTaps, p_evolveFilterTaps),
             m_connectionPool(p_connectionPool),
@@ -79,7 +79,7 @@ namespace LibGoodBoy
     }
 
     void InputNeuron::postPurgeConnections(
-        std::list<std::weak_ptr<Neuron>>& p_toPurge){}
+        std::list<std::shared_ptr<Neuron>>& p_toPurge){}
 
     void InputNeuron::postReset()
     {

@@ -35,8 +35,10 @@ namespace LibGoodBoy
             void PurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 
-            void OnConnectedToOutput(const std::shared_ptr<Neuron> p_connected);
-            void OnRemovedFromOutput(const std::shared_ptr<Neuron> p_removed);
+            void OnConnectedToOutput(
+                    const std::shared_ptr<Neuron>& p_connected);
+            void OnRemovedFromOutput(
+                    const std::shared_ptr<Neuron>& p_removed);
 
             //Probe_______________________________________
             void BackProbe();
