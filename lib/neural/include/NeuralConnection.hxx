@@ -1,5 +1,5 @@
-#ifndef NEURAL_CONNECTABLE_NEURON_HXX
-#define NEURAL_CONNECTABLE_NEURON_HXX
+#ifndef NEURAL_CONNECTION_HXX
+#define NEURAL_CONNECTION_HXX
 
 #include "libGoodBoyConfig.hxx"
 #include "NeuralConfig.hxx"
@@ -9,7 +9,7 @@
 
 namespace LibGoodBoy
 {
-    class NeuralConnection
+    class NeuralConnection : public Resetable
     {
         public:
             std::weak_ptr<Neuron> ConnectedNeuronPtr;
@@ -18,6 +18,8 @@ namespace LibGoodBoy
             neuralVal_t Alpha;
 
             NeuralConnection(){}
+            
+            void Reset(){}
     };
 }
 

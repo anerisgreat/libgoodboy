@@ -1,4 +1,5 @@
 #include "libGoodBoyConfig.hxx"
+#include "ConnectableNeuron.hxx"
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
 #include "NeuralConnection.hxx"
@@ -11,7 +12,9 @@ namespace LibGoodBoy
     ConnectableNeuron::ConnectableNeuron(
             const std::vector<neuralVal_t>& p_outputFilterTaps,
             const std::vector<neuralVal_t>& p_evolveFilterTaps,
-            const std::shared_ptr<ObjectPool<NeuralConnection>>& p_connectionPool)
+            const std::shared_ptr<ObjectPool<NeuralConnection>>& 
+                p_connectionPool,
+            neuralVal_t p_degrFactor)
         :
             Neuron(p_outputFilterTaps, p_evolveFilterTaps),
             m_connectionPool(p_connectionPool),
@@ -22,68 +25,65 @@ namespace LibGoodBoy
     neuralVal_t ConnectableNeuron::calcOutput(){
         neuralVal_t sum = 0;
 
-        for(std::list<std::weak_ptr<NeuralConnection>>::iterator connectIter
-            = m_inConnectionList.begin(),
-            connectIter != m_inConnectionList.end(), ++connectIter)
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
         {
-            sum += (*connectIter)->ConnectedNeuronPtr->GetOutput()
-                * (*connectIter)->Weight;
+            auto connectPtr = (*connectIter).lock();
+            sum += connectPtr->ConnectedNeuronPtr.lock()->GetOutput()
+                * connectPtr->Weight;
         }
 
         return sigmoid(sum);
     }
 
-    Neuron::~Neuron()
+    ConnectableNeuron::~ConnectableNeuron()
     {
-        for(std::list<std::weak_ptr<NeuralConnection>>::iterator connectIter
-            = m_inConnectionList.begin(),
-            connectIter != m_inConnectionList.end(), ++connectIter)
+        auto connectPoolPtr = m_connectionPool.lock();
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
         {
-            m_connectionPool.Release(*connectIter);
+            connectPoolPtr->Release((*connectIter).lock());
         }
     }
 
-    void InputNeuron::postBackProbe()
+    void ConnectableNeuron::postBackProbe()
     { 
-        for(std::list<std::weak_ptr<NeuralConnection>>::iterator connectIter
-            = m_inConnectionList.begin(),
-            connectIter != m_inConnectionList.end(), ++connectIter)
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
         {
-            (*connectIter)->ConnectedNeuronPtr->BackProbe();
+            (*connectIter).lock()->ConnectedNeuronPtr.lock()->BackProbe();
         }
          
     }
-    void InputNeuron::postForwardProbe(){}
+    void ConnectableNeuron::postForwardProbe(){}
 
-    void InputNeuron::evolveSelf(neuralVal_t p_amount){
-        std::list<std::weak_ptr<NeuralConnection>>::iterator connectIter
-            = m_inConnectionList.begin();
+    void ConnectableNeuron::evolveSelf(neuralVal_t p_amount){
+        auto connectIter = m_inConnectionList.begin();
+        auto connectPoolPtr = m_connectionPool.lock();
 
-        while(connectIter != m_inConnectionList.end(){
-            neuralVal_t contribution 
-                = (*connectIter)->ConnectedNeuronPtr->GetContribution();
-            neuralVal_T amountToChange 
-                = contribution * p_amount - m_degrFactor;
-            neuralVal_T finalAlpha = (*connectIter)->Alpha + p_amount; 
+        while(connectIter != m_inConnectionList.end()){
+            auto connectPtr = (*connectIter).lock();
+            auto neuronPtr = connectPtr->ConnectedNeuronPtr.lock();
+            neuralVal_t contribution = neuronPtr->GetContribution();
+            neuralVal_t amountToChange = contribution * p_amount - m_degrFactor;
+            neuralVal_t finalAlpha = connectPtr->Alpha + p_amount; 
             if(finalAlpha <= 0){
-                std::weak_ptr toRemove = (*connectIter);
                 connectIter = m_inConnectionList.erase(connectIter);
-                m_connectionPool.Release(toRemove);
+                connectPoolPtr->Release(connectPtr);
             }
             else{
-                (*connectIter)->Alpha = finalAlpha;
+                connectPtr->Alpha = finalAlpha;
                 ++connectIter;
             }
         }
         
     }
 
-    void InputNeuron::postPurgeConnections(
-        std::list<std::shared_ptr<Neuron>>& p_toPurge){}
+    void ConnectableNeuron::postPurgeConnections(
+        const std::list<std::shared_ptr<Neuron>>& p_toPurge){}
 
-    void InputNeuron::postReset()
+    void ConnectableNeuron::postReset()
     {
-        m_nextInput = 0;   
     }
 
     neuralVal_t ConnectableNeuron::sigmoid(neuralVal_t p_a){

@@ -2,6 +2,7 @@
 #define NEURAL_OBJECT_POOL_HXX
 
 #include "libGoodBoyConfig.hxx"
+#include "Resetable.hxx"
 
 #include <memory>
 #include <vector>
@@ -9,6 +10,11 @@
 namespace LibGoodBoy{
 
     template <class T> class ObjectPool{
+        static_assert(
+            (std::is_base_of<Resetable, T>::value),
+            "T in ObjectPool must be a descendant of LibGoodBoy::Resetable"
+        );
+
         private:
 
             template<class U> struct BoolPtrPair{
@@ -77,7 +83,18 @@ namespace LibGoodBoy{
                 return *m_iter;
             }
 
-            void ReleaseElement(std::shared_ptr<T>& p_elementPtr);
+            void Release(const std::shared_ptr<T>& p_elementPtr){
+                typename std::vector<BoolPtrPair<T>>::iterator iter 
+                    = m_pool.begin();
+                bool found = false;
+                while(!found && iter != m_pool.end()){
+                    if((*iter).Ptr == p_elementPtr){
+                        found = true;
+                        (*iter).Used=false;
+                        (*iter).Ptr->Reset();
+                    }
+                }
+            }
     };
 }
 

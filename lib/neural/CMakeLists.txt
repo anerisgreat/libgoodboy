@@ -11,6 +11,7 @@ include_directories(${libGoodBoy.Pool_INCLUDE_DIR})
 add_library(${PROJECT_NAME}
     src/Neuron.cxx
     src/InputNeuron.cxx
+    src/ConnectableNeuron.cxx
     )
 
 #target_link_libraries(${PROJECT_NAME} libGoodBoy.Pool)

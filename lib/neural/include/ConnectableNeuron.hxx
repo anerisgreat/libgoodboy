@@ -39,8 +39,8 @@ namespace LibGoodBoy
 
             void postReset();
         private:
-            std::list<std::weak_ptr<NeuralConnection>>& m_inConnectionList;
-            std::weak_ptr<ObjectPool<NeuralConnection>>& m_connectionPool;
+            std::list<std::weak_ptr<NeuralConnection>> m_inConnectionList;
+            std::weak_ptr<ObjectPool<NeuralConnection>> m_connectionPool;
 
             neuralVal_t m_degrFactor;
 
