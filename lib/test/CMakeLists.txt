@@ -13,5 +13,7 @@ add_executable(${PROJECT_NAME}
     src/Test.cxx
     )
 
-target_link_libraries(${PROJECT_NAME} libGoodBoy.Neural)
-target_link_libraries(${PROJECT_NAME} libGoodBoy.Pool)
+target_link_libraries(${PROJECT_NAME} 
+    libGoodBoy.Neural
+    #libGoodBoy.Pool
+    )

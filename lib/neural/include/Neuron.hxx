@@ -3,6 +3,7 @@
 
 #include "libGoodBoyConfig.hxx"
 #include "NeuralConfig.hxx"
+#include "Resetable.hxx"
 
 #include <vector>
 #include <memory>
@@ -13,7 +14,7 @@
 
 namespace LibGoodBoy
 {
-    class Neuron
+    class Neuron : public Resetable, public std::enable_shared_from_this<Neuron>
     {
         public:
             //Constructor & Destructor____________________
@@ -28,7 +29,7 @@ namespace LibGoodBoy
             //Evolving____________________________________
             void Evolve(neuralVal_t p_amount);
             void ResetEvolveFlag();
-            neuralVal_t GetContribution() const;
+            neuralVal_t GetContribution();
             
             //Connection Management_______________________
             void PurgeConnections(
@@ -43,8 +44,8 @@ namespace LibGoodBoy
             bool GetWasFullyProbed() const;
             void ResetProbeFlag();
 
-            //Flushing____________________________________
-            void Flush();
+            //Reseting____________________________________
+            void Reset();
 
             //Properties__________________________________
             boost::uuids::uuid GetUUID();
@@ -61,7 +62,7 @@ namespace LibGoodBoy
             virtual void postPurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge) = 0;
 
-            virtual void postFlush() = 0;
+            virtual void postReset() = 0;
 
             neuralVal_t tapsCircBuffInner(
                     const std::vector<neuralVal_t>& p_taps,
@@ -72,8 +73,11 @@ namespace LibGoodBoy
             bool m_forwardProbedFlag;
             bool m_backwardProbedFlag;
             bool m_evolveFlag;
+            bool m_contributionFlag;
 
-            std::list<std::shared_ptr<Neuron>> m_outputConnectionsList;
+            neuralVal_t m_lastContribution;
+
+            std::list<std::weak_ptr<Neuron>> m_outputConnectionsList;
 
             boost::circular_buffer<neuralVal_t> m_outputPreFilterBuffer;
             boost::circular_buffer<neuralVal_t> m_outputPostFilterBuffer;

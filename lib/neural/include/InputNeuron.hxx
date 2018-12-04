@@ -27,9 +27,9 @@ namespace LibGoodBoy
             void evolveSelf(neuralVal_t p_amount);
             
             void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
+                    const std::list<std::weak_ptr<Neuron>>& p_toPurge);
 
-            void postFlush();
+            void postReset();
         private:
             neuralVal_t m_nextInput;
     };

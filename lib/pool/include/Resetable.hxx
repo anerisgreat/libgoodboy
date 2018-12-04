@@ -5,11 +5,11 @@
 
 namespace LibGoodBoy
 {
-    template <class T> class Resetable
+    class Resetable
     {
         public:
-            virtual void Flush() = 0;
-    }
+            virtual void Reset() = 0;
+    };
 }
 
 #endif

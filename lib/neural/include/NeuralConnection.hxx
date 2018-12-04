@@ -12,12 +12,10 @@ namespace LibGoodBoy
     class NeuralConnection
     {
         public:
-            typedef unsigned int alpha_t;
-
-            std::shared_ptr<Neuron> ConnectedNeuronPtr;
+            std::weak_ptr<Neuron> ConnectedNeuronPtr;
 
             neuralVal_t Weight;
-            alpha_t Alpha;
+            neuralVal_t Alpha;
 
             NeuralConnection(){}
     };

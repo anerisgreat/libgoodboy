@@ -35,9 +35,9 @@ namespace LibGoodBoy
     void InputNeuron::postForwardProbe(){}
     void InputNeuron::evolveSelf(neuralVal_t p_amount){}
     void InputNeuron::postPurgeConnections(
-            const std::list<std::shared_ptr<Neuron>>& p_toPurge){}
+            std::list<std::weak_ptr<Neuron>>& p_toPurge){}
 
-    void InputNeuron::postFlush()
+    void InputNeuron::postReset()
     {
         m_nextInput = 0;   
     }
