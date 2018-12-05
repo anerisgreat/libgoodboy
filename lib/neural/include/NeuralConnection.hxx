@@ -6,6 +6,9 @@
 #include "Neuron.hxx"
 
 #include <memory>
+#include <string>
+
+#include <boost/uuid/uuid_io.hpp>
 
 namespace LibGoodBoy
 {
@@ -20,6 +23,15 @@ namespace LibGoodBoy
             NeuralConnection(){}
             
             void Reset(){}
+
+            json_t GetJSON(){
+                json_t retJSON();
+                retJSON[JSON_CONNECTION_ALPHA_KEY] = std::to_string(Alpha);
+                retJSON[JSON_CONNECTION_WEIGHT_KEY] = std::to_string(Weight);
+                retJSON[JSON_UID_KEY] = 
+                    boost::uuid::to_string(ConnectedNeuronPtr.lock()->GetUID());
+                return retJSON;
+            }
     };
 }
 

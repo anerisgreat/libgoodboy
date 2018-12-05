@@ -17,17 +17,20 @@ namespace LibGoodBoy
     {
     }
 
-    Neuron::~Neuron()
-    {
+    Neuron::~Neuron(){
     }
 
-    void InputNeuron::FeedInput(neuralVal_t p_input)
-    {
+    void InputNeuron::FeedInput(neuralVal_t p_input){
         m_nextInput = p_input; 
     }
 
-    neuralVal_t InputNeuron::calcOutput()
-    {
+    json_t InputNeuron::GetJSON(){
+        json_t retJSON = Neuron::GetJSON();
+        retJSON[JSON_NEURON_TYPE] = JSON_NEURON_TYPE_INPUT; 
+        return retJSON;
+    }
+
+    neuralVal_t InputNeuron::calcOutput(){
         return m_nextInput;
     }
 
@@ -37,10 +40,7 @@ namespace LibGoodBoy
     void InputNeuron::postPurgeConnections(
             const std::list<std::shared_ptr<Neuron>>& p_toPurge){}
 
-    void InputNeuron::postReset()
-    {
+    void InputNeuron::postReset(){
         m_nextInput = 0;   
     }
-
-
 }

@@ -17,7 +17,7 @@ namespace LibGoodBoy
 
             void FeedInput(neuralVal_t p_input);
             
-            //JSON GetJson()
+            json_t GetJSON();
         protected:
             neuralVal_t calcOutput();
 

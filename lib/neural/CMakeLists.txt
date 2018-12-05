@@ -14,4 +14,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     "${CMAKE_SOURCE_DIR}"
     )
 
-target_link_libraries(${PROJECT_NAME} libGoodBoy.Pool)
+target_link_libraries(${PROJECT_NAME} 
+    PUBLIC
+    libGoodBoy.Pool
+
+    PRIVATE
+    nlohmann_json::nlohmann_json
+    )

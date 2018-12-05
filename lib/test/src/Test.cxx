@@ -1,10 +1,11 @@
 #include "Test.hxx"
-#include "Neuron.hxx"
 #include "ObjectPool.hxx"
 
 #include <stdio.h>
 #include <iostream>
 #include <list>
+#include <nlohmann/json.hpp>
+#include <string>
 
 int main(int argc, char *argv[])
 {
@@ -20,4 +21,9 @@ int main(int argc, char *argv[])
     for (std::list<int>::iterator it=stupid.begin(); it!=stupid.end(); ++it)
     	std::cout << ' ' << *it;
   	std::cout << '\n';
+
+    nlohmann::json j;
+    j["foo"] = "bar";
+
+    std::cout << j.dump() << std::endl;
 }

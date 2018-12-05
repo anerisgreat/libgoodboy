@@ -10,7 +10,6 @@
 #include <list>
 
 #include <boost/circular_buffer.hpp>
-#include <boost/uuid/uuid.hpp>
 
 namespace LibGoodBoy
 {
@@ -50,8 +49,8 @@ namespace LibGoodBoy
             void Reset();
 
             //Properties__________________________________
-            boost::uuids::uuid GetUUID();
-            //JSON GetJson();
+            uid_t GetUID();
+            virtual json_t GetJSON();
             //STRING ToString();
         protected:
             virtual neuralVal_t calcOutput() = 0;
@@ -87,7 +86,7 @@ namespace LibGoodBoy
             const std::vector<neuralVal_t>& m_outputFilterTaps;
             const std::vector<neuralVal_t>& m_evolveFilterTaps;
 
-            boost::uuids::uuid m_id;
+            uid_t m_uid;
     };
 }
 
