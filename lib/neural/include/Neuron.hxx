@@ -49,7 +49,7 @@ namespace LibGoodBoy
             void Reset();
 
             //Properties__________________________________
-            uid_t GetUID();
+            uuid_t GetUID();
             virtual json_t GetJSON();
             //STRING ToString();
         protected:
@@ -86,7 +86,7 @@ namespace LibGoodBoy
             const std::vector<neuralVal_t>& m_outputFilterTaps;
             const std::vector<neuralVal_t>& m_evolveFilterTaps;
 
-            uid_t m_uid;
+            uuid_t m_uid;
     };
 }
 

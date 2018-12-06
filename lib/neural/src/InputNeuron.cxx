@@ -26,7 +26,7 @@ namespace LibGoodBoy
 
     json_t InputNeuron::GetJSON(){
         json_t retJSON = Neuron::GetJSON();
-        retJSON[JSON_NEURON_TYPE] = JSON_NEURON_TYPE_INPUT; 
+        retJSON[JSON_NEURON_TYPE_KEY] = JSON_NEURON_TYPE_INPUT_VAL; 
         return retJSON;
     }
 

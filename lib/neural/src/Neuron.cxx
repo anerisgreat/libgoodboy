@@ -10,6 +10,7 @@
 
 #include <boost/circular_buffer.hpp>
 #include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
 namespace LibGoodBoy{
@@ -167,31 +168,31 @@ namespace LibGoodBoy{
         m_outputPreFilterBuffer.clear();
         m_outputPostFilterBuffer.clear();
 
-        m_id = boost::uuids::random_generator()();
+        m_uid = boost::uuids::random_generator()();
         m_outputConnectionsList.clear();
 
         postReset();
     }
 
     //Properties___________________________________________________
-    uid_t Neuron::GetUID(){
+    uuid_t Neuron::GetUID(){
         return m_uid;
     }
 
     json_t Neuron::GetJSON()
     {
-        json_t retJSON();
-        retJSON[JSON_UID_KEY] = boost::uuid::to_string(uid);
+        json_t retJSON;
+        retJSON[JSON_UID_KEY] = boost::uuids::to_string(m_uid);
         retJSON[JSON_OUTP_CONN_KEY] = json_t::array();
         for(auto iter = m_outputConnectionsList.begin(); 
                 iter != m_outputConnectionsList.end(); ++iter)
         {
-            retJSON[JSON_OUTP_CONN_KEY].emplace(boost::uuid::to_string(uid));
+            retJSON[JSON_OUTP_CONN_KEY].push_back(
+                    boost::uuids::to_string((*iter).lock()->GetUID()));
         }
 
         return retJSON;
     }
-    
 
     //Protected__________________________________________________________
     neuralVal_t Neuron::tapsCircBuffInner(
