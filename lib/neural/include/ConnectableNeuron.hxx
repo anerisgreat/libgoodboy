@@ -31,7 +31,7 @@ namespace LibGoodBoy
                     neuralVal_t p_weight,
                     neuralVal_t p_alpha);
 
-            //JSON GetJson()
+            json_t GetJSON();
         protected:
 
             neuralVal_t calcOutput();

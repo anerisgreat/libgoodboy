@@ -13,9 +13,11 @@ namespace LibGoodBoy{
 
     extern const std::string JSON_UID_KEY;
     extern const std::string JSON_OUTP_CONN_KEY;
+    extern const std::string JSON_INP_CONN_KEY;
 
     extern const std::string JSON_NEURON_TYPE_KEY;
     extern const std::string JSON_NEURON_TYPE_INPUT_VAL;
+    extern const std::string JSON_NEURON_TYPE_CONNECTABLE_VAL;
 
     extern const std::string JSON_CONNECTION_WEIGHT_KEY;
     extern const std::string JSON_CONNECTION_ALPHA_KEY;

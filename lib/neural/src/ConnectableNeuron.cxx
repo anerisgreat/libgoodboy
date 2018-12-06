@@ -53,6 +53,18 @@ namespace LibGoodBoy
             OnConnectedToOutput(shared_from_this());
     }
 
+    json_t ConnectableNeuron::GetJSON(){
+        json_t retJSON = Neuron::GetJSON();
+        retJSON[JSON_NEURON_TYPE_KEY] = JSON_NEURON_TYPE_CONNECTABLE_VAL; 
+        retJSON[JSON_INP_CONN_KEY] = json_t::array(); 
+        for(auto iter = m_inConnectionList.begin(); 
+                iter != m_inConnectionList.end(); ++iter)
+        {
+            retJSON[JSON_OUTP_CONN_KEY].push_back((*iter).lock()->GetJSON());
+        }
+        return retJSON;
+    }
+
     neuralVal_t ConnectableNeuron::calcOutput(){
         neuralVal_t sum = 0;
 
