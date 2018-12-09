@@ -40,8 +40,7 @@ namespace LibGoodBoy
 
             void postBackProbe();
             void postForwardProbe();
-            
-            
+
             void postPurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 

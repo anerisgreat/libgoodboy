@@ -1,5 +1,5 @@
-#ifndef NEURAL_NEURON_HXX
-#define NEURAL_NEURON_HXX
+#ifndef NEURAL_GOOD_BOY_NET_HXX
+#define NEURAL_GOOD_BOY_NET_HXX
 
 #include "libGoodBoyConfig.hxx"
 #include "NeuralConfig.hxx"
@@ -26,7 +26,7 @@ namespace LibGoodBoy
                     neuralVal_t p_maxStartWeight,
                     neuralVal_t p_defaultAlpha,
 
-                    bool p_evolvingEnabled
+                    bool p_evolvingEnabled = true
                     );
             ~GoodBoyNet();
 
@@ -42,12 +42,15 @@ namespace LibGoodBoy
         protected:
 
         private:
-            void cleanup();
+            void evolve();
+            void adjustWeights();
             boolean shouldCleanup();
+            void cleanup();
             neuralSize_t numNeuronsToMake();
+            void makeNewNeurons();
 
             void calcOutputs();
-            void evolve();
+            std::shared_ptr<neuralVal_t> m_lastOutput;
 
             std::shared_ptr<ConnectableNeuron> makeNewConnectableNeuronPtr();
             std::shared_ptr<ConnectableNeuron> makeNewNeuralConnectionPtr();

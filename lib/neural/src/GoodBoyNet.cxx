@@ -47,14 +47,17 @@ namespace LibGoodBoy
     }
 
     void GoodBoynet::evolve(){
+        adjustWeights();
+
         if(shouldCleanup()){
             cleanup();
         }
 
-
+        makeNewNeurons();
     }
 
-    std::shared_ptr<ConnectableNeuron> GoodBoyNet::makeNewConnectableNeuron(){
+    std::shared_ptr<ConnectableNeuron> 
+    GoodBoyNet::makeNewConnectableNeuronPtr(){
         //We use the default constructor as opposed to make_shared because
             //of the use of weak pointers. Using the constructor as is
             //seperates the intance to poinpt towards from the control block,
@@ -71,7 +74,7 @@ namespace LibGoodBoy
                     ));
     }
 
-    std::shared_ptr<ConnectableNeuron> GoodBoyNet::makeNewNeuralConnection(){
+    std::shared_ptr<ConnectableNeuron> GoodBoyNet::makeNewNeuralConnectionPtr(){
         //See notes for GoodBoyNet::makeNewConnectableNeuron.
         return std::shared_ptr<NeuralConnection>(new NeuralConnection());
     }
