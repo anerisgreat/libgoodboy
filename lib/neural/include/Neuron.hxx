@@ -26,10 +26,10 @@ namespace LibGoodBoy
             void ResetOutputFlag();
 
             //Evolving____________________________________
-            void Evolve(neuralVal_t p_amount);
-            void ResetEvolveFlag();
+            virtual void Evolve(neuralVal_t p_amount) = 0;
             neuralVal_t GetContribution();
-            
+            void ResetContributionFlag();
+
             //Connection Management_______________________
             void PurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);

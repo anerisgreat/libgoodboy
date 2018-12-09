@@ -26,6 +26,8 @@ namespace LibGoodBoy
 
             ~ConnectableNeuron();
 
+            void Evolve(neuralVal_t p_amount);
+
             void Connect(std::shared_ptr<Neuron>& p_toConnect);
             void Connect(std::shared_ptr<Neuron>& p_toConnect,
                     neuralVal_t p_weight,
@@ -39,7 +41,6 @@ namespace LibGoodBoy
             void postBackProbe();
             void postForwardProbe();
             
-            void evolveSelf(neuralVal_t p_amount);
             
             void postPurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);

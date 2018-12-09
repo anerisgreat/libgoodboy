@@ -31,6 +31,29 @@ namespace LibGoodBoy
         releaseAllInputs();
     }
 
+    void ConnectableNeuron::Evolve(neuralVal_t p_amount){
+        auto connectIter = m_inConnectionList.begin();
+
+        while(connectIter != m_inConnectionList.end()){
+            auto connectPtr = (*connectIter).lock();
+            auto neuronPtr = connectPtr->ConnectedNeuronPtr.lock();
+            neuralVal_t contribution = neuronPtr->GetContribution();
+            neuralVal_t amountToChange = contribution * p_amount - m_degrFactor;
+            neuralVal_t finalAlpha = connectPtr->Alpha + p_amount; 
+            if(finalAlpha <= 0){
+                connectIter = m_inConnectionList.erase(connectIter);
+                connectPtr->ConnectedNeuronPtr.lock()->
+                    OnRemovedFromOutput(shared_from_this());
+                m_connectionPool.Release(connectPtr);
+
+            }
+            else{
+                connectPtr->Alpha = finalAlpha;
+                ++connectIter;
+            }
+        }
+    }
+
     void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect){
         neuralVal_t weight = RandInRange<neuralVal_t>(
                 -m_maxStartWeight, m_maxStartWeight);
@@ -89,29 +112,6 @@ namespace LibGoodBoy
     }
 
     void ConnectableNeuron::postForwardProbe(){}
-
-    void ConnectableNeuron::evolveSelf(neuralVal_t p_amount){
-        auto connectIter = m_inConnectionList.begin();
-
-        while(connectIter != m_inConnectionList.end()){
-            auto connectPtr = (*connectIter).lock();
-            auto neuronPtr = connectPtr->ConnectedNeuronPtr.lock();
-            neuralVal_t contribution = neuronPtr->GetContribution();
-            neuralVal_t amountToChange = contribution * p_amount - m_degrFactor;
-            neuralVal_t finalAlpha = connectPtr->Alpha + p_amount; 
-            if(finalAlpha <= 0){
-                connectIter = m_inConnectionList.erase(connectIter);
-                connectPtr->ConnectedNeuronPtr.lock()->
-                    OnRemovedFromOutput(shared_from_this());
-                m_connectionPool.Release(connectPtr);
-
-            }
-            else{
-                connectPtr->Alpha = finalAlpha;
-                ++connectIter;
-            }
-        }
-    }
 
     void ConnectableNeuron::postPurgeConnections(
         const std::list<std::shared_ptr<Neuron>>& p_toPurge)

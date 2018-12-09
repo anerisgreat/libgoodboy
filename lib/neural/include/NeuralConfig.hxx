@@ -5,9 +5,11 @@
 #include <boost/uuid/uuid.hpp>
 
 #include <string>
+#include <vector>
 
 namespace LibGoodBoy{
     typedef float neuralVal_t;
+    typedef std::size_t neuralSize_t;
     typedef nlohmann::json json_t;
     typedef boost::uuids::uuid uuid_t;
 

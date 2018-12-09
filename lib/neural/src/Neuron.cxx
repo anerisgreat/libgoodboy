@@ -61,7 +61,6 @@ namespace LibGoodBoy{
 
     void Neuron::ResetOutputFlag(){
         m_checkedOutputFlag = false;
-        m_contributionFlag = false;
     }
 
     //Connection Management________________________________________
@@ -103,26 +102,20 @@ namespace LibGoodBoy{
         }
     }
 
-    //Evolving____________________________________________________
-    void Neuron::Evolve(neuralVal_t p_amount){
-        if(!m_evolveFlag){
-            m_evolveFlag = true;
-            evolveSelf(p_amount);
-        }
-    }
-
-    void Neuron::ResetEvolveFlag(){
-        m_evolveFlag = false;
-    }
-
+    //Contribution________________________________________________
     neuralVal_t Neuron::GetContribution(){
-        if(!m_contributionFlag && m_checkedOutputFlag){
+        if(!m_contributionFlag){
+            m_contributionFlag = true;
             m_lastContribution =  tapsCircBuffInner(
                                     m_evolveFilterTaps,
                                     m_outputPostFilterBuffer);
         }
 
         return m_lastContribution;
+    }
+
+    void Neuron::ResetContributionFlag(){
+        m_contributionFlag = false;
     }
 
     //Probe________________________________________________________

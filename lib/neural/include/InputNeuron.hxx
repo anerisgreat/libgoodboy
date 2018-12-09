@@ -15,17 +15,18 @@ namespace LibGoodBoy
 
             ~InputNeuron();
 
+            void Evolve(neuralVal_t p_amount);
+
             void FeedInput(neuralVal_t p_input);
-            
+
             json_t GetJSON();
         protected:
             neuralVal_t calcOutput();
 
             void postBackProbe();
             void postForwardProbe();
-            
-            void evolveSelf(neuralVal_t p_amount);
-            
+
+
             void postPurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 

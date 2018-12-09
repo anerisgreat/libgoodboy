@@ -46,8 +46,9 @@ namespace LibGoodBoy{
                 bool found = false;
 
                 do{
-                    int checks = 0;
-                    int maxChecks = m_pool.size();
+                    typename std::vector<T>::size_type checks = 0;
+                    typename std::vector<T>::size_type maxChecks 
+                        = m_pool.size();
 
                     do{
                         if(!(m_iter->Used)){
