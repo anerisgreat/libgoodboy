@@ -1,10 +1,5 @@
-#include "libGoodBoyConfig.hxx"
 #include "ConnectableNeuron.hxx"
-#include "NeuralConfig.hxx"
-#include "Neuron.hxx"
-#include "NeuralConnection.hxx"
 #include "NeuralUtils.hxx"
-#include "ObjectPool.hxx"
 
 namespace LibGoodBoy
 {
@@ -54,68 +49,10 @@ namespace LibGoodBoy
         }
     }
 
-    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect){
-        neuralVal_t weight = RandInRange<neuralVal_t>(
-                -m_maxStartWeight, m_maxStartWeight);
-        Connect(p_toConnect, weight, m_defaultAlpha);
-    }
-
-    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect,
-            neuralVal_t p_weight,
-            neuralVal_t p_alpha)
-    {
-        std::shared_ptr<NeuralConnection> connection = 
-            m_connectionPool.AllocElement();
-        connection->ConnectedNeuronPtr = p_toConnect;
-        connection->Weight = p_weight;
-        connection->Alpha = p_alpha;
-
-        m_inConnectionList.emplace_back(connection);
-
-        connection->ConnectedNeuronPtr.lock()->
-            OnConnectedToOutput(shared_from_this());
-    }
-
-    json_t ConnectableNeuron::GetJSON(){
-        json_t retJSON = Neuron::GetJSON();
-        retJSON[JSON_NEURON_TYPE_KEY] = JSON_NEURON_TYPE_CONNECTABLE_VAL; 
-        retJSON[JSON_INP_CONN_KEY] = json_t::array(); 
-        for(auto iter = m_inConnectionList.begin(); 
-                iter != m_inConnectionList.end(); ++iter)
-        {
-            retJSON[JSON_OUTP_CONN_KEY].push_back((*iter).lock()->GetJSON());
-        }
-        return retJSON;
-    }
-
-    neuralVal_t ConnectableNeuron::calcOutput(){
-        neuralVal_t sum = 0;
-
-        for(auto connectIter = m_inConnectionList.begin();
-            connectIter != m_inConnectionList.end(); ++connectIter)
-        {
-            auto connectPtr = (*connectIter).lock();
-            sum += connectPtr->ConnectedNeuronPtr.lock()->GetOutput()
-                * connectPtr->Weight;
-        }
-
-        return Sigmoid<neuralVal_t>(sum);
-    }
-
-    void ConnectableNeuron::postBackProbe(){ 
-        for(auto connectIter = m_inConnectionList.begin();
-            connectIter != m_inConnectionList.end(); ++connectIter)
-        {
-            (*connectIter).lock()->ConnectedNeuronPtr.lock()->BackProbe();
-        }
-         
-    }
-
-    void ConnectableNeuron::postForwardProbe(){}
-
-    void ConnectableNeuron::postPurgeConnections(
+    void ConnectableNeuron::PurgeConnections(
         const std::list<std::shared_ptr<Neuron>>& p_toPurge)
     {
+        Neuron::PurgeConnections(p_toPurge);
         auto iter = m_inConnectionList.begin();
         while(iter != m_inConnectionList.end()){
             bool found = false;
@@ -143,9 +80,69 @@ namespace LibGoodBoy
         }
     }
 
-    void ConnectableNeuron::postReset(){
+    void ConnectableNeuron::Reset(){
+        Neuron::Reset();
         releaseAllInputs();
     }
+
+    json_t ConnectableNeuron::GetJSON() const{
+        json_t retJSON = Neuron::GetJSON();
+        retJSON[JSON_NEURON_TYPE_KEY] = JSON_NEURON_TYPE_CONNECTABLE_VAL; 
+        retJSON[JSON_INP_CONN_KEY] = json_t::array(); 
+        for(auto iter = m_inConnectionList.begin(); 
+                iter != m_inConnectionList.end(); ++iter)
+        {
+            retJSON[JSON_OUTP_CONN_KEY].push_back((*iter).lock()->GetJSON());
+        }
+        return retJSON;
+    }
+
+    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect){
+        neuralVal_t weight = RandInRange<neuralVal_t>(
+                -m_maxStartWeight, m_maxStartWeight);
+        Connect(p_toConnect, weight, m_defaultAlpha);
+    }
+
+    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect,
+            neuralVal_t p_weight,
+            neuralVal_t p_alpha)
+    {
+        std::shared_ptr<NeuralConnection> connection = 
+            m_connectionPool.AllocElement();
+        connection->ConnectedNeuronPtr = p_toConnect;
+        connection->Weight = p_weight;
+        connection->Alpha = p_alpha;
+
+        m_inConnectionList.emplace_back(connection);
+
+        connection->ConnectedNeuronPtr.lock()->
+            OnConnectedToOutput(shared_from_this());
+    }
+
+    neuralVal_t ConnectableNeuron::calcOutput(){
+        neuralVal_t sum = 0;
+
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
+        {
+            auto connectPtr = (*connectIter).lock();
+            sum += connectPtr->ConnectedNeuronPtr.lock()->GetOutput()
+                * connectPtr->Weight;
+        }
+
+        return Sigmoid<neuralVal_t>(sum);
+    }
+
+    void ConnectableNeuron::postBackProbe(){ 
+        for(auto connectIter = m_inConnectionList.begin();
+            connectIter != m_inConnectionList.end(); ++connectIter)
+        {
+            (*connectIter).lock()->ConnectedNeuronPtr.lock()->BackProbe();
+        }
+         
+    }
+
+    void ConnectableNeuron::postForwardProbe(){}
 
     void ConnectableNeuron::releaseAllInputs(){
         for(auto connectIter = m_inConnectionList.begin();

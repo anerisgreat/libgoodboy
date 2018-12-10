@@ -11,4 +11,15 @@ namespace LibGoodBoy{
 
     const std::string JSON_CONNECTION_WEIGHT_KEY = "weight";
     const std::string JSON_CONNECTION_ALPHA_KEY = "alpha";
+
+    const std::string NET_INP_KEY = "inputs";
+    const std::string NET_OUT_KEY = "outputs";
+    const std::string NET_MID_KEY = "mid_neurons";
+    const std::string NET_DEGR_FACTOR_KEY = "degredation_factor";
+    const std::string NET_MAX_START_WEIGHT_KEY = "maximum_start_weight";
+    const std::string NET_DEFAULT_ALPHA = "default_alpha";
+    const std::string NET_GEN_FACTOR = "generation_factor";
+    const std::string NET_EVOLVE_ENABLED = "evolve_enabled";
+    const std::string NET_OUT_FILT_TAPS_KEY = "output_filter_taps";
+    const std::string NET_EVOLVE_FILT_TAPS_KEY = "input_filter_taps";
 }

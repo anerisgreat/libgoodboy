@@ -7,6 +7,7 @@ add_library(${PROJECT_NAME}
     src/Neuron.cxx
     src/InputNeuron.cxx
     src/ConnectableNeuron.cxx
+    src/GoodBoyNet.cxx
     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 

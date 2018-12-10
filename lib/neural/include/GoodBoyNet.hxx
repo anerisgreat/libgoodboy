@@ -5,8 +5,8 @@
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
 #include "ConnectableNeuron.hxx"
+#include "InputNeuron.hxx"
 #include "ObjectPool.hxx"
-#include "Resetable.hxx"
 
 #include <vector>
 #include <memory>
@@ -14,7 +14,7 @@
 
 namespace LibGoodBoy
 {
-    class GoodBoyNet : public std::enable_shared_from_this<GoodBoyNet>
+    class GoodBoyNet
     {
         public:
             //Constructor & Destructor____________________
@@ -22,12 +22,15 @@ namespace LibGoodBoy
                     std::vector<neuralVal_t>& p_outputFilterTaps,
                     std::vector<neuralVal_t>& p_evolveFilterTaps,
 
+                    neuralSize_t p_nInputs,
+                    neuralSize_t p_nOutputs,
+
                     neuralVal_t p_degrFactor,
                     neuralVal_t p_maxStartWeight,
                     neuralVal_t p_defaultAlpha,
+                    neuralVal_t p_defaultGenerationFactor,
 
-                    bool p_evolvingEnabled = true
-                    );
+                    bool p_evolvingEnabled);
             ~GoodBoyNet();
 
             void Iter();
@@ -37,20 +40,17 @@ namespace LibGoodBoy
             void CreateInputs(neuralSize_t p_nInputs);
             void CreateOutputs(neuralSize_t p_nOutputs);
 
-            void GetOutputs(std::vector<neuralVal_T>& p_outBuff) const;
+            void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
             neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
 
-            json_t GetJSON();
-
-        protected:
+            json_t GetJSON() const;
 
         private:
             void evolve();
             void adjustWeights();
-            boolean shouldCleanup();
             void cleanup();
             neuralSize_t numNeuronsToMake();
-            void makeNewNeurons();
+            void makeNewNeurons(neuralSize_t p_numNewNeurons);
 
             void calcOutputs();
 
@@ -67,12 +67,13 @@ namespace LibGoodBoy
             ObjectPool<ConnectableNeuron> m_midNeuronPool;
             ObjectPool<NeuralConnection> m_connectionPool;
 
-            std::vector<neuralVal_t>& m_outputFilterTaps,
-            std::vector<neuralVal_t>& m_evolveFilterTaps,
+            std::vector<neuralVal_t>& m_outputFilterTaps;
+            std::vector<neuralVal_t>& m_evolveFilterTaps;
 
-            neuralVal_t m_degrFactor,
-            neuralVal_t m_maxStartWeight,
-            neuralVal_t m_defaultAlpha,
+            neuralVal_t m_degrFactor;
+            neuralVal_t m_maxStartWeight;
+            neuralVal_t m_defaultAlpha;
+            neuralVal_t m_generationFactor;
             bool m_evolvingEnabled;
     };
 }

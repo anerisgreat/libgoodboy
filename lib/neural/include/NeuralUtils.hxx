@@ -3,16 +3,17 @@
 
 #include "libGoodBoyConfig.hxx"
 #include <type_traits>
+#include <cstdlib>
 
 namespace LibGoodBoy{
     template<class T> inline T RandInRange(T min, T max){
         static_assert(
                 std::is_arithmetic<T>::value,
                 "Value must be arithmetic!");
-        return min + static_cast <T> (rand()) 
+        return min + static_cast <T> (std::rand()) 
             / ( static_cast <T> (RAND_MAX/(max-min)));
     }
-    
+
     template<class T> inline T Sigmoid(T p_a){
         static_assert(
                 std::is_floating_point<T>::value,

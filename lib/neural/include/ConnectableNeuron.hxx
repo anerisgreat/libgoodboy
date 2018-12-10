@@ -9,7 +9,6 @@
 
 #include <memory>
 #include <list>
-#include <boost/random/uniform_real.hpp>
 
 namespace LibGoodBoy
 {
@@ -28,12 +27,17 @@ namespace LibGoodBoy
 
             void Evolve(neuralVal_t p_amount);
 
+            void PurgeConnections(
+                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
+
+            void Reset();
+
+            json_t GetJSON() const;
+
             void Connect(std::shared_ptr<Neuron>& p_toConnect);
             void Connect(std::shared_ptr<Neuron>& p_toConnect,
                     neuralVal_t p_weight,
                     neuralVal_t p_alpha);
-
-            json_t GetJSON();
         protected:
 
             neuralVal_t calcOutput();
@@ -41,10 +45,6 @@ namespace LibGoodBoy
             void postBackProbe();
             void postForwardProbe();
 
-            void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
-
-            void postReset();
         private:
             std::list<std::weak_ptr<NeuralConnection>> m_inConnectionList;
             ObjectPool<NeuralConnection>& m_connectionPool;

@@ -5,6 +5,8 @@
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
 
+#include <vector>
+
 namespace LibGoodBoy
 {
     class InputNeuron : public Neuron
@@ -19,18 +21,15 @@ namespace LibGoodBoy
 
             void FeedInput(neuralVal_t p_input);
 
-            json_t GetJSON();
+            void Reset();
+
+            json_t GetJSON() const;
         protected:
             neuralVal_t calcOutput();
 
             void postBackProbe();
             void postForwardProbe();
 
-
-            void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
-
-            void postReset();
         private:
             neuralVal_t m_nextInput;
     };

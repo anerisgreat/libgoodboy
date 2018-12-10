@@ -9,7 +9,7 @@
 
 namespace LibGoodBoy{
 
-    template <class T> class ObjectPool{
+    template <class T, class... T_values> class ObjectPool{
         static_assert(
             (std::is_base_of<Resetable, T>::value),
             "T in ObjectPool must be a descendant of LibGoodBoy::Resetable"
@@ -29,18 +29,28 @@ namespace LibGoodBoy{
                     {}
             };
 
-            std::shared_ptr<T> (*m_allocFunc)();
+            std::tuple<T_values...> m_constructArgs;
             std::vector<BoolPtrPair<T>> m_pool;
             typename std::vector<BoolPtrPair<T>>::iterator m_iter;
 
+            template<std::size_t... Is>
+            std::shared_ptr<T> newElement(
+                    const std::tuple<T_values...>& p_tuple,
+                    std::index_sequence<Is...>)
+            {
+                return std::shared_ptr<T>(new T(std::get<Is>(p_tuple)...));
+            }
+
         public:
-            ObjectPool(std::shared_ptr<T> (*p_allocFunc)())
+            ObjectPool(Args... constructArgs)
                 :
+                    m_constructArgs(std::tuple<T_values...>(constructArgs)),
                     m_allocFunc(p_allocFunc),
                     m_pool(std::vector<BoolPtrPair<T>>())
             {}
 
             ~ObjectPool();
+
 
             std::shared_ptr<T> AllocElement(){
                 bool found = false;
@@ -60,7 +70,7 @@ namespace LibGoodBoy{
                                 m_iter = m_pool.begin();
                             }
                         }
-                        
+
                     }while(!found && checks < maxChecks);
 
                     if(!found){
@@ -75,11 +85,13 @@ namespace LibGoodBoy{
                                 i < amountToAdd; ++i){
                             m_pool.emplace_back((*m_allocFunc)());
                         }
-                        
+
                         m_iter = m_pool.begin() + prevSize;
                         found = true;
                     }
                 }while(!found);
+
+                (*m_iter).Used = true;
 
                 return (*m_iter).Ptr;
             }

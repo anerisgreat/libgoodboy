@@ -1,11 +1,5 @@
-#include "libGoodBoyConfig.hxx"
-#include "NeuralConfig.hxx"
 #include "Neuron.hxx"
-#include "Resetable.hxx"
 
-#include <vector>
-#include <memory>
-#include <list>
 #include <algorithm>
 
 #include <boost/circular_buffer.hpp>
@@ -82,8 +76,6 @@ namespace LibGoodBoy{
                 }
             }while(eraseIter != m_outputConnectionsList.end());
         }
-
-        postPurgeConnections(p_toPurge);
     }
 
     void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron>& connected){
@@ -163,8 +155,6 @@ namespace LibGoodBoy{
 
         m_uid = boost::uuids::random_generator()();
         m_outputConnectionsList.clear();
-
-        postReset();
     }
 
     //Properties___________________________________________________
@@ -172,8 +162,7 @@ namespace LibGoodBoy{
         return m_uid;
     }
 
-    json_t Neuron::GetJSON()
-    {
+    json_t Neuron::GetJSON() const{
         json_t retJSON;
         retJSON[JSON_UID_KEY] = boost::uuids::to_string(m_uid);
         retJSON[JSON_OUTP_CONN_KEY] = json_t::array();

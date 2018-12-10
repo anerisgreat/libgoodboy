@@ -31,7 +31,7 @@ namespace LibGoodBoy
             void ResetContributionFlag();
 
             //Connection Management_______________________
-            void PurgeConnections(
+            virtual void PurgeConnections(
                     const std::list<std::shared_ptr<Neuron>>& p_toPurge);
 
             void OnConnectedToOutput(
@@ -43,27 +43,20 @@ namespace LibGoodBoy
             void BackProbe();
             void ForwardProbe();
             bool GetWasFullyProbed() const;
-            void ResetProbeFlag();
+            virtual void ResetProbeFlag();
 
             //Reseting____________________________________
-            void Reset();
+            virtual void Reset();
 
             //Properties__________________________________
             uuid_t GetUID();
-            virtual json_t GetJSON();
+            virtual json_t GetJSON() const;
             //STRING ToString();
         protected:
             virtual neuralVal_t calcOutput() = 0;
 
             virtual void postBackProbe() = 0;
             virtual void postForwardProbe() = 0;
-            
-            virtual void evolveSelf(neuralVal_t p_amount) = 0;
-            
-            virtual void postPurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& p_toPurge) = 0;
-
-            virtual void postReset() = 0;
 
             neuralVal_t tapsCircBuffInner(
                     const std::vector<neuralVal_t>& p_taps,

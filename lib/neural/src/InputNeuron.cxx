@@ -1,8 +1,4 @@
-#include "libGoodBoyConfig.hxx"
-#include "NeuralConfig.hxx"
 #include "InputNeuron.hxx"
-
-#include <vector>
 
 namespace LibGoodBoy
 {
@@ -26,7 +22,12 @@ namespace LibGoodBoy
         m_nextInput = p_input; 
     }
 
-    json_t InputNeuron::GetJSON(){
+    void InputNeuron::Reset(){
+        Neuron::Reset();
+        m_nextInput = 0;
+    }
+
+    json_t InputNeuron::GetJSON() const{
         json_t retJSON = Neuron::GetJSON();
         retJSON[JSON_NEURON_TYPE_KEY] = JSON_NEURON_TYPE_INPUT_VAL; 
         return retJSON;
@@ -38,10 +39,4 @@ namespace LibGoodBoy
 
     void InputNeuron::postBackProbe(){}
     void InputNeuron::postForwardProbe(){}
-    void InputNeuron::postPurgeConnections(
-            const std::list<std::shared_ptr<Neuron>>& p_toPurge){}
-
-    void InputNeuron::postReset(){
-        m_nextInput = 0;   
-    }
 }
