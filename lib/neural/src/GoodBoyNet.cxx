@@ -14,12 +14,17 @@ namespace LibGoodBoy
             std::vector<neuralVal_t>& p_outputFilterTaps,
             std::vector<neuralVal_t>& p_evolveFilterTaps,
 
+            neuralSize_t p_nInputs,
+            neuralSize_t p_nOutputs,
+
             neuralVal_t p_degrFactor,
             neuralVal_t p_maxStartWeight,
             neuralVal_t p_defaultAlpha,
         :
             m_inputs(std::vector<std::shared_ptr<InputNeuron>>()),
             m_outputs(std::vector<std::shared_ptr<ConnectableNeuron>>()),
+
+            m_lastOutputs(std::vector<neuralVal_t>(),
 
             m_midNeurons(std::vector<std::shared_ptr<ConnectableNeurons>>()),
 
@@ -35,7 +40,11 @@ namespace LibGoodBoy
             m_maxStartWeight(p_maxStartWeight),
             m_defaultAlpha(p_defaultAlpha),
             m_evolvingEnabled(p_evolvingEnabled)
-    {}
+            m_lastOutputs
+    {
+        CreateInputs(neuralSize_t p_nInputs);
+        CreateOutputs(neuralSize_t p_nOutputs);
+    }
 
     GoodBoyNet::~GoodBoyNet(){}
 
@@ -46,7 +55,46 @@ namespace LibGoodBoy
         }
     }
 
-    void GoodBoynet::evolve(){
+    void GoodBoyNet::SetInputs(std::vector<neuralVal_t>& p_inVec){
+        for(auto inputIter = p_inVec.begin(), auto neurIter = m_inputs.begin();
+                inputIter != p_inVec.end() && neurIter != m_inputs.end(),
+                ++inputIter, ++neurIter)
+        {
+            (*neurIter)->FeedInput(*inputIter);
+        }
+
+    }
+
+    void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
+        m_inputs[neuralSize_t]->FeedInput(p_inputVal);
+    }
+
+    void GoodBoyNet::CreateInputs(neuralSize_t p_nInputs){
+        for(neuralSize_t i = 0; i < p_nInputs; ++i){
+            m_inputs.emplace_back(m_outputFilterTaps, m_evolveFilterTaps);
+        }
+    }
+
+    void GoodBoyNet::CreateOutputs(neuralSize_t p_nOutputs){
+        for(neuralSize_t i = 0; i < p_nOutputs; ++i){
+            m_outputs.push_back(makeNewNeuralConnectionPtr());
+        }
+    }
+
+    void GoodBoyNet::GetOutputs(std::vector<neuralVal_T>& p_outBuff) const{
+        for(auto oIter = p_outBuff.begin(), auto vIter = m_lastOutputs.begin();
+                oIter!= p_outBuff.end() && vIter != m_lastOutputs.end();
+                ++oIter, ++vIter)
+        {
+            *oIter = *vIter;
+        }
+    }
+
+    neuralVal_t GetOutput(neuralVal_t p_nOutput) const{
+        return m_lastOutputs[p_nOutput];
+    }
+
+    void GoodBoyNet::evolve(){
         adjustWeights();
 
         if(shouldCleanup()){
@@ -77,6 +125,10 @@ namespace LibGoodBoy
     std::shared_ptr<ConnectableNeuron> GoodBoyNet::makeNewNeuralConnectionPtr(){
         //See notes for GoodBoyNet::makeNewConnectableNeuron.
         return std::shared_ptr<NeuralConnection>(new NeuralConnection());
+    }
+
+    void GoodBoyNet::calcOutputs(){
+        forzz
     }
 
 }

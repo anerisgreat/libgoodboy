@@ -31,10 +31,13 @@ namespace LibGoodBoy
             ~GoodBoyNet();
 
             void Iter();
-            void SetInputs();
-            void SetInput(p_nInput);
+            void SetInputs(std::vector<neuralVal_t>& p_inVec);
+            void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
 
-            std::vector<neuralVal_t>& GetOutputs() const;
+            void CreateInputs(neuralSize_t p_nInputs);
+            void CreateOutputs(neuralSize_t p_nOutputs);
+
+            void GetOutputs(std::vector<neuralVal_T>& p_outBuff) const;
             neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
 
             json_t GetJSON();
@@ -50,13 +53,14 @@ namespace LibGoodBoy
             void makeNewNeurons();
 
             void calcOutputs();
-            std::shared_ptr<neuralVal_t> m_lastOutput;
 
             std::shared_ptr<ConnectableNeuron> makeNewConnectableNeuronPtr();
-            std::shared_ptr<ConnectableNeuron> makeNewNeuralConnectionPtr();
+            std::shared_ptr<NeuralConnection> makeNewNeuralConnectionPtr();
 
             std::vector<std::shared_ptr<InputNeuron>> m_inputs;
             std::vector<std::shared_ptr<ConnectableNeuron>> m_outputs;
+
+            std::vector<neuralVal_t> m_lastOutputs;
 
             std::list<std::shared_ptr<ConnectableNeuron>> m_midNeurons;
 
