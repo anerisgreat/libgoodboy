@@ -3,50 +3,39 @@
 
 #include "libGoodBoyConfig.hxx"
 #include "Resetable.hxx"
+#include "InstanceFactory.hxx"
 
 #include <memory>
 #include <vector>
+#include <tuple>
 
 namespace LibGoodBoy{
-
-    template <class T, class... T_values> class ObjectPool{
+    template <class T> class ObjectPool{
         static_assert(
             (std::is_base_of<Resetable, T>::value),
             "T in ObjectPool must be a descendant of LibGoodBoy::Resetable"
         );
 
         private:
+            
+            typedef std::tuple<bool, std::shared_ptr<T>> BoolPtrPair;
 
-            template<class U> struct BoolPtrPair{
-                public:
-                    std::shared_ptr<U> Ptr;
-                    bool Used;
+            InstanceFactory<T>& m_factory;
+            std::vector<BoolPtrPair> m_pool;
+            typename std::vector<BoolPtrPair>::iterator m_iter;
 
-                    BoolPtrPair(const std::shared_ptr<T>& p_ptr)
-                        :
-                            Ptr(p_ptr),
-                            Used(false)
-                    {}
-            };
-
-            std::tuple<T_values...> m_constructArgs;
-            std::vector<BoolPtrPair<T>> m_pool;
-            typename std::vector<BoolPtrPair<T>>::iterator m_iter;
-
-            template<std::size_t... Is>
-            std::shared_ptr<T> newElement(
-                    const std::tuple<T_values...>& p_tuple,
-                    std::index_sequence<Is...>)
-            {
-                return std::shared_ptr<T>(new T(std::get<Is>(p_tuple)...));
+            BoolPtrPair makeNewElement(){
+                return std::make_tuple<bool, std::shared_ptr<T>>(
+                        false,
+                        m_factory.MakeNewInstance());
             }
 
         public:
-            ObjectPool(Args... constructArgs)
+            ObjectPool(InstanceFactory<T>& p_factory)
                 :
-                    m_constructArgs(std::tuple<T_values...>(constructArgs)),
-                    m_allocFunc(p_allocFunc),
-                    m_pool(std::vector<BoolPtrPair<T>>())
+                    m_pool(std::vector<BoolPtrPair>()),
+                    m_factory(p_factory),
+                    m_iter(m_pool.begin())
             {}
 
             ~ObjectPool();
@@ -61,7 +50,7 @@ namespace LibGoodBoy{
                         = m_pool.size();
 
                     do{
-                        if(!(m_iter->Used)){
+                        if(!std::get<0>(*m_iter)){
                             found = true;
                         }
                         else{
@@ -82,8 +71,9 @@ namespace LibGoodBoy{
                             amountToAdd = 2;
                         }
                         for(typename std::vector<T>::size_type i = 0; 
-                                i < amountToAdd; ++i){
-                            m_pool.emplace_back((*m_allocFunc)());
+                                i < amountToAdd; ++i)
+                        {
+                            m_pool.emplace_back(makeNewElement());
                         }
 
                         m_iter = m_pool.begin() + prevSize;
@@ -91,19 +81,19 @@ namespace LibGoodBoy{
                     }
                 }while(!found);
 
-                (*m_iter).Used = true;
+                std::get<0>(*m_iter) = true;
 
-                return (*m_iter).Ptr;
+                return std::get<1>(*m_iter);
             }
 
             void Release(const std::shared_ptr<T>& p_elementPtr){
                 auto iter = m_pool.begin();
                 bool found = false;
                 while(!found && iter != m_pool.end()){
-                    if((*iter).Ptr == p_elementPtr){
+                    if(std::get<1>(*iter) == p_elementPtr){
                         found = true;
-                        (*iter).Used=false;
-                        (*iter).Ptr->Reset();
+                        std::get<0>(*iter)=false;
+                        std::get<1>(*iter)->Reset();
                     }
                 }
             }

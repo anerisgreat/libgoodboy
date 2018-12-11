@@ -17,7 +17,8 @@ namespace LibGoodBoy
             neuralVal_t p_defaultAlpha,
             neuralVal_t p_defaultGenerationFactor,
 
-            bool p_evolvingEnabled = true)
+            bool p_evolvingEnabled)
+            /*
         :
             m_inputs(std::vector<std::shared_ptr<InputNeuron>>()),
             m_outputs(std::vector<std::shared_ptr<ConnectableNeuron>>()),
@@ -27,9 +28,12 @@ namespace LibGoodBoy
             m_midNeurons(std::list<std::shared_ptr<ConnectableNeuron>>()),
 
             m_midNeuronPool(
-                ObjectPool<ConnectableNeuron>(makeNewConnectableNeuronPtr)),
+                ObjectPool<ConnectableNeuron, 
+                            std::vector<neuralVal_t>&, 
+                            std::vector<neuralVal_t>&>
+                        (p_outputFilterTaps, p_evolveFilterTaps)),
             m_connectionPool(
-                ObjectPool<NeuralConnection>(makeNewNeuralConnectionPtr)),
+                ObjectPool<NeuralConnection>()),
 
             m_outputFilterTaps(p_outputFilterTaps),
             m_evolveFilterTaps(p_evolveFilterTaps),
@@ -39,12 +43,14 @@ namespace LibGoodBoy
             m_defaultAlpha(p_defaultAlpha),
             m_generationFactor(p_defaultGenerationFactor),
             m_evolvingEnabled(p_evolvingEnabled)
+            */
 
     {
-        CreateInputs(neuralSize_t p_nInputs);
-        CreateOutputs(neuralSize_t p_nOutputs);
+        CreateInputs(p_nInputs);
+        CreateOutputs(p_nOutputs);
     }
 
+/*
     GoodBoyNet::~GoodBoyNet(){}
 
     void GoodBoyNet::Iter(){
@@ -53,7 +59,6 @@ namespace LibGoodBoy
             evolve();
         }
     }
-
     void GoodBoyNet::SetInputs(std::vector<neuralVal_t>& p_inVec){
         for(auto inputIter = p_inVec.begin(), auto neurIter = m_inputs.begin();
                 inputIter != p_inVec.end() && neurIter != m_inputs.end(),
@@ -62,7 +67,7 @@ namespace LibGoodBoy
             (*neurIter)->FeedInput(*inputIter);
         }
 
-    }
+    }*/
 
     void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
         m_inputs[neuralSize_t]->FeedInput(p_inputVal);

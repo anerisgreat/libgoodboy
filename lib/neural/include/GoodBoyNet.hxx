@@ -64,7 +64,9 @@ namespace LibGoodBoy
 
             std::list<std::shared_ptr<ConnectableNeuron>> m_midNeurons;
 
-            ObjectPool<ConnectableNeuron> m_midNeuronPool;
+            ObjectPool<ConnectableNeuron, 
+                std::vector<neuralVal_t>, 
+                std::vector<neuralVal_t>> m_midNeuronPool;
             ObjectPool<NeuralConnection> m_connectionPool;
 
             std::vector<neuralVal_t>& m_outputFilterTaps;
