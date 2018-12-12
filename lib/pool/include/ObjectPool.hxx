@@ -10,36 +10,41 @@
 #include <tuple>
 
 namespace LibGoodBoy{
-    template <class T> class ObjectPool{
+    template <class T, typename... T_args> class ObjectPool{
         static_assert(
             (std::is_base_of<Resetable, T>::value),
             "T in ObjectPool must be a descendant of LibGoodBoy::Resetable"
         );
 
         private:
-            
-            typedef std::tuple<bool, std::shared_ptr<T>> BoolPtrPair;
+            template<size_t... Is> struct index_sequence;
+            using BoolPtrPair = std::tuple<bool, std::shared_ptr<T>>;
 
-            InstanceFactory<T>& m_factory;
+            std::tuple<T_args...> m_argTuple;
             std::vector<BoolPtrPair> m_pool;
             typename std::vector<BoolPtrPair>::iterator m_iter;
 
-            BoolPtrPair makeNewElement(){
+            template<std::size_t... Is>
+            BoolPtrPair makeNewElement(std::index_sequence<Is...>){
+                T* newMember = new T(std::get<Is>(m_argTuple)...);
                 return std::make_tuple<bool, std::shared_ptr<T>>(
-                        false,
-                        m_factory.MakeNewInstance());
+                        false, 
+                        std::make_shared<T>(std::get<Is>(m_argTuple)...));
+            }
+
+            BoolPtrPair makeNewElement(){
+                return makeNewElement(std::index_sequence_for<T_args...>());
             }
 
         public:
-            ObjectPool(InstanceFactory<T>& p_factory)
+            ObjectPool(T_args... p_args)
                 :
                     m_pool(std::vector<BoolPtrPair>()),
-                    m_factory(p_factory),
+                    m_argTuple(std::make_tuple<T_args...>(p_args...)),
                     m_iter(m_pool.begin())
             {}
 
             ~ObjectPool();
-
 
             std::shared_ptr<T> AllocElement(){
                 bool found = false;

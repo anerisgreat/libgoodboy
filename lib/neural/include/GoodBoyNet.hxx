@@ -7,6 +7,7 @@
 #include "ConnectableNeuron.hxx"
 #include "InputNeuron.hxx"
 #include "ObjectPool.hxx"
+#include "InstanceFactory.hxx"
 
 #include <vector>
 #include <memory>
@@ -19,8 +20,8 @@ namespace LibGoodBoy
         public:
             //Constructor & Destructor____________________
             GoodBoyNet(
-                    std::vector<neuralVal_t>& p_outputFilterTaps,
-                    std::vector<neuralVal_t>& p_evolveFilterTaps,
+                    const std::vector<neuralVal_t>& p_outputFilterTaps,
+                    const std::vector<neuralVal_t>& p_evolveFilterTaps,
 
                     neuralSize_t p_nInputs,
                     neuralSize_t p_nOutputs,
@@ -46,6 +47,7 @@ namespace LibGoodBoy
             json_t GetJSON() const;
 
         private:
+
             void evolve();
             void adjustWeights();
             void cleanup();
@@ -64,13 +66,19 @@ namespace LibGoodBoy
 
             std::list<std::shared_ptr<ConnectableNeuron>> m_midNeurons;
 
-            ObjectPool<ConnectableNeuron, 
-                std::vector<neuralVal_t>, 
-                std::vector<neuralVal_t>> m_midNeuronPool;
             ObjectPool<NeuralConnection> m_connectionPool;
+            ObjectPool<ConnectableNeuron,
+                //Constructor arguments passed to template
+                    const std::vector<neuralVal_t>&,
+                    const std::vector<neuralVal_t>&,
+                    ObjectPool<NeuralConnection>&,
+                    neuralVal_t,
+                    neuralVal_t,
+                    neuralVal_t> 
+                m_midNeuronPool;
 
-            std::vector<neuralVal_t>& m_outputFilterTaps;
-            std::vector<neuralVal_t>& m_evolveFilterTaps;
+            const std::vector<neuralVal_t>& m_outputFilterTaps;
+            const std::vector<neuralVal_t>& m_evolveFilterTaps;
 
             neuralVal_t m_degrFactor;
             neuralVal_t m_maxStartWeight;
