@@ -26,7 +26,6 @@ namespace LibGoodBoy{
 
             template<std::size_t... Is>
             BoolPtrPair makeNewElement(std::index_sequence<Is...>){
-                T* newMember = new T(std::get<Is>(m_argTuple)...);
                 return std::make_tuple<bool, std::shared_ptr<T>>(
                         false, 
                         std::make_shared<T>(std::get<Is>(m_argTuple)...));
@@ -36,15 +35,24 @@ namespace LibGoodBoy{
                 return makeNewElement(std::index_sequence_for<T_args...>());
             }
 
+            void advanceIterator(){
+                ++m_iter;
+                if(m_iter == m_pool.end()){
+                    m_iter = m_pool.begin();
+                }
+            }
+
         public:
             ObjectPool(T_args... p_args)
                 :
                     m_pool(std::vector<BoolPtrPair>()),
-                    m_argTuple(std::make_tuple<T_args...>(p_args...)),
-                    m_iter(m_pool.begin())
-            {}
+                    m_argTuple(std::tuple<T_args...>(p_args...))
+            {
+                m_pool.emplace_back(makeNewElement());
+                m_iter = m_pool.begin();
+            }
 
-            ~ObjectPool();
+            ~ObjectPool(){};
 
             std::shared_ptr<T> AllocElement(){
                 bool found = false;
@@ -59,12 +67,10 @@ namespace LibGoodBoy{
                             found = true;
                         }
                         else{
-                            ++m_iter;
-                            if(m_iter == m_pool.end()){
-                                m_iter = m_pool.begin();
-                            }
+                            advanceIterator();
                         }
 
+                        ++checks;
                     }while(!found && checks < maxChecks);
 
                     if(!found){
@@ -88,7 +94,10 @@ namespace LibGoodBoy{
 
                 std::get<0>(*m_iter) = true;
 
-                return std::get<1>(*m_iter);
+                std::shared_ptr<T>& retVal = std::get<1>(*m_iter);
+
+                advanceIterator();
+                return retVal;
             }
 
             void Release(const std::shared_ptr<T>& p_elementPtr){
@@ -100,6 +109,7 @@ namespace LibGoodBoy{
                         std::get<0>(*iter)=false;
                         std::get<1>(*iter)->Reset();
                     }
+                    ++iter;
                 }
             }
     };
