@@ -10,30 +10,15 @@
 #include <tuple>
 
 namespace LibGoodBoy{
-    template <class T, typename... T_args> class ObjectPool{
-        static_assert(
-            (std::is_base_of<Resetable, T>::value),
-            "T in ObjectPool must be a descendant of LibGoodBoy::Resetable"
-        );
+
+    template <class T> class ObjectPoolBase{
+        protected:
+            virtual std::tuple<bool, std::shared_ptr<T>> makeNewElement() = 0;
 
         private:
-            template<size_t... Is> struct index_sequence;
-            using BoolPtrPair = std::tuple<bool, std::shared_ptr<T>>;
-
-            std::tuple<T_args...> m_argTuple;
-            std::vector<BoolPtrPair> m_pool;
-            typename std::vector<BoolPtrPair>::iterator m_iter;
-
-            template<std::size_t... Is>
-            BoolPtrPair makeNewElement(std::index_sequence<Is...>){
-                return std::make_tuple<bool, std::shared_ptr<T>>(
-                        false, 
-                        std::make_shared<T>(std::get<Is>(m_argTuple)...));
-            }
-
-            BoolPtrPair makeNewElement(){
-                return makeNewElement(std::index_sequence_for<T_args...>());
-            }
+            std::vector<std::tuple<bool, std::shared_ptr<T>>> m_pool;
+            typename std::vector<std::tuple<bool, std::shared_ptr<T>>>::iterator
+                m_iter;
 
             void advanceIterator(){
                 ++m_iter;
@@ -43,26 +28,21 @@ namespace LibGoodBoy{
             }
 
         public:
-            ObjectPool(T_args... p_args)
-                :
-                    m_pool(std::vector<BoolPtrPair>()),
-                    m_argTuple(std::tuple<T_args...>(p_args...))
-            {
-                m_pool.emplace_back(makeNewElement());
-                m_iter = m_pool.begin();
-            }
+            ObjectPoolBase() : 
+                    m_pool(std::vector<std::tuple<bool, std::shared_ptr<T>>>())
+            {}
 
-            ~ObjectPool(){};
+            ~ObjectPoolBase(){};
 
             std::shared_ptr<T> AllocElement(){
                 bool found = false;
+                typename std::vector<T>::size_type poolSizeAtBegin 
+                    = m_pool.size();
 
                 do{
                     typename std::vector<T>::size_type checks = 0;
-                    typename std::vector<T>::size_type maxChecks 
-                        = m_pool.size();
 
-                    do{
+                    while(!found && checks < poolSizeAtBegin){
                         if(!std::get<0>(*m_iter)){
                             found = true;
                         }
@@ -71,13 +51,11 @@ namespace LibGoodBoy{
                         }
 
                         ++checks;
-                    }while(!found && checks < maxChecks);
+                    }
 
                     if(!found){
                         typename std::vector<T>::size_type amountToAdd 
-                            = m_pool.size();
-                        typename std::vector<T>::size_type prevSize
-                            = m_pool.size();
+                            = poolSizeAtBegin; 
                         if(amountToAdd == 0){
                             amountToAdd = 2;
                         }
@@ -87,7 +65,7 @@ namespace LibGoodBoy{
                             m_pool.emplace_back(makeNewElement());
                         }
 
-                        m_iter = m_pool.begin() + prevSize;
+                        m_iter = m_pool.begin() + poolSizeAtBegin;
                         found = true;
                     }
                 }while(!found);
@@ -112,6 +90,49 @@ namespace LibGoodBoy{
                     ++iter;
                 }
             }
+    };
+
+    template <class T > class ObjectPool : public ObjectPoolBase<T>
+    {
+        protected:
+            std::tuple<bool, std::shared_ptr<T>> makeNewElement(){
+                return std::make_tuple<bool, std::shared_ptr<T>>(
+                        false,
+                        std::make_shared<T>());
+            }
+        public:
+            ObjectPool():ObjectPoolBase<T>(){}
+            ~ObjectPool(){};
+    };
+
+    template <class T, typename... T_args> class ParamedObjectPool 
+        : public ObjectPoolBase<T>
+    {
+        private:
+            std::tuple<T_args...> m_argTuple;
+        protected:
+            template<size_t... Is> struct index_sequence;
+
+            template<std::size_t... Is>
+            std::tuple<bool, std::shared_ptr<T>> makeNewElement(
+                    std::index_sequence<Is...>)
+            {
+                return std::make_tuple<bool, std::shared_ptr<T>>(
+                        false, 
+                        std::make_shared<T>(std::get<Is>(m_argTuple)...));
+            }
+
+            std::tuple<bool, std::shared_ptr<T>> makeNewElement(){
+                return makeNewElement(std::index_sequence_for<T_args...>());
+            }
+        public:
+            ParamedObjectPool(T_args... p_args)
+                :
+                    ObjectPoolBase<T>(),
+                    m_argTuple(std::tuple<T_args...>(p_args...))
+            {}
+
+            ~ParamedObjectPool(){};
     };
 }
 
