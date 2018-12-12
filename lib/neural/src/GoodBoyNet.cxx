@@ -52,14 +52,12 @@ namespace LibGoodBoy
 
     void GoodBoyNet::Iter(){
         calcOutputs();
-        if(m_evolvingEnabled){
-            evolve();
-        }
     }
 
-    void GoodBoyNet::SetInputs(std::vector<neuralVal_t>& p_inVec){
-        for(auto inputIter = p_inVec.begin(), auto neurIter = m_inputs.begin();
-                inputIter != p_inVec.end() && neurIter != m_inputs.end(),
+    void GoodBoyNet::SetInputs(const std::vector<neuralVal_t>& p_inVec){
+        auto inputIter = p_inVec.begin();
+        auto neurIter = m_inputs.begin();
+        for(;inputIter != p_inVec.end() && neurIter != m_inputs.end();
                 ++inputIter, ++neurIter)
         {
             (*neurIter)->FeedInput(*inputIter);
@@ -67,7 +65,7 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
-        m_inputs[neuralSize_t]->FeedInput(p_inputVal);
+        m_inputs[p_nInput]->FeedInput(p_inputVal);
     }
 
     void GoodBoyNet::CreateInputs(neuralSize_t p_nInputs){
@@ -79,16 +77,16 @@ namespace LibGoodBoy
 
     void GoodBoyNet::CreateOutputs(neuralSize_t p_nOutputs){
         for(neuralSize_t i = 0; i < p_nOutputs; ++i){
-            m_outputs.push_back(m_connectionPool.AllocElement());
+            m_outputs.push_back(m_midNeuronPool.AllocElement());
         }
     }
 
     void GoodBoyNet::GetOutputs(std::vector<neuralVal_t>& p_outBuff) const{
-        for(auto oIter = p_outBuff.begin(), auto vIter = m_lastOutputs.begin();
-                oIter!= p_outBuff.end() && vIter != m_lastOutputs.end();
-                ++oIter, ++vIter)
-        {
-            *oIter = *vIter;
+        auto oIter = p_outBuff.begin();
+        auto vIter = m_lastOutputs.begin();
+
+        while(oIter!= p_outBuff.end() && vIter != m_lastOutputs.end()){
+            *oIter++ = *vIter++;
         }
     }
 
@@ -133,7 +131,7 @@ namespace LibGoodBoy
 
         retJson[NET_EVOLVE_FILT_TAPS_KEY] = json_t::array();
         for(auto iter = m_evolveFilterTaps.begin(); 
-                iter != m_evolveFilterTapsend(); 
+                iter != m_evolveFilterTaps.end(); 
                 ++iter)
         {
             retJson[NET_OUT_FILT_TAPS_KEY].push_back(*iter);
@@ -142,8 +140,8 @@ namespace LibGoodBoy
         return retJson;
     }
 
-    void GoodBoyNet::evolve(){
-        adjustWeights();
+    void GoodBoyNet::Evolve(neuralVal_t p_amount){
+        adjustWeights(p_amount);
 
         neuralSize_t numNewNeurons = numNeuronsToMake();
         if(numNewNeurons > 0){
@@ -153,23 +151,23 @@ namespace LibGoodBoy
 
     }
 
-    void GoodBoyNet::adjustWeights(){
+    void GoodBoyNet::adjustWeights(neuralVal_t p_amount){
         for(auto neurIter = m_midNeurons.begin();
                 neurIter != m_midNeurons.end();
                 ++neurIter)
         {
-            (*neurIter)->Evolve();
+            (*neurIter)->Evolve(p_amount);
         }
 
         for(auto neurIter = m_outputs.begin();
                 neurIter != m_outputs.end();
                 ++neurIter)
         {
-            (*neurIter)->Evolve();
+            (*neurIter)->Evolve(p_amount);
         }
     }
 
-    void GoodBoynet::cleanup(){
+    void GoodBoyNet::cleanup(){
         for(auto neurIter = m_inputs.begin();
                 neurIter != m_inputs.end();
                 ++neurIter)
@@ -184,13 +182,15 @@ namespace LibGoodBoy
             (*neurIter)->BackProbe();
         }
 
-        std::list<std::shared_ptr<Neuron>> toPurge();
+        std::list<std::shared_ptr<Neuron>> toPurge;
+        std::list<std::shared_ptr<ConnectableNeuron>> toPurgeAsConnectable;
         for(auto neurIter = m_midNeurons.begin();
                 neurIter != m_midNeurons.end();
                 ++neurIter)
         {
             if(!(*neurIter)->GetWasFullyProbed()){
                 toPurge.push_back(*neurIter);
+                toPurgeAsConnectable.push_back(*neurIter);
             }
             (*neurIter)->ResetProbeFlag();
         }
@@ -209,16 +209,22 @@ namespace LibGoodBoy
             (*neurIter)->PurgeConnections(toPurge);
         }
 
-        for(auto neurIter = toPurge.begin();
-                neurIter != toPurge.end();
+        for(auto neurIter = toPurgeAsConnectable.begin();
+                neurIter != toPurgeAsConnectable.end();
                 ++neurIter)
         {
             m_midNeurons.remove(*neurIter);
+        }
+
+        for(auto neurIter = toPurgeAsConnectable.begin();
+                neurIter != toPurgeAsConnectable.end();
+                ++neurIter)
+        {
             m_midNeuronPool.Release(*neurIter);
         }
     }
 
-    neuralSize_t numNeuronsToMake(){
+    neuralSize_t GoodBoyNet::numNeuronsToMake(){
         neuralVal_t val = RandInRange<neuralVal_t>(0,1);
         neuralSize_t ret = 0;
         while(val < m_generationFactor){
@@ -237,21 +243,25 @@ namespace LibGoodBoy
         neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();
 
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
-            std::shared_ptr<Neuron> recvNeuronPtr;
+            std::shared_ptr<ConnectableNeuron> recvNeuronPtr;
             std::shared_ptr<Neuron> outNeuronPtr;
 
             neuralSize_t recIndex = RandInRange<neuralSize_t>(0, numOfRecv);
             neuralSize_t outIndex = RandInRange<neuralSize_t>(0, numOfOut);
 
             if(recIndex < m_midNeurons.size()){
-                recvNeuronPtr = m_midNeurons[recIndex];
+                auto iter = m_midNeurons.begin();
+                std::advance(iter, recIndex);
+                recvNeuronPtr = *iter;
             }
             else{
                 recvNeuronPtr = m_outputs[recIndex - m_midNeurons.size()];
             }
 
             if(outIndex < m_midNeurons.size()){
-                outNeuronPtr = m_midNeurons[outIndex];
+                auto iter = m_midNeurons.begin();
+                std::advance(iter, outIndex);
+                recvNeuronPtr = *iter;
             }
             else{
                 outNeuronPtr = m_inputs[outIndex - m_midNeurons.size()];
@@ -267,35 +277,13 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::calcOutputs(){
-        for(auto oIter = m_outputs.begin(), auto lIter = m_lastOutputs.begin();
-                oIter != m_outputs.end() && lIter != m_lastOutputs.end();
+        auto oIter = m_outputs.begin();
+        auto lIter = m_lastOutputs.begin();
+
+        for(;oIter != m_outputs.end() && lIter != m_lastOutputs.end();
                 ++oIter, ++lIter)
         {
             *lIter = (*oIter)->GetOutput();
         }
-    }
-
-
-    std::shared_ptr<ConnectableNeuron> 
-    GoodBoyNet::makeNewConnectableNeuronPtr(){
-        //We use the default constructor as opposed to make_shared because
-            //of the use of weak pointers. Using the constructor as is
-            //seperates the intance to poinpt towards from the control block,
-            //allows the control block and the instance to be deallocated
-            //seperately. Once all the weak pointers are gone, so will be these
-            //members.
-        return std::shared_ptr<ConnectableNeuron>(new ConnectableNeuron(
-                    m_outputFilterTaps,
-                    m_evolveFilterTaps,
-                    m_connectionPool,
-                    m_maxDegrFactor,
-                    m_maxStartWeight,
-                    m_defaultAlpha
-                    ));
-    }
-
-    std::shared_ptr<ConnectableNeuron> GoodBoyNet::makeNewNeuralConnectionPtr(){
-        //See notes for GoodBoyNet::makeNewConnectableNeuron.
-        return std::shared_ptr<NeuralConnection>(new NeuralConnection());
     }
 }

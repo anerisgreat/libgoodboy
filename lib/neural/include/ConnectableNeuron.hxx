@@ -34,8 +34,8 @@ namespace LibGoodBoy
 
             json_t GetJSON() const;
 
-            void Connect(std::shared_ptr<Neuron>& p_toConnect);
-            void Connect(std::shared_ptr<Neuron>& p_toConnect,
+            void Connect(const std::shared_ptr<Neuron>& p_toConnect);
+            void Connect(const std::shared_ptr<Neuron>& p_toConnect,
                     neuralVal_t p_weight,
                     neuralVal_t p_alpha);
         protected:

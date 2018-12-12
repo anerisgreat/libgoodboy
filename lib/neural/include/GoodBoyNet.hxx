@@ -7,7 +7,6 @@
 #include "ConnectableNeuron.hxx"
 #include "InputNeuron.hxx"
 #include "ObjectPool.hxx"
-#include "InstanceFactory.hxx"
 
 #include <vector>
 #include <memory>
@@ -46,18 +45,16 @@ namespace LibGoodBoy
 
             json_t GetJSON() const;
 
+            void Evolve(neuralVal_t p_amount);
+
         private:
 
-            void evolve();
-            void adjustWeights();
+            void adjustWeights(neuralVal_t p_amount);
             void cleanup();
             neuralSize_t numNeuronsToMake();
             void makeNewNeurons(neuralSize_t p_numNewNeurons);
 
             void calcOutputs();
-
-            std::shared_ptr<ConnectableNeuron> makeNewConnectableNeuronPtr();
-            std::shared_ptr<NeuralConnection> makeNewNeuralConnectionPtr();
 
             std::vector<std::shared_ptr<InputNeuron>> m_inputs;
             std::vector<std::shared_ptr<ConnectableNeuron>> m_outputs;

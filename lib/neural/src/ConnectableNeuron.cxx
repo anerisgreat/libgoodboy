@@ -97,13 +97,13 @@ namespace LibGoodBoy
         return retJSON;
     }
 
-    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect){
+    void ConnectableNeuron::Connect(const std::shared_ptr<Neuron>& p_toConnect){
         neuralVal_t weight = RandInRange<neuralVal_t>(
                 -m_maxStartWeight, m_maxStartWeight);
         Connect(p_toConnect, weight, m_defaultAlpha);
     }
 
-    void ConnectableNeuron::Connect(std::shared_ptr<Neuron>& p_toConnect,
+    void ConnectableNeuron::Connect(const std::shared_ptr<Neuron>& p_toConnect,
             neuralVal_t p_weight,
             neuralVal_t p_alpha)
     {
