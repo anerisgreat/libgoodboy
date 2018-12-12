@@ -35,7 +35,7 @@ namespace LibGoodBoy
             ~GoodBoyNet();
 
             void Iter();
-            void SetInputs(std::vector<neuralVal_t>& p_inVec);
+            void SetInputs(const std::vector<neuralVal_t>& p_inVec);
             void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
 
             void CreateInputs(neuralSize_t p_nInputs);

@@ -7,23 +7,26 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+class MyClass(){
+    private:
+        float m_a;
+        float m_b;
+    public:
+        MyClass(float p_a, float p_b) : m_a(p_a), m_b(p_b) {}
+        void Print(std::cout << m_a << ' ' << m_b << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
     std::cout << "HI" << std::endl;
 
-    int myints[]= {17,89,7,14};
-    std::list<int> stupid (myints,myints+4);
-    stupid.push_back(2);
-    stupid.push_back(2);
-    stupid.push_back(2);
-    stupid.push_back(3);
+    ObjectPool<MyClass, float, float> ohBoy(1, 2);
+    std::vector<std::shared_ptr<MyClass>> stupidVec();
+    for(int i = 0; i < 10; i++){
+        stupidVec.push_back(ObjectPool.AllocElement());
+    }
 
-    for (std::list<int>::iterator it=stupid.begin(); it!=stupid.end(); ++it)
-    	std::cout << ' ' << *it;
-  	std::cout << '\n';
-
-    nlohmann::json j;
-    j["foo"] = "bar";
-
-    std::cout << j.dump() << std::endl;
+    for(int i = 0; i < 10; i++){
+        stupidVec[i]->Print();
+    }
 }
