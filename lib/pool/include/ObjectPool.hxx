@@ -3,7 +3,6 @@
 
 #include "libGoodBoyConfig.hxx"
 #include "Resetable.hxx"
-#include "InstanceFactory.hxx"
 
 #include <memory>
 #include <vector>
@@ -92,20 +91,7 @@ namespace LibGoodBoy{
             }
     };
 
-    template <class T > class ObjectPool : public ObjectPoolBase<T>
-    {
-        protected:
-            std::tuple<bool, std::shared_ptr<T>> makeNewElement(){
-                return std::make_tuple<bool, std::shared_ptr<T>>(
-                        false,
-                        std::make_shared<T>());
-            }
-        public:
-            ObjectPool():ObjectPoolBase<T>(){}
-            ~ObjectPool(){};
-    };
-
-    template <class T, typename... T_args> class ParamedObjectPool 
+    template <class T, typename... T_args> class ObjectPool 
         : public ObjectPoolBase<T>
     {
         private:
@@ -126,13 +112,26 @@ namespace LibGoodBoy{
                 return makeNewElement(std::index_sequence_for<T_args...>());
             }
         public:
-            ParamedObjectPool(T_args... p_args)
+            ObjectPool(T_args... p_args)
                 :
                     ObjectPoolBase<T>(),
                     m_argTuple(std::tuple<T_args...>(p_args...))
             {}
 
-            ~ParamedObjectPool(){};
+            ~ObjectPool(){};
+    };
+
+    template <class T > class ObjectPool<T, void> : public ObjectPoolBase<T>
+    {
+        protected:
+            std::tuple<bool, std::shared_ptr<T>> makeNewElement(){
+                return std::make_tuple<bool, std::shared_ptr<T>>(
+                        false,
+                        std::make_shared<T>());
+            }
+        public:
+            ObjectPool():ObjectPoolBase<T>(){}
+            ~ObjectPool(){};
     };
 }
 
