@@ -1,5 +1,4 @@
 #include "InputNeuron.hxx"
-
 namespace LibGoodBoy
 {
     //Public_____________________________________________________________
@@ -13,7 +12,7 @@ namespace LibGoodBoy
     {
     }
 
-    Neuron::~Neuron(){
+    InputNeuron::~InputNeuron(){
     }
 
     void InputNeuron::Evolve(neuralVal_t p_amount){}

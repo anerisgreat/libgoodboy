@@ -7,7 +7,7 @@ namespace LibGoodBoy{
 
     const std::string JSON_NEURON_TYPE_KEY = "neuron_type";
     const std::string JSON_NEURON_TYPE_INPUT_VAL = "input_neuron";
-    const std::string JSON_NEURON_TYPE_INPUT_VAL = "connectable_neuron";
+    const std::string JSON_NEURON_TYPE_CONNECTABLE_VAL = "connectable_neuron";
 
     const std::string JSON_CONNECTION_WEIGHT_KEY = "weight";
     const std::string JSON_CONNECTION_ALPHA_KEY = "alpha";

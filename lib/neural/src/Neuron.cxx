@@ -7,6 +7,8 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include <iostream>
+
 namespace LibGoodBoy{
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
@@ -47,9 +49,12 @@ namespace LibGoodBoy{
                     m_outputFilterTaps,
                     m_outputPreFilterBuffer);
 
+            std::cout << "POST ITER: " << post_filter << std::endl;
             m_outputPostFilterBuffer.push_back(post_filter);
         }
 
+        std::cout << "BEGIN" << m_outputPostFilterBuffer[0] << std::endl;
+        std::cout << "END" << m_outputPostFilterBuffer[m_outputPostFilterBuffer.size() -11] << std::endl;
         return m_outputPostFilterBuffer[0];
     }
 
