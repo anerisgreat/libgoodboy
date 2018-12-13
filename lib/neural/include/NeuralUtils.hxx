@@ -18,7 +18,7 @@ namespace LibGoodBoy{
         static_assert(
                 std::is_floating_point<T>::value,
                 "Value must be floating point!");
-        return p_a / (p_a + abs(p_a));
+        return p_a / (1 + abs(p_a));
     }
 }
 

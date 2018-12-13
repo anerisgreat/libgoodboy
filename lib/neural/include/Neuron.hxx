@@ -79,6 +79,8 @@ namespace LibGoodBoy
             const std::vector<neuralVal_t>& m_outputFilterTaps;
             const std::vector<neuralVal_t>& m_evolveFilterTaps;
 
+            std::size_t m_evolveFilterLen;
+
             uuid_t m_uid;
     };
 }
