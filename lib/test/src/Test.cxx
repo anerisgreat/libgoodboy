@@ -5,6 +5,7 @@
 #include "NeuralConnection.hxx"
 #include "ConnectableNeuron.hxx"
 #include "Neuron.hxx"
+#include "GoodBoyNet.hxx"
 
 #include <stdio.h>
 #include <iostream>
@@ -13,18 +14,11 @@
 #include <string>
 
 using namespace LibGoodBoy;
-/*
 void testNet(){
     std::vector<float> evFilt;
     for(char i = 2; i < 100; i++){
         evFilt.push_back(2/((float)i*(float)i));
     }
-
-    std::cout << "evFilt: " << std::endl;
-    for(int i = 0; i < evFilt.size(); i++){
-        std::cout << evFilt[i] << ' ';
-    } 
-    std::cout << std::endl;
 
     std::vector<float> connFilt;
     connFilt.push_back(0.1);
@@ -33,23 +27,21 @@ void testNet(){
     connFilt.push_back(0.2);
     connFilt.push_back(0.1);
     
-    LibGoodBoy::GoodBoyNet gNet(connFilt, evFilt, (float)2, (float)2, 0.05, (float)1, (float)2, 0.1, true);
+    GoodBoyNet gNet(connFilt, evFilt, (float)2, (float)2, 0.05, (float)1, (float)2, 0.1, true);
 
     std::vector<float> outVec(2);
     gNet.SetInput(0, 1);
     gNet.SetInput(1, 1);
-    for(int i = 0; i < 1000; i++){
+    std::cout << "BEGIN BEGIN BEGIN" << std::endl;
+    for(int i = 0; i < 10000; i++){
         gNet.Iter();
         gNet.GetOutputs(outVec);
-        gNet.Evolve(1);
-        std::cout << "OUTPUT: ";
-        for(int i = 0; i < outVec.size(); i++){
-            std::cout << outVec[i] << ' ';
-        }
-        std::cout << std::endl;
+        gNet.Evolve(100);
     }
+
+    std::cout << gNet.GetJSON() << std::endl;
 }
-*/
+
 void testNeuron(){
 
     std::vector<float> evFilt;
@@ -84,7 +76,9 @@ void testNeuron(){
     inpNeuron->FeedInput(0);
 
     for(int i = 0; i < 10; i++){
-        std:: cout << connNeuron->GetOutput() << ' ';
+        float t = connNeuron->GetOutput();
+        std::cout << t << " IS OUTPUT" << std::endl;
+        connNeuron->GetOutput();
         connNeuron->ResetOutputFlag();
         inpNeuron->ResetOutputFlag();
     }
@@ -92,14 +86,16 @@ void testNeuron(){
     inpNeuron->FeedInput(1);
 
     for(int i = 0; i < 10; i++){
-        std:: cout << connNeuron->GetOutput() << ' ';
+        float t = connNeuron->GetOutput();
+        std::cout << t << " IS OUTPUT" << std::endl;
+        std::cout << inpNeuron->GetOutput() << " IS OUTPUT FOR INP" << std::endl;
         connNeuron->ResetOutputFlag();
         inpNeuron->ResetOutputFlag();
     }
 }
 
 int main(int argc, char *argv[]){
-    //testNet();
-    testNeuron();
+    testNet();
+    //testNeuron();
     
 }
