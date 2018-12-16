@@ -4,7 +4,7 @@
 #include "libGoodBoyConfig.hxx"
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
-#include "ConnectableNeuron.hxx"
+#include "ConnectableNeuron.hxx" 
 #include "InputNeuron.hxx"
 #include "ObjectPool.hxx"
 
@@ -55,6 +55,7 @@ namespace LibGoodBoy
             void makeNewNeurons(neuralSize_t p_numNewNeurons);
 
             void calcOutputs();
+            void resetOutputFlag();
 
             std::vector<std::shared_ptr<InputNeuron>> m_inputs;
             std::vector<std::shared_ptr<ConnectableNeuron>> m_outputs;

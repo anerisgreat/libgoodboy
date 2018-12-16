@@ -78,6 +78,7 @@ namespace LibGoodBoy
     void GoodBoyNet::CreateOutputs(neuralSize_t p_nOutputs){
         for(neuralSize_t i = 0; i < p_nOutputs; ++i){
             m_outputs.push_back(m_midNeuronPool.AllocElement());
+            m_lastOutputs.push_back(0);
         }
     }
 
@@ -195,6 +196,18 @@ namespace LibGoodBoy
             (*neurIter)->ResetProbeFlag();
         }
 
+        for(auto neurIter = m_outputs.begin();
+                neurIter != m_outputs.end();
+                ++neurIter)
+        {
+            (*neurIter)->ResetProbeFlag();
+        }
+        for(auto neurIter = m_inputs.begin();
+                neurIter != m_inputs.end();
+                ++neurIter)
+        {
+            (*neurIter)->ResetProbeFlag();
+        }
         for(auto neurIter = m_midNeurons.begin();
                 neurIter != m_midNeurons.end();
                 ++neurIter)
@@ -238,11 +251,12 @@ namespace LibGoodBoy
     void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
         //We are going to do "weightless" adding. Maybe in the future, we
             //will do weighted addition.
-
-        neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
-        neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();
+        for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
+        }
 
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
+            neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
+            neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();
             std::shared_ptr<ConnectableNeuron> recvNeuronPtr;
             std::shared_ptr<Neuron> outNeuronPtr;
 
@@ -261,7 +275,7 @@ namespace LibGoodBoy
             if(outIndex < m_midNeurons.size()){
                 auto iter = m_midNeurons.begin();
                 std::advance(iter, outIndex);
-                recvNeuronPtr = *iter;
+                outNeuronPtr = *iter;
             }
             else{
                 outNeuronPtr = m_inputs[outIndex - m_midNeurons.size()];
@@ -269,7 +283,7 @@ namespace LibGoodBoy
 
             std::shared_ptr<ConnectableNeuron> newNeuron 
                 = m_midNeuronPool.AllocElement();
-
+            
             newNeuron->Connect(outNeuronPtr);
             recvNeuronPtr->Connect(newNeuron);
             m_midNeurons.push_back(newNeuron);
@@ -284,6 +298,30 @@ namespace LibGoodBoy
                 ++oIter, ++lIter)
         {
             *lIter = (*oIter)->GetOutput();
+        }
+        resetOutputFlag();
+    }
+
+    void GoodBoyNet::resetOutputFlag(){
+        for(auto neurIter = m_outputs.begin(); 
+                neurIter != m_outputs.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputFlag();
+        }
+
+        for(auto neurIter = m_midNeurons.begin(); 
+                neurIter != m_midNeurons.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputFlag();
+        }
+
+        for(auto neurIter = m_inputs.begin(); 
+                neurIter != m_inputs.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputFlag();
         }
     }
 }

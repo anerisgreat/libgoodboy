@@ -5,8 +5,7 @@ namespace LibGoodBoy
 {
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
-    ConnectableNeuron::ConnectableNeuron(
-            const std::vector<neuralVal_t>& p_outputFilterTaps,
+    ConnectableNeuron::ConnectableNeuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
             const std::vector<neuralVal_t>& p_evolveFilterTaps,
             ObjectPool<NeuralConnection>& p_connectionPool,
             neuralVal_t p_degrFactor,
@@ -92,7 +91,7 @@ namespace LibGoodBoy
         for(auto iter = m_inConnectionList.begin(); 
                 iter != m_inConnectionList.end(); ++iter)
         {
-            retJSON[JSON_OUTP_CONN_KEY].push_back((*iter).lock()->GetJSON());
+            retJSON[JSON_INP_CONN_KEY ].push_back((*iter).lock()->GetJSON());
         }
         return retJSON;
     }
@@ -139,7 +138,6 @@ namespace LibGoodBoy
         {
             (*connectIter).lock()->ConnectedNeuronPtr.lock()->BackProbe();
         }
-         
     }
 
     void ConnectableNeuron::postForwardProbe(){}
