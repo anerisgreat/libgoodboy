@@ -87,6 +87,8 @@ namespace LibGoodBoy{
                 found = true;
                 m_outputConnectionsList.erase(iter);
             }
+
+            ++iter;
         }
     }
 
