@@ -143,7 +143,6 @@ namespace LibGoodBoy
 
     void GoodBoyNet::Evolve(neuralVal_t p_amount){
         adjustWeights(p_amount);
-
         neuralSize_t numNewNeurons = numNeuronsToMake();
         if(numNewNeurons > 0){
             cleanup();
@@ -240,7 +239,7 @@ namespace LibGoodBoy
     neuralSize_t GoodBoyNet::numNeuronsToMake(){
         neuralVal_t val = RandInRange<neuralVal_t>(0,1);
         neuralSize_t ret = 0;
-        while(val < m_generationFactor){
+        while(val < m_generationFactor && val != 0){
             ++ret;
             val /= m_generationFactor;
         }
@@ -283,7 +282,7 @@ namespace LibGoodBoy
 
             std::shared_ptr<ConnectableNeuron> newNeuron 
                 = m_midNeuronPool.AllocElement();
-            
+
             newNeuron->Connect(outNeuronPtr);
             recvNeuronPtr->Connect(newNeuron);
             m_midNeurons.push_back(newNeuron);
