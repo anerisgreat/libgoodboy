@@ -62,7 +62,7 @@ namespace LibGoodBoy{
 
     //Connection Management________________________________________
     void Neuron::PurgeConnections(
-        const std::list<std::shared_ptr<Neuron>>& p_toPurge)
+        const std::list<Neuron*>& p_toPurge)
     {
         for(std::list<std::shared_ptr<Neuron>>::const_iterator iter =
                 p_toPurge.begin();
@@ -71,7 +71,7 @@ namespace LibGoodBoy{
             std::list<std::weak_ptr<Neuron>>::const_iterator eraseIter
                 = m_outputConnectionsList.begin();
             do{
-                if((*eraseIter).lock()==(*iter)){
+                if((*eraseIter)==(*iter)){
                     eraseIter = m_outputConnectionsList.erase(eraseIter);
                 }
                 else{

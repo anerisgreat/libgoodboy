@@ -13,7 +13,7 @@
 
 namespace LibGoodBoy
 {
-    class Neuron : public Resetable, public std::enable_shared_from_this<Neuron>
+    class Neuron : public Resetable
     {
         public:
             //Constructor & Destructor____________________
@@ -32,12 +32,12 @@ namespace LibGoodBoy
 
             //Connection Management_______________________
             virtual void PurgeConnections(
-                    const std::list<std::shared_ptr<Neuron>>& p_toPurge);
+                    const std::list<Neuron*>& p_toPurge);
 
             void OnConnectedToOutput(
-                    const std::shared_ptr<Neuron>& p_connected);
+                    const Neuron* const p_connected);
             void OnRemovedFromOutput(
-                    const std::shared_ptr<Neuron>& p_removed);
+                    const Neuron* const p_removed);
 
             //Probe_______________________________________
             void BackProbe();
@@ -71,7 +71,7 @@ namespace LibGoodBoy
 
             neuralVal_t m_lastContribution;
 
-            std::list<std::weak_ptr<Neuron>> m_outputConnectionsList;
+            std::list<Neuron*> m_outputConnectionsList;
 
             boost::circular_buffer<neuralVal_t> m_outputPreFilterBuffer;
             boost::circular_buffer<neuralVal_t> m_outputPostFilterBuffer;
