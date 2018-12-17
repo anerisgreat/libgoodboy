@@ -33,7 +33,7 @@ namespace LibGoodBoy{
 
             ~ObjectPoolBase(){};
 
-            std::shared_ptr<T> AllocElement(){
+            T* AllocElement(){
                 bool found = false;
                 typename std::vector<T>::size_type poolSizeAtBegin 
                     = m_pool.size();
@@ -71,17 +71,17 @@ namespace LibGoodBoy{
 
                 std::get<0>(*m_iter) = true;
 
-                std::shared_ptr<T>& retVal = std::get<1>(*m_iter);
+                std::shared_ptr<T>& retElement = std::get<1>(*m_iter);
 
                 advanceIterator();
-                return retVal;
+                return retElement.get();
             }
 
-            void Release(const std::shared_ptr<T>& p_elementPtr){
+            void Release(const T* p_elementPtr){
                 auto iter = m_pool.begin();
                 bool found = false;
                 while(!found && iter != m_pool.end()){
-                    if(std::get<1>(*iter) == p_elementPtr){
+                    if(std::get<1>(*iter).get() == p_elementPtr){
                         found = true;
                         std::get<0>(*iter)=false;
                         std::get<1>(*iter)->Reset();

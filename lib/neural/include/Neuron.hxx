@@ -31,13 +31,10 @@ namespace LibGoodBoy
             void ResetContributionFlag();
 
             //Connection Management_______________________
-            virtual void PurgeConnections(
-                    const std::list<Neuron*>& p_toPurge);
+            virtual void PurgeConnections(const std::list<Neuron*>& p_toPurge);
 
-            void OnConnectedToOutput(
-                    const Neuron* const p_connected);
-            void OnRemovedFromOutput(
-                    const Neuron* const p_removed);
+            void OnConnectedToOutput(Neuron* p_connected);
+            void OnRemovedFromOutput(Neuron* p_removed);
 
             //Probe_______________________________________
             void BackProbe();

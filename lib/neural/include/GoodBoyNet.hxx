@@ -58,11 +58,11 @@ namespace LibGoodBoy
             void resetOutputFlag();
 
             std::vector<std::shared_ptr<InputNeuron>> m_inputs;
-            std::vector<std::shared_ptr<ConnectableNeuron>> m_outputs;
+            std::vector<ConnectableNeuron*> m_outputs;
 
             std::vector<neuralVal_t> m_lastOutputs;
 
-            std::list<std::shared_ptr<ConnectableNeuron>> m_midNeurons;
+            std::list<ConnectableNeuron*> m_midNeurons;
 
             ObjectPool<NeuralConnection> m_connectionPool;
             ObjectPool<ConnectableNeuron,

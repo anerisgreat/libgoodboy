@@ -61,15 +61,9 @@ namespace LibGoodBoy{
     }
 
     //Connection Management________________________________________
-    void Neuron::PurgeConnections(
-        const std::list<Neuron*>& p_toPurge)
-    {
-        for(std::list<std::shared_ptr<Neuron>>::const_iterator iter =
-                p_toPurge.begin();
-            iter != p_toPurge.end(); ++iter)
-        {
-            std::list<std::weak_ptr<Neuron>>::const_iterator eraseIter
-                = m_outputConnectionsList.begin();
+    void Neuron::PurgeConnections(const std::list<Neuron*>& p_toPurge){
+        for(auto iter = p_toPurge.begin(); iter != p_toPurge.end(); ++iter){
+            auto eraseIter = m_outputConnectionsList.begin();
             do{
                 if((*eraseIter)==(*iter)){
                     eraseIter = m_outputConnectionsList.erase(eraseIter);
@@ -81,16 +75,15 @@ namespace LibGoodBoy{
         }
     }
 
-    void Neuron::OnConnectedToOutput(const std::shared_ptr<Neuron>& connected){
+    void Neuron::OnConnectedToOutput(Neuron* connected){
         m_outputConnectionsList.emplace_back(connected);
     }
 
-    void Neuron::OnRemovedFromOutput(const std::shared_ptr<Neuron>& p_removed){
-        std::list<std::weak_ptr<Neuron>>::const_iterator iter
-            = m_outputConnectionsList.begin();
+    void Neuron::OnRemovedFromOutput(Neuron* p_removed){
+        auto iter = m_outputConnectionsList.begin();
         bool found = false;
         while(!found && iter != m_outputConnectionsList.end()){
-            if((*iter).lock() == p_removed){
+            if((*iter) == p_removed){
                 found = true;
                 m_outputConnectionsList.erase(iter);
             }
@@ -124,11 +117,10 @@ namespace LibGoodBoy{
     void Neuron::ForwardProbe(){
         if(!m_forwardProbedFlag){
             m_forwardProbedFlag = true;
-            for(auto iter =
-                    m_outputConnectionsList.begin();
+            for(auto iter = m_outputConnectionsList.begin();
                 iter != m_outputConnectionsList.end(); ++iter)
             {
-                (*iter).lock()->ForwardProbe();
+                (*iter)->ForwardProbe();
             }
 
             postForwardProbe();
@@ -173,7 +165,7 @@ namespace LibGoodBoy{
                 iter != m_outputConnectionsList.end(); ++iter)
         {
             retJSON[JSON_OUTP_CONN_KEY].push_back(
-                    boost::uuids::to_string((*iter).lock()->GetUID()));
+                    boost::uuids::to_string((*iter)->GetUID()));
         }
 
         return retJSON;

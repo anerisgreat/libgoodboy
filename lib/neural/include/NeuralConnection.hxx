@@ -16,7 +16,7 @@ namespace LibGoodBoy
     class NeuralConnection : public Resetable
     {
         public:
-            std::weak_ptr<Neuron> ConnectedNeuronPtr;
+            Neuron* ConnectedNeuronPtr;
 
             neuralVal_t Weight;
             neuralVal_t Alpha;
@@ -30,7 +30,7 @@ namespace LibGoodBoy
                 retJSON[JSON_CONNECTION_ALPHA_KEY] = std::to_string(Alpha);
                 retJSON[JSON_CONNECTION_WEIGHT_KEY] = std::to_string(Weight);
                 retJSON[JSON_UID_KEY] = 
-                    boost::uuids::to_string(ConnectedNeuronPtr.lock()->GetUID());
+                    boost::uuids::to_string(ConnectedNeuronPtr->GetUID());
                 return retJSON;
             }
     };

@@ -1,5 +1,6 @@
-#include "NeuralUtils.hxx"
 #include "GoodBoyNet.hxx"
+#include "NeuralUtils.hxx"
+#include <memory>
 
 namespace LibGoodBoy
 {
@@ -20,11 +21,11 @@ namespace LibGoodBoy
             bool p_evolvingEnabled)
         :
             m_inputs(std::vector<std::shared_ptr<InputNeuron>>()),
-            m_outputs(std::vector<std::shared_ptr<ConnectableNeuron>>()),
+            m_outputs(std::vector<ConnectableNeuron*>()),
 
             m_lastOutputs(std::vector<neuralVal_t>()),
 
-            m_midNeurons(std::list<std::shared_ptr<ConnectableNeuron>>()),
+            m_midNeurons(std::list<ConnectableNeuron*>()),
 
             m_connectionPool(),
             m_midNeuronPool(
@@ -182,8 +183,8 @@ namespace LibGoodBoy
             (*neurIter)->BackProbe();
         }
 
-        std::list<std::shared_ptr<Neuron>> toPurge;
-        std::list<std::shared_ptr<ConnectableNeuron>> toPurgeAsConnectable;
+        std::list<Neuron*> toPurge;
+        std::list<ConnectableNeuron*> toPurgeAsConnectable;
         for(auto neurIter = m_midNeurons.begin();
                 neurIter != m_midNeurons.end();
                 ++neurIter)
@@ -256,8 +257,8 @@ namespace LibGoodBoy
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
             neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
             neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();
-            std::shared_ptr<ConnectableNeuron> recvNeuronPtr;
-            std::shared_ptr<Neuron> outNeuronPtr;
+            ConnectableNeuron* recvNeuronPtr;
+            Neuron* outNeuronPtr;
 
             neuralSize_t recIndex = RandInRange<neuralSize_t>(0, numOfRecv);
             neuralSize_t outIndex = RandInRange<neuralSize_t>(0, numOfOut);
@@ -277,11 +278,10 @@ namespace LibGoodBoy
                 outNeuronPtr = *iter;
             }
             else{
-                outNeuronPtr = m_inputs[outIndex - m_midNeurons.size()];
+                outNeuronPtr = m_inputs[outIndex - m_midNeurons.size()].get();
             }
 
-            std::shared_ptr<ConnectableNeuron> newNeuron 
-                = m_midNeuronPool.AllocElement();
+            ConnectableNeuron* newNeuron = m_midNeuronPool.AllocElement();
 
             newNeuron->Connect(outNeuronPtr);
             recvNeuronPtr->Connect(newNeuron);
