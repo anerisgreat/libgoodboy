@@ -10,6 +10,6 @@ configure_file (
     "${PROJECT_SOURCE_DIR}/${CMAKE_PROJECT_NAME}Config.hxx"
     )
 include_directories("${PROJECT_BINARY_DIR}")
-
+enable_testing()
 add_subdirectory(dependencies)
 add_subdirectory(lib)

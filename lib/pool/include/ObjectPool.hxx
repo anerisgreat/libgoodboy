@@ -89,6 +89,10 @@ namespace LibGoodBoy{
                     ++iter;
                 }
             }
+
+            std::size_t PoolSize(){
+                return m_pool.size();
+            }
     };
 
     template <class T, typename... T_args> class ObjectPool 
