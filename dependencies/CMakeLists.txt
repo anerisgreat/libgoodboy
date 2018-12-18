@@ -6,3 +6,5 @@ else()
     set(JSON_BuildTests OFF CACHE INTERNAL "") 
     add_subdirectory(json) 
 endif()
+
+add_subdirectory(googletest)

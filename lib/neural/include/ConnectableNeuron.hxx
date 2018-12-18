@@ -5,7 +5,7 @@
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
 #include "NeuralConnection.hxx"
-#include "ObjectPool.hxx"
+#include "NeuralConnectionPool.hxx"
 
 #include <memory>
 #include <list>
@@ -18,7 +18,7 @@ namespace LibGoodBoy
             ConnectableNeuron(
                     const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps,
-                    ObjectPool<NeuralConnection>& p_connectionPool,
+                    neuralConnectionPool_t& p_connectionPool,
                     neuralVal_t p_degrFactor,
                     neuralVal_t p_maxStartWeight,
                     neuralVal_t p_defaultAlpha);
@@ -46,7 +46,7 @@ namespace LibGoodBoy
 
         private:
             std::list<NeuralConnection*> m_inConnectionList;
-            ObjectPool<NeuralConnection>& m_connectionPool;
+            neuralConnectionPool_t& m_connectionPool;
 
             neuralVal_t m_degrFactor;
             neuralVal_t m_maxStartWeight;

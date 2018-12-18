@@ -8,6 +8,9 @@
 #include <vector>
 
 namespace LibGoodBoy{
+    class NeuralConnection;
+    class ConnectableNeuron;
+
     typedef float neuralVal_t;
     typedef std::size_t neuralSize_t;
     typedef nlohmann::json json_t;

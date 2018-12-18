@@ -11,15 +11,17 @@ add_library(${PROJECT_NAME}
     src/NeuralConfig.cxx
     )
 
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(${PROJECT_NAME} 
+    PUBLIC 
     ${${PROJECT_NAME}_INCLUDE_DIR}
+    PRIVATE
     "${CMAKE_SOURCE_DIR}"
     )
 
 target_link_libraries(${PROJECT_NAME} 
     PUBLIC
     libGoodBoy.Pool
-
-    PRIVATE
     nlohmann_json::nlohmann_json
     )
+
+add_subdirectory(test)

@@ -67,7 +67,7 @@ void runTest(){
 
         std::cout << "BEGIN EVOLVE" << std::endl;
         gNet.Evolve(evolveAmount* 100);
-        std::cout << "DONE EVOLVE" << std::endl;
+        std::cout << "DONE rEVOLVE" << std::endl;
 
         std::cout << evolveAmount << std::endl;
     }

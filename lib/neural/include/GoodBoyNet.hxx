@@ -4,9 +4,10 @@
 #include "libGoodBoyConfig.hxx"
 #include "NeuralConfig.hxx"
 #include "Neuron.hxx"
+#include "NeuralConnectionPool.hxx"
+#include "ConnectableNeuronPool.hxx"
 #include "ConnectableNeuron.hxx" 
 #include "InputNeuron.hxx"
-#include "ObjectPool.hxx"
 
 #include <vector>
 #include <memory>
@@ -64,16 +65,8 @@ namespace LibGoodBoy
 
             std::list<ConnectableNeuron*> m_midNeurons;
 
-            ObjectPool<NeuralConnection> m_connectionPool;
-            ObjectPool<ConnectableNeuron,
-                //Constructor arguments passed to template
-                    const std::vector<neuralVal_t>&,
-                    const std::vector<neuralVal_t>&,
-                    ObjectPool<NeuralConnection>&,
-                    neuralVal_t,
-                    neuralVal_t,
-                    neuralVal_t> 
-                m_midNeuronPool;
+            neuralConnectionPool_t m_connectionPool;
+            connectableNeuronPool_t m_midNeuronPool;
 
             const std::vector<neuralVal_t>& m_outputFilterTaps;
             const std::vector<neuralVal_t>& m_evolveFilterTaps;
