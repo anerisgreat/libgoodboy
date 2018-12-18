@@ -1,4 +1,4 @@
-project(libGoodBoy.Neural)
+project(GoodBoy.Neural)
 
 set(${PROJECT_NAME}_INCLUDE_DIR
     "${PROJECT_SOURCE_DIR}/include" CACHE TYPE STRING)
@@ -20,7 +20,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} 
     PUBLIC
-    libGoodBoy.Pool
+    GoodBoy.Pool
     nlohmann_json::nlohmann_json
     )
 

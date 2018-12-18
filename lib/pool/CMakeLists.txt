@@ -1,4 +1,4 @@
-project(libGoodBoy.Pool)
+project(GoodBoy.Pool)
 
 set(${PROJECT_NAME}_INCLUDE_DIR
     "${PROJECT_SOURCE_DIR}/include" CACHE TYPE STRING)
