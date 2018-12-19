@@ -1,14 +1,11 @@
 #include "gtest/gtest.h"
 #include "NeuralConfig.hxx"
-#include "NeuralConnection.hxx"
 #include "ConnectableNeuron.hxx"
 #include "InputNeuron.hxx"
 #include "NeuralConnectionPool.hxx"
 #include "TestUtils.hxx"
 
-#include <memory>
 #include <string>
-#include <iostream>
 
 namespace LibGoodBoy{
     namespace Test{
