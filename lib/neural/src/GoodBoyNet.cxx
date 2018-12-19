@@ -166,6 +166,20 @@ namespace LibGoodBoy
         {
             (*neurIter)->Evolve(p_amount);
         }
+
+        for(auto neurIter = m_midNeurons.begin();
+                neurIter != m_midNeurons.end();
+                ++neurIter)
+        {
+            (*neurIter)->ResetContributionFlag();
+        }
+
+        for(auto neurIter = m_outputs.begin();
+                neurIter != m_outputs.end();
+                ++neurIter)
+        {
+            (*neurIter)->ResetContributionFlag();
+        }
     }
 
     void GoodBoyNet::cleanup(){

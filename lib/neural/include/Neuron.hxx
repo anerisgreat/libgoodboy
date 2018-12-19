@@ -73,8 +73,8 @@ namespace LibGoodBoy
             boost::circular_buffer<neuralVal_t> m_outputPreFilterBuffer;
             boost::circular_buffer<neuralVal_t> m_outputPostFilterBuffer;
 
-            const std::vector<neuralVal_t>& m_outputFilterTaps;
-            const std::vector<neuralVal_t>& m_evolveFilterTaps;
+            const std::vector<neuralVal_t> m_outputFilterTaps;
+            const std::vector<neuralVal_t> m_evolveFilterTaps;
 
             std::size_t m_evolveFilterLen;
 

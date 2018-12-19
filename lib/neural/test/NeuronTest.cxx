@@ -44,11 +44,6 @@ namespace LibGoodBoy{
         TEST(TestNeuron, TestWeights){
             neuralConnectionPool_t neuralConnPool;
 
-            auto a = GetConnectionFilter();
-            for(int i = 0; i < a.size(); i++){
-                std::cout << "A" << a[i] << std::endl;
-            }
-
             InputNeuron* neurA 
                 = new InputNeuron(GetConnectionFilter(), GetEvFilter());
 
@@ -62,39 +57,64 @@ namespace LibGoodBoy{
                         DEFAULT_DEFAULT_ALPHA);
             neuralVal_t currOutput = 0;
             neurB->Connect(neurA, 1, 2);
-            for(int i = 0; i < 10; i++){
+            for(int i = 0; i < 1; i++){
                 currOutput = neurB->GetOutput();
                 neurA->ResetOutputFlag();
                 neurB->ResetOutputFlag();
             }
-            std::cerr << "HERE?" << std::endl;
             ASSERT_EQ(currOutput, 0);
-            std::cerr << "BA?" << std::endl;
             neurA->FeedInput(1);
-            std::cerr << "FED" << std::endl;
             for(int i = 0; i < 10; i++){
                 currOutput = neurB->GetOutput();
-                std::cerr << "GOT AN OUTPUT AT LEAST" << std::endl;
                 neurA->ResetOutputFlag();
                 neurB->ResetOutputFlag();
-                std::cerr << "RESET AT LEAST" << std::endl;
             }
-            std::cerr << "CALC HERE?" << std::endl;
             ASSERT_GT(currOutput, 0);
 
-            std::cerr << "OR HERE?" << std::endl;
             neuralVal_t prevAlpha = 
                 neurB->
                     GetJSON()[JSON_INP_CONN_KEY][0][JSON_CONNECTION_ALPHA_KEY];
-            neurB->Evolve(10);
-            neurA->Evolve(10);
+            neurB->Evolve(1);
+            neurA->Evolve(1);
+            neurB->ResetContributionFlag();
+            neurA->ResetContributionFlag();
 
-            neuralVal_t currentAlpha = 
-                neurB->
+            neuralVal_t currentAlpha = neurB->
                     GetJSON()[JSON_INP_CONN_KEY][0][JSON_CONNECTION_ALPHA_KEY];
 
-            std::cerr << "MAYB HERE?" << std::endl;
             ASSERT_GT(currentAlpha, prevAlpha);
+            prevAlpha = currentAlpha;
+            neurA->FeedInput(-1);
+            for(int i = 0; i < 10; i++){
+                currOutput = neurB->GetOutput();
+                neurA->ResetOutputFlag();
+                neurB->ResetOutputFlag();
+            }
+
+            ASSERT_LT(currOutput, 0);
+
+            neurB->Evolve(0);
+            neurA->Evolve(0);
+            neurB->ResetContributionFlag();
+            neurA->ResetContributionFlag();
+            currentAlpha = neurB->
+                    GetJSON()[JSON_INP_CONN_KEY][0][JSON_CONNECTION_ALPHA_KEY];
+
+            ASSERT_LT(currentAlpha, prevAlpha);
+
+            ASSERT_LT(currOutput, 0);
+            for(int i = 0; i < 10; i++){
+                currOutput = neurB->GetOutput();
+                neurA->ResetOutputFlag();
+                neurB->ResetOutputFlag();
+                neurB->Evolve(-1);
+                neurA->Evolve(-1);
+                neurB->ResetContributionFlag();
+                neurA->ResetContributionFlag();
+            }
+
+            ASSERT_TRUE(neurB->GetJSON()[JSON_INP_CONN_KEY].size() == 0);
+            ASSERT_TRUE(neurB->GetJSON()[JSON_OUTP_CONN_KEY].size() == 0);
         }
 
     }
