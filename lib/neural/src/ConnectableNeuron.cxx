@@ -5,7 +5,8 @@ namespace LibGoodBoy
 {
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
-    ConnectableNeuron::ConnectableNeuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
+    ConnectableNeuron::ConnectableNeuron(
+            const std::vector<neuralVal_t>& p_outputFilterTaps,
             const std::vector<neuralVal_t>& p_evolveFilterTaps,
             neuralConnectionPool_t& p_connectionPool,
             neuralVal_t p_degrFactor,
@@ -51,15 +52,28 @@ namespace LibGoodBoy
     {
         Neuron::PurgeConnections(p_toPurge);
         auto iter = m_inConnectionList.begin();
-        while(iter != m_inConnectionList.end()){
+        bool continueFlag;
+        bool purgeSelf = false;
+        while(!purgeSelf && iter != m_inConnectionList.end()){
             bool found = false;
             auto connectPtr = (*iter);
-            auto neuronPtr = connectPtr->ConnectedNeuronPtr;
+            auto neuronPtr = (*iter)->ConnectedNeuronPtr;
             auto purgeIter = p_toPurge.begin();
 
-            while(!found && purgeIter != p_toPurge.end()){
+            while(!found && !purgeSelf && purgeIter != p_toPurge.end()){
                 if(neuronPtr==(*purgeIter)){
                     found = true;
+                }
+                else if((*purgeIter) == this){
+                    auto delIter = m_inConnectionList.begin();
+                    while(delIter != m_inConnectionList.end()){
+                        NeuralConnection* neuralConn = *delIter;
+                        Neuron* neuronPtr = neuralConn->ConnectedNeuronPtr;
+                        delIter = m_inConnectionList.erase(delIter);
+                        neuronPtr->OnRemovedFromOutput(this);
+                        m_connectionPool.Release(neuralConn);
+                    }
+                    purgeSelf = true;
                 }
                 else{
                     ++purgeIter;

@@ -36,6 +36,37 @@ namespace LibGoodBoy{
                 = neurA->GetJSON()[JSON_OUTP_CONN_KEY][0];
 
             ASSERT_STREQ(neurBIDSTR.c_str(), outConnIDSTR.c_str());
+
+            ConnectableNeuron* neurC
+                = new ConnectableNeuron(
+                        GetConnectionFilter(), 
+                        GetEvFilter(),
+                        neuralConnPool,
+                        DEFAULT_DEGR_FACTOR,
+                        DEFAULT_MAX_START_WEIGHT,
+                        DEFAULT_DEFAULT_ALPHA);
+
+            neurC->Connect(neurB);
+            std::string neurCIDSTR = neurC->GetJSON()[JSON_UID_KEY];
+            std::string cConnectIDSTR = neurC->
+                GetJSON()[JSON_INP_CONN_KEY][0][JSON_UID_KEY];
+            std::string bOutConnectIDSTR = neurB->
+                GetJSON()[JSON_OUTP_CONN_KEY][0];
+
+            ASSERT_STREQ(neurCIDSTR.c_str(), bOutConnectIDSTR.c_str());
+            ASSERT_STREQ(cConnectIDSTR.c_str(), neurBIDSTR.c_str());
+
+            std::list<Neuron*> purgeList;
+            purgeList.push_back(neurB);
+
+            neurA->PurgeConnections(purgeList);
+            neurB->PurgeConnections(purgeList);
+            neurC->PurgeConnections(purgeList);
+
+            ASSERT_EQ(neurA->GetJSON()[JSON_OUTP_CONN_KEY].size(), 0);
+            ASSERT_EQ(neurC->GetJSON()[JSON_INP_CONN_KEY].size(), 0);
+            ASSERT_EQ(neurB->GetJSON()[JSON_OUTP_CONN_KEY].size(), 0);
+            ASSERT_EQ(neurB->GetJSON()[JSON_INP_CONN_KEY].size(), 0);
         }
 
         TEST(TestNeuron, TestWeights){
