@@ -4,6 +4,7 @@
 #include "InputNeuron.hxx"
 #include "NeuralConnectionPool.hxx"
 #include "TestUtils.hxx"
+#include "NeuralUtils.hxx"
 
 #include <string>
 
@@ -113,12 +114,13 @@ namespace LibGoodBoy{
             ASSERT_GT(currentAlpha, prevAlpha);
             prevAlpha = currentAlpha;
             neurA->FeedInput(-1);
+            neuralVal_t inputOutput = 0;
             for(int i = 0; i < 10; i++){
+                inputOutput = neurA->GetOutput();
                 currOutput = neurB->GetOutput();
                 neurA->ResetOutputFlag();
                 neurB->ResetOutputFlag();
             }
-
             ASSERT_LT(currOutput, 0);
 
             neurB->Evolve(0);
@@ -143,6 +145,35 @@ namespace LibGoodBoy{
 
             ASSERT_TRUE(neurB->GetJSON()[JSON_INP_CONN_KEY].size() == 0);
             ASSERT_TRUE(neurB->GetJSON()[JSON_OUTP_CONN_KEY].size() == 0);
+        }
+
+        TEST(TestNeuron, TestContribution){
+            neuralConnectionPool_t neuralConnPool;
+
+            InputNeuron* neurA 
+                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+
+            neurA->FeedInput(1);
+            ASSERT_EQ(neurA->GetOutput(), GetConnectionFilter()[0]);
+            neurA->ResetOutputFlag();
+
+            neuralVal_t contribution = neurA->GetContribution();
+            neurA->ResetContributionFlag();
+            neuralVal_t predicted = GetConnectionFilter()[0]*GetEvFilter()[0];
+            ASSERT_EQ(contribution, predicted);
+
+            InputNeuron* neurB 
+                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+
+            neurB->FeedInput(-1);
+            ASSERT_EQ(neurB->GetOutput(), -GetConnectionFilter()[0]);
+            neurB->ResetOutputFlag();
+
+            contribution = neurB->GetContribution();
+            neurB->ResetContributionFlag();
+            predicted = GetConnectionFilter()[0]*GetEvFilter()[0];
+
+            ASSERT_EQ(contribution, predicted);
         }
 
     }

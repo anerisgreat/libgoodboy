@@ -180,6 +180,13 @@ namespace LibGoodBoy
         {
             (*neurIter)->ResetContributionFlag();
         }
+
+        for(auto neurIter = m_outputs.begin();
+                neurIter != m_outputs.end();
+                ++neurIter)
+        {
+            (*neurIter)->ResetContributionFlag();
+        }
     }
 
     void GoodBoyNet::cleanup(){

@@ -68,8 +68,8 @@ namespace LibGoodBoy
             neuralConnectionPool_t m_connectionPool;
             connectableNeuronPool_t m_midNeuronPool;
 
-            const std::vector<neuralVal_t>& m_outputFilterTaps;
-            const std::vector<neuralVal_t>& m_evolveFilterTaps;
+            const std::vector<neuralVal_t> m_outputFilterTaps;
+            const std::vector<neuralVal_t> m_evolveFilterTaps;
 
             neuralVal_t m_degrFactor;
             neuralVal_t m_maxStartWeight;

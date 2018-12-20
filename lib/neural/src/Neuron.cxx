@@ -96,9 +96,11 @@ namespace LibGoodBoy{
     neuralVal_t Neuron::GetContribution(){
         if(!m_contributionFlag){
             m_contributionFlag = true;
+            //In this call we ABS the circular buffer values.
             m_lastContribution =  tapsCircBuffInner(
                                     m_evolveFilterTaps,
-                                    m_outputPostFilterBuffer);
+                                    m_outputPostFilterBuffer,
+                                    true);
         }
 
         return m_lastContribution;
@@ -176,16 +178,27 @@ namespace LibGoodBoy{
     //Protected__________________________________________________________
     neuralVal_t Neuron::tapsCircBuffInner(
             const std::vector<neuralVal_t>& p_taps,
-            const boost::circular_buffer<neuralVal_t>& p_samps) const
+            const boost::circular_buffer<neuralVal_t>& p_samps,
+            bool absBuff) const
     {
         neuralVal_t retVal = 0;
         std::vector<neuralVal_t>::const_iterator tapIter;
         boost::circular_buffer<neuralVal_t>::const_iterator sampIter;
-        for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
-            tapIter != p_taps.end() && sampIter != p_samps.end();
-            ++tapIter, ++sampIter)
-        {
-            retVal += *tapIter * *sampIter;
+        if(absBuff){
+            for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
+                tapIter != p_taps.end() && sampIter != p_samps.end();
+                ++tapIter, ++sampIter)
+            {
+                retVal += *tapIter * abs(*sampIter);
+            }
+        }
+        else{
+            for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
+                tapIter != p_taps.end() && sampIter != p_samps.end();
+                ++tapIter, ++sampIter)
+            {
+                retVal += *tapIter * *sampIter;
+            }
         }
 
         return retVal;

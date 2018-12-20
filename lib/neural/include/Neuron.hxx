@@ -57,7 +57,8 @@ namespace LibGoodBoy
 
             neuralVal_t tapsCircBuffInner(
                     const std::vector<neuralVal_t>& p_taps,
-                    const boost::circular_buffer<neuralVal_t>& p_samps) const;
+                    const boost::circular_buffer<neuralVal_t>& p_samps,
+                    bool absBuff = false) const;
 
         private:
             bool m_checkedOutputFlag;

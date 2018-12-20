@@ -1,6 +1,6 @@
-#include "GoodBoyNet.hxx"
 #include "NeuralConfig.hxx"
 #include "NeuralUtils.hxx"
+#include "GoodBoyNet.hxx"
 #include <iostream>
 
 using namespace LibGoodBoy;
@@ -24,7 +24,7 @@ void runTest(){
             evFilt,
             (neuralSize_t)nInputs, // n_inputs
             (neuralSize_t)nInputs,
-            (neuralVal_t)0.01, //degr_factor
+            (neuralVal_t)0.05, //degr_factor
             (neuralVal_t)1, //max start weight
             (neuralVal_t)2, //default alpha,
             (neuralVal_t)0.05, //generation factor
@@ -36,7 +36,7 @@ void runTest(){
     while(true){
         //Define inputs
          for(auto iter = inputs.begin(); iter != inputs.end(); ++iter){
-            (*iter) = RandInRange<int>(-2, 2);
+            (*iter) = RandInRange<int>(-1, 2);
          }
          for(auto iter = outputSums.begin(); iter != outputSums.end(); ++iter){
             *iter = 0;
@@ -45,11 +45,9 @@ void runTest(){
         //Run ten iterations
         gNet.SetInputs(inputs);
 
-        std::cout << "BEGIN ITER" << std::endl;
         for(int i = 0; i < 20; i++){
             gNet.Iter();
         }
-        std::cout << "DONE ITER" << std::endl;
 
         gNet.GetOutputs(outputs);
 
@@ -62,13 +60,10 @@ void runTest(){
         for(; outputIter != outputs.end() && inputIter != inputs.end();
                 ++outputIter, ++inputIter)
         {
-            evolveAmount += ((*outputIter) * (*inputIter)) / (neuralVal_t)nInputs;
+            evolveAmount += 
+                ((*outputIter) * (*inputIter)) / (neuralVal_t)nInputs;
         }
-
-        std::cout << "BEGIN EVOLVE" << std::endl;
         gNet.Evolve(evolveAmount* 100);
-        std::cout << "DONE rEVOLVE" << std::endl;
-
         std::cout << evolveAmount << std::endl;
     }
 }
