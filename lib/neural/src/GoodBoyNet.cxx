@@ -45,6 +45,9 @@ namespace LibGoodBoy
             m_generationFactor(p_defaultGenerationFactor),
             m_evolvingEnabled(p_evolvingEnabled)
     {
+        m_inputs.push_back(std::make_shared<InputNeuron>(
+            m_outputFilterTaps, m_evolveFilterTaps));
+        m_inputs[0]->FeedInput(1);
         CreateInputs(p_nInputs);
         CreateOutputs(p_nOutputs);
     }
@@ -57,7 +60,7 @@ namespace LibGoodBoy
 
     void GoodBoyNet::SetInputs(const std::vector<neuralVal_t>& p_inVec){
         auto inputIter = p_inVec.begin();
-        auto neurIter = m_inputs.begin();
+        auto neurIter = m_inputs.begin()++;
         for(;inputIter != p_inVec.end() && neurIter != m_inputs.end();
                 ++inputIter, ++neurIter)
         {
@@ -66,7 +69,7 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
-        m_inputs[p_nInput]->FeedInput(p_inputVal);
+        m_inputs[p_nInput + 1]->FeedInput(p_inputVal);
     }
 
     void GoodBoyNet::CreateInputs(neuralSize_t p_nInputs){
@@ -94,6 +97,10 @@ namespace LibGoodBoy
 
     neuralVal_t GoodBoyNet::GetOutput(neuralVal_t p_nOutput) const{
         return m_lastOutputs[p_nOutput];
+    }
+
+    neuralSize_t GoodBoyNet::GetMidSize() const{
+        return m_midNeurons.size();
     }
 
     json_t GoodBoyNet::GetJSON() const{

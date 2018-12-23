@@ -4,7 +4,8 @@ set(${PROJECT_NAME}_INCLUDE_DIR
     "${PROJECT_SOURCE_DIR}/include" CACHE TYPE STRING)
 
 add_executable(${PROJECT_NAME}
-    src/RepeaterTest.cxx
+    #src/RepeaterTest.cxx
+    src/EatyWorld.cxx
     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 

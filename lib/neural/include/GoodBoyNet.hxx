@@ -44,6 +44,8 @@ namespace LibGoodBoy
             void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
             neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
 
+            neuralSize_t GetMidSize() const;
+
             json_t GetJSON() const;
 
             void Evolve(neuralVal_t p_amount);
