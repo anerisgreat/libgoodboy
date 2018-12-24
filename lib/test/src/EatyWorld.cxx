@@ -11,7 +11,7 @@ using namespace LibGoodBoy;
 void runTest(){
     srand(time(NULL));
     const neuralVal_t WORLD_SIZE = 100;
-    std::size_t nInputs = 4;
+    std::size_t nInputs = 2;
     std::size_t nOutputs = 2;
 
     std::vector<float> evFilt;
@@ -20,11 +20,12 @@ void runTest(){
     }
 
     std::vector<float> connFilt;
-    connFilt.push_back(0.1);
-    connFilt.push_back(0.2);
-    connFilt.push_back(0.4);
-    connFilt.push_back(0.2);
-    connFilt.push_back(0.1);
+    //connFilt.push_back(0.1);
+    //connFilt.push_back(0.2);
+    //connFilt.push_back(0.4);
+    //connFilt.push_back(0.2);
+    //connFilt.push_back(0.1);
+    connFilt.push_back(1);
 
     GoodBoyNet gNet(connFilt,
             evFilt,
@@ -37,9 +38,10 @@ void runTest(){
             true); 
 
     std::vector<neuralVal_t> inputs(nInputs);
-    std::vector<neuralVal_t> outputs(nInputs);
+    std::vector<neuralVal_t> outputs(nOutputs);
     neuralVal_t foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
     neuralVal_t currentPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
+    unsigned long iterNum = 0;
     while(true){
         //Define inputs
         if(foodPos < currentPos){
@@ -50,7 +52,7 @@ void runTest(){
             inputs[0] = 0;
             inputs[1] = 1;
         }
-
+/*
         if(WORLD_SIZE - currentPos > 5){
             inputs[2] = 0;
             inputs[3] = 1;
@@ -63,6 +65,7 @@ void runTest(){
             inputs[2] = 0;
             inputs[3] = 0;
         }
+*/
 
         //Run ten iterations
         gNet.SetInputs(inputs);
@@ -88,11 +91,12 @@ void runTest(){
             evolveAmount += 1;
             foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
         }
-        evolveAmount += (abs(outputs[0]) + abs(outputs[1])) / 100;
+        //evolveAmount -= (abs(outputs[0]) + abs(outputs[1])) / 10000;
 
         //Evolve
         gNet.Evolve(evolveAmount * 1000);
-        std::cout << evolveAmount << ' ' << gNet.GetMidSize() << std::endl;
+        std::cout << evolveAmount << ' ' << gNet.GetMidSize() << ' ' << iterNum << std::endl;
+        iterNum++;
 
         std::string outString = "";
         for(int i = 0; i < (int)WORLD_SIZE; i++){
