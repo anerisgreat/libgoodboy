@@ -103,7 +103,7 @@ namespace LibGoodBoy{
                                     true);
         }
 
-        return m_lastContribution;
+        return 1;
     }
 
     void Neuron::ResetContributionFlag(){

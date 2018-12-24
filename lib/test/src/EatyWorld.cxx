@@ -2,12 +2,14 @@
 #include "NeuralUtils.hxx"
 #include "GoodBoyNet.hxx"
 #include <iostream>
-
+#include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
 
 using namespace LibGoodBoy;
 
 void runTest(){
+    srand(time(NULL));
     const neuralVal_t WORLD_SIZE = 100;
     std::size_t nInputs = 4;
     std::size_t nOutputs = 2;
@@ -28,7 +30,7 @@ void runTest(){
             evFilt,
             (neuralSize_t)nInputs, // n_inputs
             (neuralSize_t)nInputs,
-            (neuralVal_t)0.1, //degr_factor
+            (neuralVal_t)0.01, //degr_factor
             (neuralVal_t)1, //max start weight
             (neuralVal_t)2, //default alpha,
             (neuralVal_t)0.01, //generation factor
@@ -86,17 +88,18 @@ void runTest(){
             evolveAmount += 1;
             foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
         }
+        evolveAmount += (abs(outputs[0]) + abs(outputs[1])) / 100;
 
         //Evolve
-        gNet.Evolve(evolveAmount * 10);
+        gNet.Evolve(evolveAmount * 1000);
         std::cout << evolveAmount << ' ' << gNet.GetMidSize() << std::endl;
 
         std::string outString = "";
         for(int i = 0; i < (int)WORLD_SIZE; i++){
-            if(abs(i - foodPos) < 1){
+            if(abs(i - foodPos) <= 0.5){
                 std::cout << 'F';
             }
-            if(abs(i - currentPos) < 1){
+            if(abs(i - currentPos) <= 0.5){
                 std::cout << 'X';
             }
             else{
@@ -104,7 +107,7 @@ void runTest(){
             }
         }
         std::cout << std::endl;
-        usleep(3000);
+        //usleep(3000);
     }
 }
 
