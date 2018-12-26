@@ -20,6 +20,16 @@ namespace LibGoodBoy{
                 "Value must be floating point!");
         return p_a / (1 + abs(p_a));
     }
+
+    template<class T> inline T ReLU(T p_a){
+        static_assert(
+                std::is_floating_point<T>::value,
+                "Value must be floating point!");
+        if(p_a < 0){
+            return 0;
+        }
+        return p_a;
+    }
 }
 
 #endif

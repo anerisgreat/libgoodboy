@@ -94,7 +94,7 @@ namespace LibGoodBoy{
 
     //Contribution________________________________________________
     neuralVal_t Neuron::GetContribution(){
-        if(!m_contributionFlag){
+        /*if(!m_contributionFlag){
             m_contributionFlag = true;
             //In this call we ABS the circular buffer values.
             m_lastContribution =  tapsCircBuffInner(
@@ -102,6 +102,7 @@ namespace LibGoodBoy{
                                     m_outputPostFilterBuffer,
                                     true);
         }
+        */
 
         return 1;
     }
