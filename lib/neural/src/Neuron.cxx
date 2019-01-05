@@ -50,6 +50,9 @@ namespace LibGoodBoy{
                     m_outputPreFilterBuffer);
 
             m_outputPostFilterBuffer.push_back(post_filter);
+            //Calculate contribution with every step.
+            m_lastContribution = 
+                m_lastContribution/2 + abs(m_outputPostFilterBuffer.back())/2;
         }
 
         neuralVal_t retval = m_outputPostFilterBuffer.back();
@@ -94,16 +97,8 @@ namespace LibGoodBoy{
 
     //Contribution________________________________________________
     neuralVal_t Neuron::GetContribution(){
-        if(!m_contributionFlag){
-            m_contributionFlag = true;
-            //In this call we ABS the circular buffer values.
-            m_lastContribution =  tapsCircBuffInner(
-                                    m_evolveFilterTaps,
-                                    m_outputPostFilterBuffer,
-                                    true);
-        }
 
-        return 1;
+        return m_lastContribution;
     }
 
     void Neuron::ResetContributionFlag(){

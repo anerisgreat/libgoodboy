@@ -33,7 +33,7 @@ namespace LibGoodBoy
             auto connectPtr = *connectIter;
             auto neuronPtr = connectPtr->ConnectedNeuronPtr;
             neuralVal_t contribution = neuronPtr->GetContribution();
-            neuralVal_t amountToChange = contribution * (p_amount-m_degrFactor);
+            neuralVal_t amountToChange = contribution * p_amount - m_degrFactor;
             neuralVal_t finalAlpha = connectPtr->Alpha + amountToChange; 
             if(finalAlpha <= 0){
                 connectIter = m_inConnectionList.erase(connectIter);
