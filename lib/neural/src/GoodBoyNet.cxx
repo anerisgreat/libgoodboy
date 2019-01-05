@@ -83,6 +83,11 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::GetOutputs(std::vector<neuralVal_t>& p_outBuff) const{
+
+        for(auto iter = m_inputs.begin(); iter != m_inputs.end(); ++iter){
+            (*iter)->GetOutput();
+        }
+
         auto oIter = p_outBuff.begin();
         auto vIter = m_lastOutputs.begin();
 
@@ -157,6 +162,36 @@ namespace LibGoodBoy
             makeNewNeurons(numNewNeurons);
         }
 
+        resetOutputSums();
+    }
+
+    Neuron* GoodBoyNet::getOutNeuron(){
+        neuralVal_t maxSelectionWeight = 0;
+        for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
+            maxSelectionWeight += (*iter)->GetOutputSum();
+        }
+        for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
+            maxSelectionWeight += (*iter)->GetOutputSum();
+        }
+
+        neuralVal_t outWeight = RandInRange<neuralVal_t>(0, maxSelectionWeight);
+        neuralVal_t outWeightAcc = 0;
+
+        for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
+            outWeightAcc+=(*iter)->GetOutputSum();
+            if(outWeightAcc > outWeight){
+                return *iter;
+            }
+        }
+
+        for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
+            outWeightAcc+=(*iter)->GetOutputSum();
+            if(outWeightAcc > outWeight){
+                return (*iter).get();
+            }
+        }
+
+        return m_inputs[m_inputs.size() - 1].get();
     }
 
     void GoodBoyNet::adjustWeights(neuralVal_t p_amount){
@@ -266,7 +301,7 @@ namespace LibGoodBoy
     }
 
     neuralSize_t GoodBoyNet::numNeuronsToMake(){
-        neuralVal_t val = RandInRange<neuralVal_t>(0,1);
+        neuralVal_t val = RandInRange<neuralVal_t>(0,2);
         neuralSize_t ret = 0;
         while(val < m_generationFactor && val != 0){
             ++ret;
@@ -277,10 +312,6 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
-        //We are going to do "weightless" adding. Maybe in the future, we
-            //will do weighted addition.
-        for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
-        }
 
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
             neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
@@ -289,8 +320,6 @@ namespace LibGoodBoy
             Neuron* outNeuronPtr;
 
             neuralSize_t recIndex = RandInRange<neuralSize_t>(0, numOfRecv);
-            neuralSize_t outIndex = RandInRange<neuralSize_t>(0, numOfOut);
-
             if(recIndex < m_midNeurons.size()){
                 auto iter = m_midNeurons.begin();
                 std::advance(iter, recIndex);
@@ -300,14 +329,7 @@ namespace LibGoodBoy
                 recvNeuronPtr = m_outputs[recIndex - m_midNeurons.size()];
             }
 
-            if(outIndex < m_midNeurons.size()){
-                auto iter = m_midNeurons.begin();
-                std::advance(iter, outIndex);
-                outNeuronPtr = *iter;
-            }
-            else{
-                outNeuronPtr = m_inputs[outIndex - m_midNeurons.size()].get();
-            }
+            outNeuronPtr = getOutNeuron();
 
             ConnectableNeuron* newNeuron = m_midNeuronPool.AllocElement();
 
@@ -349,6 +371,29 @@ namespace LibGoodBoy
                 ++neurIter)
         {
             (*neurIter)->ResetOutputFlag();
+        }
+    }
+
+    void GoodBoyNet::resetOutputSums(){
+        for(auto neurIter = m_outputs.begin(); 
+                neurIter != m_outputs.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputSum();
+        }
+
+        for(auto neurIter = m_midNeurons.begin(); 
+                neurIter != m_midNeurons.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputSum();
+        }
+
+        for(auto neurIter = m_inputs.begin(); 
+                neurIter != m_inputs.end(); 
+                ++neurIter)
+        {
+            (*neurIter)->ResetOutputSum();
         }
     }
 }

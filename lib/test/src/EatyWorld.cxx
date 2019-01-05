@@ -52,20 +52,6 @@ void runTest(){
             inputs[0] = 0;
             inputs[1] = 1;
         }
-/*
-        if(WORLD_SIZE - currentPos > 5){
-            inputs[2] = 0;
-            inputs[3] = 1;
-        }
-        else if(currentPos < 5){
-            inputs[2] = 1;
-            inputs[3] = 0;
-        }
-        else{
-            inputs[2] = 0;
-            inputs[3] = 0;
-        }
-*/
 
         //Run ten iterations
         gNet.SetInputs(inputs);
@@ -91,10 +77,9 @@ void runTest(){
             evolveAmount += 1;
             foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
         }
-        //evolveAmount -= (abs(outputs[0]) + abs(outputs[1])) / 10000;
 
         //Evolve
-        gNet.Evolve(evolveAmount * 1000);
+        gNet.Evolve(evolveAmount * 10);
         std::cout << evolveAmount << ' ' << gNet.GetMidSize() << ' ' << iterNum << std::endl;
         iterNum++;
 
@@ -111,7 +96,7 @@ void runTest(){
             }
         }
         std::cout << std::endl;
-        //usleep(3000);
+        usleep(3000);
     }
 }
 

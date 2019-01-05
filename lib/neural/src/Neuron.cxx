@@ -21,6 +21,7 @@ namespace LibGoodBoy{
 
             m_lastOutput(0),
             m_lastContribution(0),
+            m_outputSum(0),
 
             m_outputConnectionsList(),
 
@@ -37,6 +38,7 @@ namespace LibGoodBoy{
             //Calculate contribution with every step.
             m_lastContribution = 
                 m_lastContribution/2 + abs(m_lastOutput)/2;
+            m_outputSum += m_lastOutput;
         }
 
         return m_lastOutput;
@@ -88,6 +90,15 @@ namespace LibGoodBoy{
         m_contributionFlag = false;
     }
 
+    //OutputSum___________________________________________________
+    neuralVal_t Neuron::GetOutputSum(){
+        return m_outputSum;
+    }
+
+    void Neuron::ResetOutputSum(){
+        m_outputSum = 0;
+    }
+
     //Probe________________________________________________________
     void Neuron::BackProbe(){
         if(!m_backwardProbedFlag){
@@ -126,6 +137,10 @@ namespace LibGoodBoy{
         m_forwardProbedFlag = false;
         m_backwardProbedFlag = false;
         m_evolveFlag = false;
+
+        m_lastOutput = 0;
+        m_lastContribution = 0;
+        m_outputSum = 0;
 
         m_uid = boost::uuids::random_generator()();
         m_outputConnectionsList.clear();

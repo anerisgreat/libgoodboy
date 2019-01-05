@@ -27,6 +27,9 @@ namespace LibGoodBoy
             neuralVal_t GetContribution();
             void ResetContributionFlag();
 
+            neuralVal_t GetOutputSum();
+            void ResetOutputSum();
+
             //Connection Management_______________________
             virtual void PurgeConnections(const std::list<Neuron*>& p_toPurge);
 
@@ -61,6 +64,7 @@ namespace LibGoodBoy
 
             neuralVal_t m_lastOutput;
             neuralVal_t m_lastContribution;
+            neuralVal_t m_outputSum;
 
             std::list<Neuron*> m_outputConnectionsList;
 
