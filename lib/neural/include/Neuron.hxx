@@ -9,8 +9,6 @@
 #include <memory>
 #include <list>
 
-#include <boost/circular_buffer.hpp>
-
 namespace LibGoodBoy
 {
     class Neuron : public Resetable
@@ -65,9 +63,6 @@ namespace LibGoodBoy
             neuralVal_t m_lastContribution;
 
             std::list<Neuron*> m_outputConnectionsList;
-
-            boost::circular_buffer<neuralVal_t> m_outputPreFilterBuffer;
-            boost::circular_buffer<neuralVal_t> m_outputPostFilterBuffer;
 
             const std::vector<neuralVal_t> m_outputFilterTaps;
             const std::vector<neuralVal_t> m_evolveFilterTaps;
