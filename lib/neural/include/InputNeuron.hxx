@@ -12,8 +12,7 @@ namespace LibGoodBoy
     class InputNeuron : public Neuron
     {
         public:
-            InputNeuron(const std::vector<neuralVal_t>& p_outputFilterTaps,
-                        const std::vector<neuralVal_t>& p_evolveFilterTaps);
+            InputNeuron();
 
             ~InputNeuron();
 

@@ -6,14 +6,12 @@ namespace LibGoodBoy
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
     ConnectableNeuron::ConnectableNeuron(
-            const std::vector<neuralVal_t>& p_outputFilterTaps,
-            const std::vector<neuralVal_t>& p_evolveFilterTaps,
             neuralConnectionPool_t& p_connectionPool,
             neuralVal_t p_degrFactor,
             neuralVal_t p_maxStartWeight,
             neuralVal_t p_defaultAlpha)
         :
-            Neuron(p_outputFilterTaps, p_evolveFilterTaps),
+            Neuron(),
             m_connectionPool(p_connectionPool),
             m_inConnectionList(std::list<NeuralConnection*>()),
             m_degrFactor(p_degrFactor),

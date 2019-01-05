@@ -17,8 +17,7 @@ namespace LibGoodBoy
     {
         public:
             //Constructor & Destructor____________________
-            Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
-                    const std::vector<neuralVal_t>& p_evolveFilterTaps);
+            Neuron();
             ~Neuron();
 
             //Output______________________________________
@@ -55,11 +54,6 @@ namespace LibGoodBoy
             virtual void postBackProbe() = 0;
             virtual void postForwardProbe() = 0;
 
-            neuralVal_t tapsCircBuffInner(
-                    const std::vector<neuralVal_t>& p_taps,
-                    const boost::circular_buffer<neuralVal_t>& p_samps,
-                    bool absBuff = false) const;
-
         private:
             bool m_checkedOutputFlag;
             bool m_forwardProbedFlag;
@@ -67,6 +61,7 @@ namespace LibGoodBoy
             bool m_evolveFlag;
             bool m_contributionFlag;
 
+            neuralVal_t m_lastOutput;
             neuralVal_t m_lastContribution;
 
             std::list<Neuron*> m_outputConnectionsList;

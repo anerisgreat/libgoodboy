@@ -29,8 +29,6 @@ namespace LibGoodBoy
 
             m_connectionPool(),
             m_midNeuronPool(
-                        p_outputFilterTaps,
-                        p_evolveFilterTaps,
                         m_connectionPool,
                         p_degrFactor,
                         p_maxStartWeight,
@@ -45,8 +43,7 @@ namespace LibGoodBoy
             m_generationFactor(p_defaultGenerationFactor),
             m_evolvingEnabled(p_evolvingEnabled)
     {
-        m_inputs.push_back(std::make_shared<InputNeuron>(
-            m_outputFilterTaps, m_evolveFilterTaps));
+        m_inputs.push_back(std::make_shared<InputNeuron>());
         m_inputs[0]->FeedInput(1);
         CreateInputs(p_nInputs);
         CreateOutputs(p_nOutputs);
@@ -74,8 +71,7 @@ namespace LibGoodBoy
 
     void GoodBoyNet::CreateInputs(neuralSize_t p_nInputs){
         for(neuralSize_t i = 0; i < p_nInputs; ++i){
-            m_inputs.push_back(std::make_shared<InputNeuron>(
-                        m_outputFilterTaps, m_evolveFilterTaps));
+            m_inputs.push_back(std::make_shared<InputNeuron>());
         }
     }
 

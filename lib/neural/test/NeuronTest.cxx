@@ -15,12 +15,10 @@ namespace LibGoodBoy{
             neuralConnectionPool_t neuralConnPool;
 
             InputNeuron* neurA 
-                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+                = new InputNeuron();
 
             ConnectableNeuron* neurB 
                 = new ConnectableNeuron(
-                        GetConnectionFilter(), 
-                        GetEvFilter(),
                         neuralConnPool,
                         DEFAULT_DEGR_FACTOR,
                         DEFAULT_MAX_START_WEIGHT,
@@ -40,8 +38,6 @@ namespace LibGoodBoy{
 
             ConnectableNeuron* neurC
                 = new ConnectableNeuron(
-                        GetConnectionFilter(), 
-                        GetEvFilter(),
                         neuralConnPool,
                         DEFAULT_DEGR_FACTOR,
                         DEFAULT_MAX_START_WEIGHT,
@@ -74,12 +70,10 @@ namespace LibGoodBoy{
             neuralConnectionPool_t neuralConnPool;
 
             InputNeuron* neurA 
-                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+                = new InputNeuron();
 
             ConnectableNeuron* neurB 
                 = new ConnectableNeuron(
-                        GetConnectionFilter(), 
-                        GetEvFilter(),
                         neuralConnPool,
                         DEFAULT_DEGR_FACTOR,
                         DEFAULT_MAX_START_WEIGHT,
@@ -151,27 +145,27 @@ namespace LibGoodBoy{
             neuralConnectionPool_t neuralConnPool;
 
             InputNeuron* neurA 
-                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+                = new InputNeuron();
 
             neurA->FeedInput(1);
-            ASSERT_EQ(neurA->GetOutput(), GetConnectionFilter()[0]);
+            ASSERT_EQ(neurA->GetOutput(), 1);
             neurA->ResetOutputFlag();
 
             neuralVal_t contribution = neurA->GetContribution();
             neurA->ResetContributionFlag();
-            neuralVal_t predicted = GetConnectionFilter()[0]*GetEvFilter()[0];
+            neuralVal_t predicted = 0.5;
             ASSERT_EQ(contribution, predicted);
 
             InputNeuron* neurB 
-                = new InputNeuron(GetConnectionFilter(), GetEvFilter());
+                = new InputNeuron();
 
             neurB->FeedInput(-1);
-            ASSERT_EQ(neurB->GetOutput(), -GetConnectionFilter()[0]);
+            ASSERT_EQ(neurB->GetOutput(), -1);
             neurB->ResetOutputFlag();
 
             contribution = neurB->GetContribution();
             neurB->ResetContributionFlag();
-            predicted = GetConnectionFilter()[0]*GetEvFilter()[0];
+            predicted = 0.5;
 
             ASSERT_EQ(contribution, predicted);
         }

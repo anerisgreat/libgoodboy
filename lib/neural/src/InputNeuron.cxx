@@ -3,11 +3,9 @@ namespace LibGoodBoy
 {
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
-    InputNeuron::InputNeuron( 
-            const std::vector<neuralVal_t>& p_outputFilterTaps,
-            const std::vector<neuralVal_t>& p_evolveFilterTaps)
+    InputNeuron::InputNeuron()
         :
-            Neuron(p_outputFilterTaps, p_evolveFilterTaps),
+            Neuron(),
             m_nextInput(0)
     {
     }
