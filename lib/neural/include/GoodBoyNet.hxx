@@ -47,8 +47,10 @@ namespace LibGoodBoy
             neuralSize_t GetMidSize() const;
 
             json_t GetJSON() const;
+            std::string jsonString();
 
             void Evolve(neuralVal_t p_amount);
+
 
         private:
 

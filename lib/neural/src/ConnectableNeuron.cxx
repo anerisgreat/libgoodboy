@@ -139,7 +139,7 @@ namespace LibGoodBoy
                 * connectPtr->Weight;
         }
 
-        return Sigmoid<neuralVal_t>(sum);
+        return ApproxSigmoid<neuralVal_t>(sum);
     }
 
     void ConnectableNeuron::postBackProbe(){ 

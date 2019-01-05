@@ -20,6 +20,19 @@ namespace LibGoodBoy{
                 "Value must be floating point!");
         return p_a / (1 + abs(p_a));
     }
+
+    template<class T> inline T ApproxSigmoid(T p_a){
+        static_assert(
+                std::is_floating_point<T>::value,
+                "Value must be floating point!");
+        if(p_a > 1){
+            return 1;
+        }else if(p_a < -1){
+            return -1;
+        }else{
+            return p_a;
+        }
+    }
 }
 
 #endif

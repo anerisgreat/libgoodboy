@@ -48,7 +48,7 @@ namespace LibGoodBoy
             //Properties__________________________________
             uuid_t GetUID();
             virtual json_t GetJSON() const;
-            //STRING ToString();
+            std::string jsonString();
         protected:
             virtual neuralVal_t calcOutput() = 0;
 

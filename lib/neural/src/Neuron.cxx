@@ -175,6 +175,10 @@ namespace LibGoodBoy{
         return retJSON;
     }
 
+    std::string Neuron::jsonString(){
+        return GetJSON().dump();
+    }
+
     //Protected__________________________________________________________
     neuralVal_t Neuron::tapsCircBuffInner(
             const std::vector<neuralVal_t>& p_taps,

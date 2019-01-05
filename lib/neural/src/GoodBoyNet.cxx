@@ -149,6 +149,10 @@ namespace LibGoodBoy
         return retJson;
     }
 
+    std::string GoodBoyNet::jsonString(){
+        return GetJSON().dump();
+    }
+
     void GoodBoyNet::Evolve(neuralVal_t p_amount){
         adjustWeights(p_amount);
         neuralSize_t numNewNeurons = numNeuronsToMake();
