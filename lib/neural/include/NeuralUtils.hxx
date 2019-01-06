@@ -29,6 +29,7 @@ namespace LibGoodBoy{
             return 0;
         }
         return p_a;
+    }
 
     template<class T> inline T ApproxSigmoid(T p_a){
         static_assert(
