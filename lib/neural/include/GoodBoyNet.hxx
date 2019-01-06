@@ -47,8 +47,10 @@ namespace LibGoodBoy
             neuralSize_t GetMidSize() const;
 
             json_t GetJSON() const;
+            std::string jsonString();
 
             void Evolve(neuralVal_t p_amount);
+
 
         private:
 
@@ -56,9 +58,11 @@ namespace LibGoodBoy
             void cleanup();
             neuralSize_t numNeuronsToMake();
             void makeNewNeurons(neuralSize_t p_numNewNeurons);
+            Neuron* getOutNeuron();
 
             void calcOutputs();
             void resetOutputFlag();
+            void resetOutputSums();
 
             std::vector<std::shared_ptr<InputNeuron>> m_inputs;
             std::vector<ConnectableNeuron*> m_outputs;

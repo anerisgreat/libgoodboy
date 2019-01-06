@@ -5,8 +5,6 @@
 
 namespace LibGoodBoy{
     typedef ObjectPool<ConnectableNeuron,
-        const std::vector<neuralVal_t>&,
-        const std::vector<neuralVal_t>&,
         neuralConnectionPool_t&,
         neuralVal_t,
         neuralVal_t,

@@ -2,7 +2,6 @@
 
 #include <algorithm>
 
-#include <boost/circular_buffer.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -10,8 +9,7 @@
 namespace LibGoodBoy{
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
-    Neuron::Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
-                    const std::vector<neuralVal_t>& p_evolveFilterTaps)
+    Neuron::Neuron()
         :
             Resetable(),
 
@@ -21,17 +19,11 @@ namespace LibGoodBoy{
             m_evolveFlag(false),
             m_contributionFlag(false),
 
+            m_lastOutput(0),
             m_lastContribution(0),
+            m_outputSum(0),
 
             m_outputConnectionsList(),
-
-            m_outputPreFilterBuffer(p_outputFilterTaps.size()),
-            m_outputPostFilterBuffer(p_evolveFilterTaps.size()),
-
-            m_outputFilterTaps(p_outputFilterTaps),
-            m_evolveFilterTaps(p_evolveFilterTaps),
-
-            m_evolveFilterLen(p_evolveFilterTaps.size()),
 
             m_uid(boost::uuids::random_generator()())
     {}
@@ -42,18 +34,14 @@ namespace LibGoodBoy{
     neuralVal_t Neuron::GetOutput(){
         if(!m_checkedOutputFlag){
             m_checkedOutputFlag = true;
-            neuralVal_t pre_filt_output = calcOutput();
-            m_outputPreFilterBuffer.push_back(pre_filt_output);
-
-            neuralVal_t post_filter = tapsCircBuffInner(
-                    m_outputFilterTaps,
-                    m_outputPreFilterBuffer);
-
-            m_outputPostFilterBuffer.push_back(post_filter);
+            m_lastOutput = calcOutput();
+            //Calculate contribution with every step.
+            m_lastContribution = 
+                m_lastContribution/2 + abs(m_lastOutput)/2;
+            m_outputSum += m_lastOutput;
         }
 
-        neuralVal_t retval = m_outputPostFilterBuffer.back();
-        return retval;
+        return m_lastOutput;
     }
 
     void Neuron::ResetOutputFlag(){
@@ -94,21 +82,20 @@ namespace LibGoodBoy{
 
     //Contribution________________________________________________
     neuralVal_t Neuron::GetContribution(){
-        /*if(!m_contributionFlag){
-            m_contributionFlag = true;
-            //In this call we ABS the circular buffer values.
-            m_lastContribution =  tapsCircBuffInner(
-                                    m_evolveFilterTaps,
-                                    m_outputPostFilterBuffer,
-                                    true);
-        }
-        */
-
-        return 1;
+        return m_lastContribution;
     }
 
     void Neuron::ResetContributionFlag(){
         m_contributionFlag = false;
+    }
+
+    //OutputSum___________________________________________________
+    neuralVal_t Neuron::GetOutputSum(){
+        return m_outputSum;
+    }
+
+    void Neuron::ResetOutputSum(){
+        m_outputSum = 0;
     }
 
     //Probe________________________________________________________
@@ -150,8 +137,9 @@ namespace LibGoodBoy{
         m_backwardProbedFlag = false;
         m_evolveFlag = false;
 
-        m_outputPreFilterBuffer.clear();
-        m_outputPostFilterBuffer.clear();
+        m_lastOutput = 0;
+        m_lastContribution = 0;
+        m_outputSum = 0;
 
         m_uid = boost::uuids::random_generator()();
         m_outputConnectionsList.clear();
@@ -176,33 +164,8 @@ namespace LibGoodBoy{
         return retJSON;
     }
 
-    //Protected__________________________________________________________
-    neuralVal_t Neuron::tapsCircBuffInner(
-            const std::vector<neuralVal_t>& p_taps,
-            const boost::circular_buffer<neuralVal_t>& p_samps,
-            bool absBuff) const
-    {
-        neuralVal_t retVal = 0;
-        std::vector<neuralVal_t>::const_iterator tapIter;
-        boost::circular_buffer<neuralVal_t>::const_iterator sampIter;
-        if(absBuff){
-            for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
-                tapIter != p_taps.end() && sampIter != p_samps.end();
-                ++tapIter, ++sampIter)
-            {
-                retVal += *tapIter * abs(*sampIter);
-            }
-        }
-        else{
-            for(tapIter = p_taps.begin(), sampIter = p_samps.begin();
-                tapIter != p_taps.end() && sampIter != p_samps.end();
-                ++tapIter, ++sampIter)
-            {
-                retVal += *tapIter * *sampIter;
-            }
-        }
-
-        return retVal;
+    std::string Neuron::jsonString(){
+        return GetJSON().dump();
     }
 
     //Private____________________________________________________________

@@ -6,14 +6,12 @@ namespace LibGoodBoy
     //Public_____________________________________________________________
     //Constructor & Destructor_____________________________________
     ConnectableNeuron::ConnectableNeuron(
-            const std::vector<neuralVal_t>& p_outputFilterTaps,
-            const std::vector<neuralVal_t>& p_evolveFilterTaps,
             neuralConnectionPool_t& p_connectionPool,
             neuralVal_t p_degrFactor,
             neuralVal_t p_maxStartWeight,
             neuralVal_t p_defaultAlpha)
         :
-            Neuron(p_outputFilterTaps, p_evolveFilterTaps),
+            Neuron(),
             m_connectionPool(p_connectionPool),
             m_inConnectionList(std::list<NeuralConnection*>()),
             m_degrFactor(p_degrFactor),
@@ -33,7 +31,7 @@ namespace LibGoodBoy
             auto connectPtr = *connectIter;
             auto neuronPtr = connectPtr->ConnectedNeuronPtr;
             neuralVal_t contribution = neuronPtr->GetContribution();
-            neuralVal_t amountToChange = contribution * (p_amount-m_degrFactor);
+            neuralVal_t amountToChange = contribution * p_amount - m_degrFactor;
             neuralVal_t finalAlpha = connectPtr->Alpha + amountToChange; 
             if(finalAlpha <= 0){
                 connectIter = m_inConnectionList.erase(connectIter);
@@ -139,7 +137,7 @@ namespace LibGoodBoy
                 * connectPtr->Weight;
         }
 
-        return ReLU<neuralVal_t>(sum);
+        return ApproxSigmoid<neuralVal_t>(sum);
     }
 
     void ConnectableNeuron::postBackProbe(){ 

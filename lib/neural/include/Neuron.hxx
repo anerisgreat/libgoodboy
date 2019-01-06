@@ -9,16 +9,13 @@
 #include <memory>
 #include <list>
 
-#include <boost/circular_buffer.hpp>
-
 namespace LibGoodBoy
 {
     class Neuron : public Resetable
     {
         public:
             //Constructor & Destructor____________________
-            Neuron( const std::vector<neuralVal_t>& p_outputFilterTaps,
-                    const std::vector<neuralVal_t>& p_evolveFilterTaps);
+            Neuron();
             ~Neuron();
 
             //Output______________________________________
@@ -29,6 +26,9 @@ namespace LibGoodBoy
             virtual void Evolve(neuralVal_t p_amount) = 0;
             neuralVal_t GetContribution();
             void ResetContributionFlag();
+
+            neuralVal_t GetOutputSum();
+            void ResetOutputSum();
 
             //Connection Management_______________________
             virtual void PurgeConnections(const std::list<Neuron*>& p_toPurge);
@@ -48,17 +48,12 @@ namespace LibGoodBoy
             //Properties__________________________________
             uuid_t GetUID();
             virtual json_t GetJSON() const;
-            //STRING ToString();
+            std::string jsonString();
         protected:
             virtual neuralVal_t calcOutput() = 0;
 
             virtual void postBackProbe() = 0;
             virtual void postForwardProbe() = 0;
-
-            neuralVal_t tapsCircBuffInner(
-                    const std::vector<neuralVal_t>& p_taps,
-                    const boost::circular_buffer<neuralVal_t>& p_samps,
-                    bool absBuff = false) const;
 
         private:
             bool m_checkedOutputFlag;
@@ -67,12 +62,11 @@ namespace LibGoodBoy
             bool m_evolveFlag;
             bool m_contributionFlag;
 
+            neuralVal_t m_lastOutput;
             neuralVal_t m_lastContribution;
+            neuralVal_t m_outputSum;
 
             std::list<Neuron*> m_outputConnectionsList;
-
-            boost::circular_buffer<neuralVal_t> m_outputPreFilterBuffer;
-            boost::circular_buffer<neuralVal_t> m_outputPostFilterBuffer;
 
             const std::vector<neuralVal_t> m_outputFilterTaps;
             const std::vector<neuralVal_t> m_evolveFilterTaps;
