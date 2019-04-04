@@ -2,6 +2,7 @@
 #include "NeuralUtils.hxx"
 #include "GoodBoyNet.hxx"
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
@@ -96,7 +97,10 @@ void runTest(){
             }
         }
         std::cout << std::endl;
-        usleep(3000);
+        std::ofstream jsonstream("out.json");
+        jsonstream << gNet.jsonString();
+        jsonstream.close();
+        usleep(1);
     }
 }
 
