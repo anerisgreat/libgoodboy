@@ -8,7 +8,7 @@ add_library(${PROJECT_NAME}
     src/InputNeuron.cxx
     src/ConnectableNeuron.cxx
     src/GoodBoyNet.cxx
-    src/NeuralConfig.cxx
+    src/NeuralGlobals.cxx
     )
 
 target_include_directories(${PROJECT_NAME} 

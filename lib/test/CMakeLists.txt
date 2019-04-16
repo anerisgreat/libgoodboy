@@ -5,7 +5,8 @@ set(${PROJECT_NAME}_INCLUDE_DIR
 
 add_executable(${PROJECT_NAME}
     #src/RepeaterTest.cxx
-    src/EatyWorld.cxx
+    #src/EatyWorld.cxx
+    src/Test2.cxx
     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC 

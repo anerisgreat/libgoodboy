@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 #include "ConnectableNeuron.hxx"
 #include "InputNeuron.hxx"
 #include "NeuralConnectionPool.hxx"

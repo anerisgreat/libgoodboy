@@ -1,4 +1,4 @@
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 #include "NeuralUtils.hxx"
 #include "GoodBoyNet.hxx"
 #include <iostream>
@@ -97,9 +97,11 @@ void runTest(){
             }
         }
         std::cout << std::endl;
-        std::ofstream jsonstream("out.json");
-        jsonstream << gNet.jsonString();
-        jsonstream.close();
+        if(iterNum % 1000 == 0){
+            std::ofstream jsonstream("out.json");
+            jsonstream << gNet.jsonString();
+            jsonstream.close();
+        }
         usleep(1);
     }
 }

@@ -2,7 +2,7 @@
 #define NEURAL_CONNECTION_HXX
 
 #include "libGoodBoyConfig.hxx"
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 #include "Neuron.hxx"
 
 #include <memory>

@@ -6,16 +6,27 @@
 
 #include <string>
 #include <vector>
+#include <valarray>
 
 namespace LibGoodBoy{
-    class NeuralConnection;
-    class ConnectableNeuron;
-
+    //TYPEDEFS
     typedef float neuralVal_t;
     typedef std::size_t neuralSize_t;
     typedef nlohmann::json json_t;
     typedef boost::uuids::uuid uuid_t;
+    typedef double pos_t;
+    typedef std::valarray<pos_t> coord_t;
 
+    //METHODS
+
+    template<class T> inline T RandInRange(T min, T max);
+    template<class T> inline T Sigmoid(T p_a);
+    template<class T> inline T ReLU(T p_a);
+    template<class T> inline T ApproxSigmoid(T p_a);
+
+    pos_t GetDistance(const coord_t& p_ca, const coord_t& p_cb);
+
+    //CONSTS
     extern const std::string JSON_UID_KEY;
     extern const std::string JSON_OUTP_CONN_KEY;
     extern const std::string JSON_INP_CONN_KEY;

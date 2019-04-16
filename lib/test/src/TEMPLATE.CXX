@@ -1,5 +1,5 @@
 #include "GoodBoyNet.hxx"
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 
 using namespace LibGoodBoy;
 

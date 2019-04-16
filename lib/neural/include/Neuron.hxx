@@ -2,7 +2,7 @@
 #define NEURAL_NEURON_HXX
 
 #include "libGoodBoyConfig.hxx"
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 #include "Resetable.hxx"
 
 #include <vector>

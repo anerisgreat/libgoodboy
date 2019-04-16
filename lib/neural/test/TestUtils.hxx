@@ -1,4 +1,4 @@
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 
 namespace LibGoodBoy{
     namespace Test{

@@ -1,4 +1,4 @@
-#include "NeuralConfig.hxx"
+#include "NeuralGlobals.hxx"
 #include "NeuralUtils.hxx"
 #include "GoodBoyNet.hxx"
 #include <iostream>
