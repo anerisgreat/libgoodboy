@@ -15,7 +15,7 @@ namespace LibGoodBoy
     {
         public:
             //Constructor & Destructor____________________
-            Neuron();
+            Neuron(coord_t p_pos);
             ~Neuron();
 
             //Output______________________________________
@@ -49,6 +49,10 @@ namespace LibGoodBoy
             uuid_t GetUID();
             virtual json_t GetJSON() const;
             std::string jsonString();
+
+            coord_t GetPosition();
+            static pos_t GetDistance(const Neuron& p_a, const Neuron& p_b);
+            static coord_t GetAverage(const Neuron& p_a, const Neuron& p_b);
         protected:
             virtual neuralVal_t calcOutput() = 0;
 
@@ -67,6 +71,8 @@ namespace LibGoodBoy
             neuralVal_t m_outputSum;
 
             std::list<Neuron*> m_outputConnectionsList;
+
+            coord_t m_pos;
 
             const std::vector<neuralVal_t> m_outputFilterTaps;
             const std::vector<neuralVal_t> m_evolveFilterTaps;

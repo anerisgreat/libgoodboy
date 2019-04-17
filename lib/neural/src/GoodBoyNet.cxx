@@ -312,7 +312,6 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
-
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
             neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
             neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();

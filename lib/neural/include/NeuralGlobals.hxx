@@ -25,6 +25,7 @@ namespace LibGoodBoy{
     template<class T> inline T ApproxSigmoid(T p_a);
 
     pos_t GetDistance(const coord_t& p_ca, const coord_t& p_cb);
+    coord_t GetAverageCoord(const coord_t& p_ca, const coord_t& p_cb);
 
     //CONSTS
     extern const std::string JSON_UID_KEY;
@@ -37,6 +38,8 @@ namespace LibGoodBoy{
 
     extern const std::string JSON_CONNECTION_WEIGHT_KEY;
     extern const std::string JSON_CONNECTION_ALPHA_KEY;
+
+    const std::string JSON_POS_KEY;
 
     extern const std::string NET_INP_KEY;
     extern const std::string NET_OUT_KEY;

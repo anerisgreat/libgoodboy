@@ -48,6 +48,10 @@ namespace LibGoodBoy{
         return sqrt(pow((p_ca - p_cb), 2).sum());
     }
 
+    pos_t GetAverageCoord(const coord_t& p_ca, const coord_t& p_cb){
+        return (p_ca + p_cb) / 2;
+    }
+
     //CONSTS
     const std::string JSON_UID_KEY = "uid";
     const std::string JSON_OUTP_CONN_KEY = "output_connections";
@@ -59,6 +63,8 @@ namespace LibGoodBoy{
 
     const std::string JSON_CONNECTION_WEIGHT_KEY = "weight";
     const std::string JSON_CONNECTION_ALPHA_KEY = "alpha";
+
+    const std::string JSON_POS_KEY = "position";
 
     const std::string NET_INP_KEY = "inputs";
     const std::string NET_OUT_KEY = "outputs";

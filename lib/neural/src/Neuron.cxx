@@ -25,6 +25,8 @@ namespace LibGoodBoy{
 
             m_outputConnectionsList(),
 
+            m_pos({});
+
             m_uid(boost::uuids::random_generator()())
     {}
 
@@ -161,6 +163,11 @@ namespace LibGoodBoy{
                     boost::uuids::to_string((*iter)->GetUID()));
         }
 
+        retJSON[JSON_POS_KEY] = json_t::array();
+        for(pos_t pos : m_pos){
+            retJSON[JSON_POS_KEY].push_back(pos);
+        }
+
         return retJSON;
     }
 
@@ -168,5 +175,20 @@ namespace LibGoodBoy{
         return GetJSON().dump();
     }
 
+    coord_t GetPosition(){
+        return m_pos;
+    }
+
+    void SetPosition(coord_t p_pos){
+        m_pos = p_pos;
+    }
+
+    pos_t Neuron::GetDistance(const Neuron& p_a, const Neuron& p_b){
+        return GetDistance(p_a.GetPosition(), p_b.GetPosition());
+    }
+
+    coord_t GetAveragePosition(const Neuron& p_a, const Neuron& p_b){
+        return GetAverageCoord(p_a.GetPosition(), p_b.GetPosition());
+    }
     //Private____________________________________________________________
 }
