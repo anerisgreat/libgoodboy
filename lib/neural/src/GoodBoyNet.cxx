@@ -40,8 +40,6 @@ namespace LibGoodBoy
             m_generationFactor(p_defaultGenerationFactor),
             m_evolvingEnabled(p_evolvingEnabled)
     {
-        //m_inputs.push_back(std::make_shared<InputNeuron>());
-        //m_inputs[0]->FeedInput(1);
     }
 
     GoodBoyNet::~GoodBoyNet(){}
@@ -61,7 +59,7 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
-        m_inputs[p_nInput + 1]->FeedInput(p_inputVal);
+        m_inputs[p_nInput]->FeedInput(p_inputVal);
     }
 
         void GoodBoyNet::CreateInputs(const std::vector<pos_t>& p_positions){
@@ -90,9 +88,6 @@ namespace LibGoodBoy
 
     void GoodBoyNet::GetOutputs(std::vector<neuralVal_t>& p_outBuff) const{
 
-        for(auto iter = m_inputs.begin(); iter != m_inputs.end(); ++iter){
-            (*iter)->GetOutput();
-        }
 
         auto oIter = p_outBuff.begin();
         auto vIter = m_lastOutputs.begin();
@@ -201,31 +196,37 @@ namespace LibGoodBoy
                 iter != m_midNeurons.end();
                 ++iter)
         {
-            maxSelectionWeight += 
-                GetDistance((*iter)->GetPosition(), neuronPos);
+            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
+            if(d!= 0)
+                maxSelectionWeight += 1/d;
         }
 
         for(auto iter = m_outputs.begin();
                 iter != m_outputs.end();
                 ++iter)
         {
-            maxSelectionWeight += 
-                GetDistance((*iter)->GetPosition(), neuronPos);
+            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
+            if(d!= 0)
+                maxSelectionWeight += 1/d;
         }
 
         posscalar_t outWeight = RandInRange<posscalar_t>(0, maxSelectionWeight);
         posscalar_t outWeightAcc = 0;
 
         for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
-            outWeightAcc+=(*iter)->GetOutputSum();
-            if(outWeightAcc > outWeight){
+            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
+            if(d!= 0)
+                outWeightAcc += 1/d;
+            if(outWeightAcc >= outWeight){
                 return *iter;
             }
         }
 
         for(auto iter=m_outputs.begin(); iter!=m_outputs.end(); ++iter){
-            outWeightAcc+=(*iter)->GetOutputSum();
-            if(outWeightAcc > outWeight){
+            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
+            if(d!= 0)
+                outWeightAcc += 1/d;
+            if(outWeightAcc >= outWeight){
                 return *iter;
             }
         }
@@ -391,6 +392,11 @@ namespace LibGoodBoy
     }
 
     void GoodBoyNet::calcOutputs(){
+        //Do this to make sure all inputs always update
+        for(auto iter = m_inputs.begin(); iter != m_inputs.end(); ++iter){
+            (*iter)->GetOutput();
+        }
+
         auto oIter = m_outputs.begin();
         auto lIter = m_lastOutputs.begin();
 
