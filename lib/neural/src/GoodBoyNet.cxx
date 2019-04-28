@@ -40,8 +40,8 @@ namespace LibGoodBoy
             m_generationFactor(p_defaultGenerationFactor),
             m_evolvingEnabled(p_evolvingEnabled)
     {
-        m_inputs.push_back(std::make_shared<InputNeuron>());
-        m_inputs[0]->FeedInput(1);
+        //m_inputs.push_back(std::make_shared<InputNeuron>());
+        //m_inputs[0]->FeedInput(1);
     }
 
     GoodBoyNet::~GoodBoyNet(){}
@@ -383,6 +383,9 @@ namespace LibGoodBoy
 
             newNeuron->Connect(outNeuronPtr);
             recvNeuronPtr->Connect(newNeuron);
+            newNeuron->SetPosition(Neuron::GetNeuronAveragePosition(
+                        *outNeuronPtr, 
+                        *recvNeuronPtr));
             m_midNeurons.push_back(newNeuron);
         }
     }

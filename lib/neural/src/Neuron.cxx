@@ -190,7 +190,7 @@ namespace LibGoodBoy{
     pos_t Neuron::GetNeuronAveragePosition(const Neuron& p_a, 
             const Neuron& p_b)
     {
-        return GetAverageCoord(p_a.GetPosition(), p_b.GetPosition());
+        return GetAveragePosition(p_a.GetPosition(), p_b.GetPosition());
     }
     //Private____________________________________________________________
 }

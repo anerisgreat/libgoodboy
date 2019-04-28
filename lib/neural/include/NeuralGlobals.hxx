@@ -25,7 +25,7 @@ namespace LibGoodBoy{
     template<class T> inline T ApproxSigmoid(T p_a);
 
     extern posscalar_t GetDistance(const pos_t& p_ca, const pos_t& p_cb);
-    extern pos_t GetAverageCoord(const pos_t& p_ca, const pos_t& p_cb);
+    extern pos_t GetAveragePosition(const pos_t& p_ca, const pos_t& p_cb);
 
     //CONSTS
     extern const std::string JSON_UID_KEY;

@@ -48,7 +48,7 @@ namespace LibGoodBoy{
         return sqrt(pow((p_ca - p_cb), 2).sum());
     }
 
-    pos_t GetAverageCoord(const pos_t& p_ca, const pos_t& p_cb){
+    pos_t GetAveragePosition(const pos_t& p_ca, const pos_t& p_cb){
         return (p_ca + p_cb) / 2;
     }
 
