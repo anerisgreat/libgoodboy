@@ -44,11 +44,11 @@ namespace LibGoodBoy{
         }
     }
 
-    pos_t GetDistance(const coord_t& p_ca, const coord_t& p_cb){
+    posscalar_t GetDistance(const pos_t& p_ca, const pos_t& p_cb){
         return sqrt(pow((p_ca - p_cb), 2).sum());
     }
 
-    pos_t GetAverageCoord(const coord_t& p_ca, const coord_t& p_cb){
+    pos_t GetAverageCoord(const pos_t& p_ca, const pos_t& p_cb){
         return (p_ca + p_cb) / 2;
     }
 

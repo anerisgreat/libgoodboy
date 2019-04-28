@@ -23,9 +23,6 @@ namespace LibGoodBoy
                     const std::vector<neuralVal_t>& p_outputFilterTaps,
                     const std::vector<neuralVal_t>& p_evolveFilterTaps,
 
-                    neuralSize_t p_nInputs,
-                    neuralSize_t p_nOutputs,
-
                     neuralVal_t p_degrFactor,
                     neuralVal_t p_maxStartWeight,
                     neuralVal_t p_defaultAlpha,
@@ -38,8 +35,8 @@ namespace LibGoodBoy
             void SetInputs(const std::vector<neuralVal_t>& p_inVec);
             void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
 
-            void CreateInputs(neuralSize_t p_nInputs);
-            void CreateOutputs(neuralSize_t p_nOutputs);
+            void CreateInputs(const std::vector<pos_t>& p_positions);
+            void CreateOutputs(const std::vector<pos_t>& p_positions);
 
             void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
             neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
@@ -51,14 +48,14 @@ namespace LibGoodBoy
 
             void Evolve(neuralVal_t p_amount);
 
-
         private:
 
             void adjustWeights(neuralVal_t p_amount);
             void cleanup();
             neuralSize_t numNeuronsToMake();
             void makeNewNeurons(neuralSize_t p_numNewNeurons);
-            Neuron* getOutNeuron();
+            Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
+            ConnectableNeuron* getRecvNeuron(Neuron* outNeuron);
 
             void calcOutputs();
             void resetOutputFlag();

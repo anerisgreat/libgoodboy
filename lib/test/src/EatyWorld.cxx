@@ -12,8 +12,6 @@ using namespace LibGoodBoy;
 void runTest(){
     srand(time(NULL));
     const neuralVal_t WORLD_SIZE = 100;
-    std::size_t nInputs = 2;
-    std::size_t nOutputs = 2;
 
     std::vector<float> evFilt;
     for(char i = 2; i < 100; i++){
@@ -30,16 +28,18 @@ void runTest(){
 
     GoodBoyNet gNet(connFilt,
             evFilt,
-            (neuralSize_t)nInputs, // n_inputs
-            (neuralSize_t)nInputs,
             (neuralVal_t)0.01, //degr_factor
             (neuralVal_t)1, //max start weight
             (neuralVal_t)2, //default alpha,
             (neuralVal_t)0.01, //generation factor
             true); 
 
-    std::vector<neuralVal_t> inputs(nInputs);
-    std::vector<neuralVal_t> outputs(nOutputs);
+    std::vector<pos_t> inpPos = {{-1, -1, 0}, {1, -1, 0}};
+    std::vector<pos_t> outPos = {{0, 1, 1}, {0, 1, -1}};
+    gNet.CreateInputs(inpPos);
+    gNet.CreateOutputs(outPos);
+    std::vector<neuralVal_t> inputs(2);
+    std::vector<neuralVal_t> outputs(2);
     neuralVal_t foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
     neuralVal_t currentPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
     unsigned long iterNum = 0;

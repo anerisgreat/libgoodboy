@@ -14,8 +14,8 @@ namespace LibGoodBoy{
     typedef std::size_t neuralSize_t;
     typedef nlohmann::json json_t;
     typedef boost::uuids::uuid uuid_t;
-    typedef double pos_t;
-    typedef std::valarray<pos_t> coord_t;
+    typedef double posscalar_t;
+    typedef std::valarray<posscalar_t> pos_t;
 
     //METHODS
 
@@ -24,8 +24,8 @@ namespace LibGoodBoy{
     template<class T> inline T ReLU(T p_a);
     template<class T> inline T ApproxSigmoid(T p_a);
 
-    pos_t GetDistance(const coord_t& p_ca, const coord_t& p_cb);
-    coord_t GetAverageCoord(const coord_t& p_ca, const coord_t& p_cb);
+    extern posscalar_t GetDistance(const pos_t& p_ca, const pos_t& p_cb);
+    extern pos_t GetAverageCoord(const pos_t& p_ca, const pos_t& p_cb);
 
     //CONSTS
     extern const std::string JSON_UID_KEY;
@@ -39,7 +39,7 @@ namespace LibGoodBoy{
     extern const std::string JSON_CONNECTION_WEIGHT_KEY;
     extern const std::string JSON_CONNECTION_ALPHA_KEY;
 
-    const std::string JSON_POS_KEY;
+    extern const std::string JSON_POS_KEY;
 
     extern const std::string NET_INP_KEY;
     extern const std::string NET_OUT_KEY;
