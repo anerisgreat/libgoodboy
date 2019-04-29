@@ -1,7 +1,5 @@
 #include "NeuralGlobals.hxx"
 #include <boost/fusion/algorithm/iteration/for_each.hpp>
-#include <iostream>
-#include <stdio.h>
 #include <math.h>
 
 namespace LibGoodBoy{
