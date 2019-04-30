@@ -29,7 +29,7 @@ void runTest(){
     GoodBoyNet gNet(connFilt,
             evFilt,
             (neuralVal_t)0.01, //degr_factor
-            (neuralVal_t)1, //max start weight
+            (neuralVal_t)2, //max start weight
             (neuralVal_t)2, //default alpha,
             (neuralVal_t)0.01, //generation factor
             true); 
