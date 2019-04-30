@@ -172,14 +172,14 @@ namespace LibGoodBoy
         neuralVal_t outWeightAcc = 0;
 
         for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
-            outWeightAcc+=(*iter)->GetOutputSum();
+            outWeightAcc+=calcOutNeuronWeight(*iter);
             if(outWeightAcc > outWeight){
                 return *iter;
             }
         }
 
         for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
-            outWeightAcc+=(*iter)->GetOutputSum();
+            outWeightAcc+=calcOutNeuronWeight(iter->get());
             if(outWeightAcc > outWeight){
                 return (*iter).get();
             }
@@ -188,50 +188,59 @@ namespace LibGoodBoy
         return m_inputs[m_inputs.size() - 1].get();
     }
 
-    ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* outNeuron){
-        pos_t neuronPos = outNeuron->GetPosition();
+
+    neuralVal_t GoodBoyNet::calcOutNeuronWeight(Neuron* p_n){
+        neuralSize_t noutputs = p_n->GetNumOutputs();
+        return (p_n->GetOutputSum())/(1+noutputs);
+    }
+
+    ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
+        pos_t neuronPos = p_outNeuron->GetPosition();
 
         posscalar_t maxSelectionWeight = 0;
         for(auto iter = m_midNeurons.begin();
                 iter != m_midNeurons.end();
                 ++iter)
         {
-            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
-            if(d!= 0)
-                maxSelectionWeight += 1/d;
+            maxSelectionWeight += calcRecvNeuronWeight(*iter, neuronPos);
         }
 
         for(auto iter = m_outputs.begin();
                 iter != m_outputs.end();
                 ++iter)
         {
-            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
-            if(d!= 0)
-                maxSelectionWeight += 1/d;
+            maxSelectionWeight += calcRecvNeuronWeight(*iter, neuronPos);
         }
 
         posscalar_t outWeight = RandInRange<posscalar_t>(0, maxSelectionWeight);
         posscalar_t outWeightAcc = 0;
 
         for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
-            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
-            if(d!= 0)
-                outWeightAcc += 1/d;
-            if(outWeightAcc >= outWeight){
+            outWeightAcc += calcRecvNeuronWeight(*iter, neuronPos);
+            if(outWeightAcc > outWeight){
                 return *iter;
             }
         }
 
         for(auto iter=m_outputs.begin(); iter!=m_outputs.end(); ++iter){
-            posscalar_t d = GetDistance((*iter)->GetPosition(), neuronPos);
-            if(d!= 0)
-                outWeightAcc += 1/d;
-            if(outWeightAcc >= outWeight){
+            outWeightAcc += calcRecvNeuronWeight(*iter, neuronPos);
+            if(outWeightAcc > outWeight){
                 return *iter;
             }
         }
 
         return m_outputs[m_outputs.size() - 1];
+    }
+
+    posscalar_t GoodBoyNet::calcRecvNeuronWeight(
+            const ConnectableNeuron* p_recvNeuron, 
+            pos_t p_outPos)
+    {
+        neuralSize_t ninputs = p_recvNeuron->GetNumInputs();
+        posscalar_t d = GetDistance(p_recvNeuron->GetPosition(), p_outPos);
+        if(d == 0)
+            return 0;
+        return 1/(d*(ninputs + 1));
     }
 
     void GoodBoyNet::adjustWeights(neuralVal_t p_amount){
@@ -355,10 +364,10 @@ namespace LibGoodBoy
         //Getting max selection weight for output selection
         neuralVal_t maxSelectionWeight = 0;
         for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
-            maxSelectionWeight += (*iter)->GetOutputSum();
+            maxSelectionWeight += calcOutNeuronWeight(*iter);
         }
         for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
-            maxSelectionWeight += (*iter)->GetOutputSum();
+            maxSelectionWeight += calcOutNeuronWeight(iter->get());
         }
 
         for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){

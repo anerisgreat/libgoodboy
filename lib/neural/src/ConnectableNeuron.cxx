@@ -126,6 +126,10 @@ namespace LibGoodBoy
         connection->ConnectedNeuronPtr->OnConnectedToOutput(this);
     }
 
+    neuralSize_t ConnectableNeuron::GetNumInputs() const{
+        return m_inConnectionList.size();
+    }
+
     neuralVal_t ConnectableNeuron::calcOutput(){
         neuralVal_t sum = 0;
 

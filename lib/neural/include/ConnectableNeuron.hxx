@@ -35,6 +35,8 @@ namespace LibGoodBoy
             void Connect(Neuron* p_toConnect,
                     neuralVal_t p_weight,
                     neuralVal_t p_alpha);
+
+            neuralSize_t GetNumInputs() const;
         protected:
 
             neuralVal_t calcOutput();

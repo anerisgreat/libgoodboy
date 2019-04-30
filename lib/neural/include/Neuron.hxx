@@ -36,6 +36,8 @@ namespace LibGoodBoy
             void OnConnectedToOutput(Neuron* p_connected);
             void OnRemovedFromOutput(Neuron* p_removed);
 
+            neuralSize_t GetNumOutputs() const;
+
             //Probe_______________________________________
             void BackProbe();
             void ForwardProbe();

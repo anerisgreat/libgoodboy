@@ -52,10 +52,16 @@ namespace LibGoodBoy
 
             void adjustWeights(neuralVal_t p_amount);
             void cleanup();
+
             neuralSize_t numNeuronsToMake();
             void makeNewNeurons(neuralSize_t p_numNewNeurons);
+
             Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
-            ConnectableNeuron* getRecvNeuron(Neuron* outNeuron);
+            neuralVal_t calcOutNeuronWeight(Neuron* p_n);
+            ConnectableNeuron* getRecvNeuron(Neuron* p_outNeuron);
+            posscalar_t calcRecvNeuronWeight(
+                const ConnectableNeuron* p_recvNeuron, 
+                pos_t p_outPos);
 
             void calcOutputs();
             void resetOutputFlag();

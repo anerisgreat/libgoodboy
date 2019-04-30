@@ -81,6 +81,10 @@ namespace LibGoodBoy{
         }
     }
 
+    neuralSize_t Neuron::GetNumOutputs() const{
+        return m_outputConnectionsList.size();
+    }
+
     //Contribution________________________________________________
     neuralVal_t Neuron::GetContribution(){
         return m_lastContribution;
