@@ -191,7 +191,7 @@ namespace LibGoodBoy
 
     neuralVal_t GoodBoyNet::calcOutNeuronWeight(Neuron* p_n){
         neuralSize_t noutputs = p_n->GetNumOutputs();
-        return (p_n->GetOutputSum())/(1+noutputs);
+        return (log(p_n->GetOutputSum()))/(1+noutputs);
     }
 
     ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
