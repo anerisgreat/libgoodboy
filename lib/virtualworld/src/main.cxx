@@ -32,6 +32,13 @@ void runTest(){
         return;
     }
 
+    IVideoDriver* driver = device->getVideoDriver();
+    ISceneManager* smgr = device->getSceneManager();
+    IGUIEnvironment* guienv = device->getGUIEnvironment();
+
+    guienv->addStaticText(L"Hello World" \
+        "This is the Irrlicht Software renderer!",
+        rect<s32>(10,10,260,22), true);
     srand(time(NULL));
 
     std::vector<float> evFilt;
@@ -57,7 +64,7 @@ void runTest(){
     std::vector<neuralVal_t> inputs(2);
     std::vector<neuralVal_t> outputs(2);
     unsigned long iterNum = 0;
-    while(true){
+    while(device->run()){
         gNet.SetInputs(inputs);
         gNet.Iter();
         gNet.GetOutputs(outputs);
@@ -65,6 +72,13 @@ void runTest(){
         neuralVal_t evolveAmount = 0;
         gNet.Evolve(evolveAmount);
         iterNum++;
+
+        driver->beginScene(true, true, SColor(255,100,101,140));
+
+        smgr->drawAll();
+        guienv->drawAll();
+
+        driver->endScene();
     }
 }
 
