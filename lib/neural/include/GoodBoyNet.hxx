@@ -80,6 +80,8 @@ namespace LibGoodBoy
             const std::vector<neuralVal_t> m_outputFilterTaps;
             const std::vector<neuralVal_t> m_evolveFilterTaps;
 
+            neuralVal_t m_filteredEv;
+
             neuralVal_t m_degrFactor;
             neuralVal_t m_maxStartWeight;
             neuralVal_t m_defaultAlpha;

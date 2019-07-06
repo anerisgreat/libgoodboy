@@ -34,6 +34,8 @@ namespace LibGoodBoy
             m_outputFilterTaps(p_outputFilterTaps),
             m_evolveFilterTaps(p_evolveFilterTaps),
 
+            m_filteredEv(0),
+
             m_degrFactor(p_degrFactor),
             m_maxStartWeight(p_maxStartWeight),
             m_defaultAlpha(p_defaultAlpha),

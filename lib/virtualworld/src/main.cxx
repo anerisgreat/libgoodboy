@@ -80,6 +80,8 @@ void runTest(){
 
         driver->endScene();
     }
+
+    device->drop();
 }
 
 int main(int argc, char *argv[]){
