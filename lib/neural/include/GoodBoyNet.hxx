@@ -30,18 +30,27 @@ class GoodBoyNet{
                 bool p_evolvingEnabled);
         ~GoodBoyNet();
 
+        //Runtime_____________________________________
         void Iter();
-        void SetInputs(const std::vector<neuralVal_t>& p_inVec);
-        void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
 
-        void CreateInputs(const std::vector<pos_t>& p_positions);
-        void CreateOutputs(const std::vector<pos_t>& p_positions);
+        //Input/output handling_______________________
+        void CreateInputGroup(std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
+        void AppendToInputGroup(std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
 
-        void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
-        neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
+        void CreateOutputGroup(std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
+        void AppendToOutputGroup(std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
 
+        void GetOutputGroupValues(std::string p_groupName,
+                std::vector<neuralVal_t>& p_outBuff) const;
+
+        //Statistics__________________________________
         neuralSize_t GetMidSize() const;
 
+        //JSON________________________________________
         json_t GetJSON() const;
         std::string jsonString();
 
@@ -49,8 +58,9 @@ class GoodBoyNet{
 
     private:
 
+        //Methods_____________________________________
         void adjustWeights(neuralVal_t p_amount);
-        void cleanup();
+        void cleanup(); //Erases all non-reachable neurons
 
         neuralSize_t numNeuronsToMake();
         void makeNewNeurons(neuralSize_t p_numNewNeurons);
@@ -66,10 +76,13 @@ class GoodBoyNet{
         void resetOutputFlag();
         void resetOutputSums();
 
-        std::vector<std::shared_ptr<InputNeuron>> m_inputs;
-        std::vector<ConnectableNeuron*> m_outputs;
+        //Members_____________________________________
+        std::map<std::string, std::vector<std::shared_ptr<InputNeuron>>>
+            m_inputMap;
+        std::map<std::string, std::vector<ConnectableNeuron*>>
+            m_outputMap;
 
-        std::vector<neuralVal_t> m_lastOutputs;
+        std::map<std::string, ConnectableNeuron*> m_outputMap;
 
         std::list<ConnectableNeuron*> m_midNeurons;
 

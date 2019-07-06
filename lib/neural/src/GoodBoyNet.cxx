@@ -17,14 +17,6 @@ GoodBoyNet::GoodBoyNet(
 
         bool p_evolvingEnabled)
     :
-        m_inputs(std::vector<std::shared_ptr<InputNeuron>>()),
-        m_outputs(std::vector<ConnectableNeuron*>()),
-
-        m_lastOutputs(std::vector<neuralVal_t>()),
-
-        m_midNeurons(std::list<ConnectableNeuron*>()),
-
-        m_connectionPool(),
         m_midNeuronPool(
                     m_connectionPool,
                     p_degrFactor,
@@ -62,33 +54,31 @@ void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
     m_inputs[p_nInput]->FeedInput(p_inputVal);
 }
 
-    void GoodBoyNet::CreateInputs(const std::vector<pos_t>& p_positions){
-        for(auto iter = p_positions.begin();
-                iter != p_positions.end();
-                ++iter)
-        {
-            std::shared_ptr<InputNeuron> newInp = 
-                std::make_shared<InputNeuron>();
-            newInp->SetPosition(*iter);
-            m_inputs.push_back(newInp);
-        }
+void GoodBoyNet::CreateInputs(const std::vector<pos_t>& p_positions){
+    for(auto iter = p_positions.begin();
+            iter != p_positions.end();
+            ++iter)
+    {
+        std::shared_ptr<InputNeuron> newInp = 
+            std::make_shared<InputNeuron>();
+        newInp->SetPosition(*iter);
+        m_inputs.push_back(newInp);
     }
+}
 
-    void GoodBoyNet::CreateOutputs(const std::vector<pos_t>& p_positions){
-        for(auto iter = p_positions.begin();
-                iter != p_positions.end();
-                ++iter)
-        {
-            ConnectableNeuron* newOutput = m_midNeuronPool.AllocElement();
-            newOutput->SetPosition(*iter);
-            m_outputs.push_back(newOutput);
-            m_lastOutputs.push_back(0);
-        }
+void GoodBoyNet::CreateOutputs(const std::vector<pos_t>& p_positions){
+    for(auto iter = p_positions.begin();
+            iter != p_positions.end();
+            ++iter)
+    {
+        ConnectableNeuron* newOutput = m_midNeuronPool.AllocElement();
+        newOutput->SetPosition(*iter);
+        m_outputs.push_back(newOutput);
+        m_lastOutputs.push_back(0);
     }
+}
 
 void GoodBoyNet::GetOutputs(std::vector<neuralVal_t>& p_outBuff) const{
-
-
     auto oIter = p_outBuff.begin();
     auto vIter = m_lastOutputs.begin();
 
