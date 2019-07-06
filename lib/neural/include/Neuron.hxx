@@ -9,83 +9,83 @@
 #include <memory>
 #include <list>
 
-namespace LibGoodBoy
-{
-    class Neuron : public Resetable
-    {
-        public:
-            //Constructor & Destructor____________________
-            Neuron();
-            ~Neuron();
+namespace LibGoodBoy{
 
-            //Output______________________________________
-            neuralVal_t GetOutput();
-            void ResetOutputFlag();
+class Neuron : public Resetable{
+    public:
+        //Constructor & Destructor____________________
+        Neuron();
+        ~Neuron();
 
-            //Evolving____________________________________
-            virtual void Evolve(neuralVal_t p_amount) = 0;
-            neuralVal_t GetContribution();
-            void ResetContributionFlag();
+        //Output______________________________________
+        neuralVal_t GetOutput();
+        void ResetOutputFlag();
 
-            neuralVal_t GetOutputSum();
-            void ResetOutputSum();
+        //Evolving____________________________________
+        virtual void Evolve(neuralVal_t p_amount) = 0;
+        neuralVal_t GetContribution();
+        void ResetContributionFlag();
 
-            //Connection Management_______________________
-            virtual void PurgeConnections(const std::list<Neuron*>& p_toPurge);
+        neuralVal_t GetOutputSum();
+        void ResetOutputSum();
 
-            void OnConnectedToOutput(Neuron* p_connected);
-            void OnRemovedFromOutput(Neuron* p_removed);
+        //Connection Management_______________________
+        virtual void PurgeConnections(const std::list<Neuron*>& p_toPurge);
 
-            neuralSize_t GetNumOutputs() const;
+        void OnConnectedToOutput(Neuron* p_connected);
+        void OnRemovedFromOutput(Neuron* p_removed);
 
-            //Probe_______________________________________
-            void BackProbe();
-            void ForwardProbe();
-            bool GetWasFullyProbed() const;
-            virtual void ResetProbeFlag();
+        neuralSize_t GetNumOutputs() const;
 
-            //Reseting____________________________________
-            virtual void Reset();
+        //Probe_______________________________________
+        void BackProbe();
+        void ForwardProbe();
+        bool GetWasFullyProbed() const;
+        virtual void ResetProbeFlag();
 
-            //Properties__________________________________
-            uuid_t GetUID();
-            virtual json_t GetJSON() const;
-            std::string jsonString();
+        //Reseting____________________________________
+        virtual void Reset();
 
-            pos_t GetPosition() const;
-            void SetPosition(pos_t p_pos);
-            static posscalar_t GetNeuronDistance(const Neuron& p_a,
-                    const Neuron& p_b);
-            static pos_t GetNeuronAveragePosition(const Neuron& p_a,
-                    const Neuron& p_b);
-        protected:
-            virtual neuralVal_t calcOutput() = 0;
+        //Properties__________________________________
+        uuid_t GetUID();
+        virtual json_t GetJSON() const;
+        std::string jsonString();
 
-            virtual void postBackProbe() = 0;
-            virtual void postForwardProbe() = 0;
+        pos_t GetPosition() const;
+        void SetPosition(pos_t p_pos);
+        static posscalar_t GetNeuronDistance(const Neuron& p_a,
+                const Neuron& p_b);
+        static pos_t GetNeuronAveragePosition(const Neuron& p_a,
+                const Neuron& p_b);
+    protected:
+        virtual neuralVal_t calcOutput() = 0;
 
-        private:
-            bool m_checkedOutputFlag;
-            bool m_forwardProbedFlag;
-            bool m_backwardProbedFlag;
-            bool m_evolveFlag;
-            bool m_contributionFlag;
+        virtual void postBackProbe() = 0;
+        virtual void postForwardProbe() = 0;
 
-            neuralVal_t m_lastOutput;
-            neuralVal_t m_lastContribution;
-            neuralVal_t m_outputSum;
+    private:
+        bool m_checkedOutputFlag;
+        bool m_forwardProbedFlag;
+        bool m_backwardProbedFlag;
+        bool m_evolveFlag;
+        bool m_contributionFlag;
 
-            std::list<Neuron*> m_outputConnectionsList;
+        neuralVal_t m_lastOutput;
+        neuralVal_t m_lastContribution;
+        neuralVal_t m_outputSum;
 
-            pos_t m_pos;
+        std::list<Neuron*> m_outputConnectionsList;
 
-            const std::vector<neuralVal_t> m_outputFilterTaps;
-            const std::vector<neuralVal_t> m_evolveFilterTaps;
+        pos_t m_pos;
 
-            std::size_t m_evolveFilterLen;
+        const std::vector<neuralVal_t> m_outputFilterTaps;
+        const std::vector<neuralVal_t> m_evolveFilterTaps;
 
-            uuid_t m_uid;
-    };
-}
+        std::size_t m_evolveFilterLen;
+
+        uuid_t m_uid;
+};
+
+}//End namespace
 
 #endif

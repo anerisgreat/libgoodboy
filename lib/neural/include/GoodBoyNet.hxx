@@ -13,79 +13,79 @@
 #include <memory>
 #include <list>
 
-namespace LibGoodBoy
-{
-    class GoodBoyNet
-    {
-        public:
-            //Constructor & Destructor____________________
-            GoodBoyNet(
-                    const std::vector<neuralVal_t>& p_outputFilterTaps,
-                    const std::vector<neuralVal_t>& p_evolveFilterTaps,
+namespace LibGoodBoy{
 
-                    neuralVal_t p_degrFactor,
-                    neuralVal_t p_maxStartWeight,
-                    neuralVal_t p_defaultAlpha,
-                    neuralVal_t p_defaultGenerationFactor,
+class GoodBoyNet{
+    public:
+        //Constructor & Destructor____________________
+        GoodBoyNet(
+                const std::vector<neuralVal_t>& p_outputFilterTaps,
+                const std::vector<neuralVal_t>& p_evolveFilterTaps,
 
-                    bool p_evolvingEnabled);
-            ~GoodBoyNet();
+                neuralVal_t p_degrFactor,
+                neuralVal_t p_maxStartWeight,
+                neuralVal_t p_defaultAlpha,
+                neuralVal_t p_defaultGenerationFactor,
 
-            void Iter();
-            void SetInputs(const std::vector<neuralVal_t>& p_inVec);
-            void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
+                bool p_evolvingEnabled);
+        ~GoodBoyNet();
 
-            void CreateInputs(const std::vector<pos_t>& p_positions);
-            void CreateOutputs(const std::vector<pos_t>& p_positions);
+        void Iter();
+        void SetInputs(const std::vector<neuralVal_t>& p_inVec);
+        void SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal);
 
-            void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
-            neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
+        void CreateInputs(const std::vector<pos_t>& p_positions);
+        void CreateOutputs(const std::vector<pos_t>& p_positions);
 
-            neuralSize_t GetMidSize() const;
+        void GetOutputs(std::vector<neuralVal_t>& p_outBuff) const;
+        neuralVal_t GetOutput(neuralVal_t p_nOutput) const;
 
-            json_t GetJSON() const;
-            std::string jsonString();
+        neuralSize_t GetMidSize() const;
 
-            void Evolve(neuralVal_t p_amount);
+        json_t GetJSON() const;
+        std::string jsonString();
 
-        private:
+        void Evolve(neuralVal_t p_amount);
 
-            void adjustWeights(neuralVal_t p_amount);
-            void cleanup();
+    private:
 
-            neuralSize_t numNeuronsToMake();
-            void makeNewNeurons(neuralSize_t p_numNewNeurons);
+        void adjustWeights(neuralVal_t p_amount);
+        void cleanup();
 
-            Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
-            neuralVal_t calcOutNeuronWeight(Neuron* p_n);
-            ConnectableNeuron* getRecvNeuron(Neuron* p_outNeuron);
-            posscalar_t calcRecvNeuronWeight(
-                const ConnectableNeuron* p_recvNeuron, 
-                pos_t p_outPos);
+        neuralSize_t numNeuronsToMake();
+        void makeNewNeurons(neuralSize_t p_numNewNeurons);
 
-            void calcOutputs();
-            void resetOutputFlag();
-            void resetOutputSums();
+        Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
+        neuralVal_t calcOutNeuronWeight(Neuron* p_n);
+        ConnectableNeuron* getRecvNeuron(Neuron* p_outNeuron);
+        posscalar_t calcRecvNeuronWeight(
+            const ConnectableNeuron* p_recvNeuron, 
+            pos_t p_outPos);
 
-            std::vector<std::shared_ptr<InputNeuron>> m_inputs;
-            std::vector<ConnectableNeuron*> m_outputs;
+        void calcOutputs();
+        void resetOutputFlag();
+        void resetOutputSums();
 
-            std::vector<neuralVal_t> m_lastOutputs;
+        std::vector<std::shared_ptr<InputNeuron>> m_inputs;
+        std::vector<ConnectableNeuron*> m_outputs;
 
-            std::list<ConnectableNeuron*> m_midNeurons;
+        std::vector<neuralVal_t> m_lastOutputs;
 
-            neuralConnectionPool_t m_connectionPool;
-            connectableNeuronPool_t m_midNeuronPool;
+        std::list<ConnectableNeuron*> m_midNeurons;
 
-            const std::vector<neuralVal_t> m_outputFilterTaps;
-            const std::vector<neuralVal_t> m_evolveFilterTaps;
+        neuralConnectionPool_t m_connectionPool;
+        connectableNeuronPool_t m_midNeuronPool;
 
-            neuralVal_t m_degrFactor;
-            neuralVal_t m_maxStartWeight;
-            neuralVal_t m_defaultAlpha;
-            neuralVal_t m_generationFactor;
-            bool m_evolvingEnabled;
-    };
-}
+        const std::vector<neuralVal_t> m_outputFilterTaps;
+        const std::vector<neuralVal_t> m_evolveFilterTaps;
+
+        neuralVal_t m_degrFactor;
+        neuralVal_t m_maxStartWeight;
+        neuralVal_t m_defaultAlpha;
+        neuralVal_t m_generationFactor;
+        bool m_evolvingEnabled;
+};
+
+}//End namespace
 
 #endif

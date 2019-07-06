@@ -4,11 +4,13 @@
 #include "ConnectableNeuron.hxx"
 
 namespace LibGoodBoy{
-    typedef ObjectPool<ConnectableNeuron,
-        neuralConnectionPool_t&,
-        neuralVal_t,
-        neuralVal_t,
-        neuralVal_t> connectableNeuronPool_t;
-}
+
+typedef ObjectPool<ConnectableNeuron,
+    neuralConnectionPool_t&,
+    neuralVal_t,
+    neuralVal_t,
+    neuralVal_t> connectableNeuronPool_t;
+
+}//End namespace
 
 #endif

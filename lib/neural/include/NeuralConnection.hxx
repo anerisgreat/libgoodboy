@@ -10,29 +10,29 @@
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/uuid.hpp>
 
-namespace LibGoodBoy
-{
-    class NeuralConnection : public Resetable
-    {
-        public:
-            Neuron* ConnectedNeuronPtr;
+namespace LibGoodBoy{
 
-            neuralVal_t Weight;
-            neuralVal_t Alpha;
+class NeuralConnection : public Resetable{
+    public:
+        Neuron* ConnectedNeuronPtr;
 
-            NeuralConnection(){}
+        neuralVal_t Weight;
+        neuralVal_t Alpha;
 
-            void Reset(){}
+        NeuralConnection(){}
 
-            json_t GetJSON(){
-                json_t retJSON;
-                retJSON[JSON_CONNECTION_ALPHA_KEY] = Alpha;
-                retJSON[JSON_CONNECTION_WEIGHT_KEY] = Weight;
-                retJSON[JSON_UID_KEY] = 
-                    boost::uuids::to_string(ConnectedNeuronPtr->GetUID());
-                return retJSON;
-            }
-    };
-}
+        void Reset(){}
+
+        json_t GetJSON(){
+            json_t retJSON;
+            retJSON[JSON_CONNECTION_ALPHA_KEY] = Alpha;
+            retJSON[JSON_CONNECTION_WEIGHT_KEY] = Weight;
+            retJSON[JSON_UID_KEY] = 
+                boost::uuids::to_string(ConnectedNeuronPtr->GetUID());
+            return retJSON;
+        }
+};
+
+}//End namespace
 
 #endif

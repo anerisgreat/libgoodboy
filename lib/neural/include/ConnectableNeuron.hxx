@@ -10,50 +10,50 @@
 #include <memory>
 #include <list>
 
-namespace LibGoodBoy
-{
-    class ConnectableNeuron : public Neuron
-    {
-        public:
-            ConnectableNeuron(
-                    neuralConnectionPool_t& p_connectionPool,
-                    neuralVal_t p_degrFactor,
-                    neuralVal_t p_maxStartWeight,
-                    neuralVal_t p_defaultAlpha);
+namespace LibGoodBoy{
 
-            ~ConnectableNeuron();
+class ConnectableNeuron : public Neuron{
+    public:
+        ConnectableNeuron(
+                neuralConnectionPool_t& p_connectionPool,
+                neuralVal_t p_degrFactor,
+                neuralVal_t p_maxStartWeight,
+                neuralVal_t p_defaultAlpha);
 
-            void Evolve(neuralVal_t p_amount);
+        ~ConnectableNeuron();
 
-            void PurgeConnections(const std::list<Neuron*>& p_toPurge);
+        void Evolve(neuralVal_t p_amount);
 
-            void Reset();
+        void PurgeConnections(const std::list<Neuron*>& p_toPurge);
 
-            json_t GetJSON() const;
+        void Reset();
 
-            void Connect(Neuron* p_toConnect);
-            void Connect(Neuron* p_toConnect,
-                    neuralVal_t p_weight,
-                    neuralVal_t p_alpha);
+        json_t GetJSON() const;
 
-            neuralSize_t GetNumInputs() const;
-        protected:
+        void Connect(Neuron* p_toConnect);
+        void Connect(Neuron* p_toConnect,
+                neuralVal_t p_weight,
+                neuralVal_t p_alpha);
 
-            neuralVal_t calcOutput();
+        neuralSize_t GetNumInputs() const;
+    protected:
 
-            void postBackProbe();
-            void postForwardProbe();
+        neuralVal_t calcOutput();
 
-        private:
-            std::list<NeuralConnection*> m_inConnectionList;
-            neuralConnectionPool_t& m_connectionPool;
+        void postBackProbe();
+        void postForwardProbe();
 
-            neuralVal_t m_degrFactor;
-            neuralVal_t m_maxStartWeight;
-            neuralVal_t m_defaultAlpha;
+    private:
+        std::list<NeuralConnection*> m_inConnectionList;
+        neuralConnectionPool_t& m_connectionPool;
 
-            void releaseAllInputs();
-    };
-}
+        neuralVal_t m_degrFactor;
+        neuralVal_t m_maxStartWeight;
+        neuralVal_t m_defaultAlpha;
+
+        void releaseAllInputs();
+};
+
+}//End namespace
 
 #endif

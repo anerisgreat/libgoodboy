@@ -5,7 +5,9 @@
 #include "NeuralConnection.hxx"
 
 namespace LibGoodBoy{
-    typedef ObjectPool<NeuralConnection> neuralConnectionPool_t;
-}
+
+typedef ObjectPool<NeuralConnection> neuralConnectionPool_t;
+
+}//End namespace
 
 #endif

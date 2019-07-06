@@ -7,31 +7,31 @@
 
 #include <vector>
 
-namespace LibGoodBoy
-{
-    class InputNeuron : public Neuron
-    {
-        public:
-            InputNeuron();
+namespace LibGoodBoy{
 
-            ~InputNeuron();
+class InputNeuron : public Neuron{
+    public:
+        InputNeuron();
 
-            void Evolve(neuralVal_t p_amount);
+        ~InputNeuron();
 
-            void FeedInput(neuralVal_t p_input);
+        void Evolve(neuralVal_t p_amount);
 
-            void Reset();
+        void FeedInput(neuralVal_t p_input);
 
-            json_t GetJSON() const;
-        protected:
-            neuralVal_t calcOutput();
+        void Reset();
 
-            void postBackProbe();
-            void postForwardProbe();
+        json_t GetJSON() const;
+    protected:
+        neuralVal_t calcOutput();
 
-        private:
-            neuralVal_t m_nextInput;
-    };
-}
+        void postBackProbe();
+        void postForwardProbe();
+
+    private:
+        neuralVal_t m_nextInput;
+};
+
+}//End namespace
 
 #endif
