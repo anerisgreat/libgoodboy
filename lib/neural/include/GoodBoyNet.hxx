@@ -34,14 +34,17 @@ class GoodBoyNet{
         void Iter();
 
         //Input/output handling_______________________
-        void CreateInputGroup(std::string p_groupName,
+        void CreateInputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
-        void AppendToInputGroup(std::string p_groupName,
+        void AppendToInputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
 
-        void CreateOutputGroup(std::string p_groupName,
+        void SetInputGroupValues(const std::string p_groupName,
+                const std::vector<neuralVal_t>& p_vals);
+
+        void CreateOutputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
-        void AppendToOutputGroup(std::string p_groupName,
+        void AppendToOutputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
 
         void GetOutputGroupValues(std::string p_groupName,
@@ -65,6 +68,11 @@ class GoodBoyNet{
         neuralSize_t numNeuronsToMake();
         void makeNewNeurons(neuralSize_t p_numNewNeurons);
 
+        void appendInputNeurons(const std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
+        void appendOutputNeurons(const std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
+
         Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
         neuralVal_t calcOutNeuronWeight(Neuron* p_n);
         ConnectableNeuron* getRecvNeuron(Neuron* p_outNeuron);
@@ -77,17 +85,16 @@ class GoodBoyNet{
         void resetOutputSums();
 
         //Members_____________________________________
-        std::map<std::string, std::vector<std::shared_ptr<InputNeuron>>>
+        std::map<std::string, std::vector<InputNeuron*>>
             m_inputMap;
         std::map<std::string, std::vector<ConnectableNeuron*>>
             m_outputMap;
-
-        std::map<std::string, ConnectableNeuron*> m_outputMap;
 
         std::list<ConnectableNeuron*> m_midNeurons;
 
         neuralConnectionPool_t m_connectionPool;
         connectableNeuronPool_t m_midNeuronPool;
+        inputNeuronPool_t  m_inputNeuronPool;
 
         const std::vector<neuralVal_t> m_outputFilterTaps;
         const std::vector<neuralVal_t> m_evolveFilterTaps;

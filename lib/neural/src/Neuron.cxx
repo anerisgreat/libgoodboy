@@ -46,6 +46,10 @@ neuralVal_t Neuron::GetOutput(){
     return m_lastOutput;
 }
 
+neuralVal_t Neuron::GetLastOutput() const{
+    return m_lastOutput;
+}
+
 void Neuron::ResetOutputFlag(){
     m_checkedOutputFlag = false;
 }

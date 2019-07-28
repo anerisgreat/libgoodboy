@@ -43,7 +43,11 @@ extern const std::string JSON_CONNECTION_ALPHA_KEY;
 extern const std::string JSON_POS_KEY;
 
 extern const std::string NET_INP_KEY;
+extern const std::string NET_INP_GROUP_NAME_KEY;
+extern const std::string NET_INP_GROUP_NEURONS_KEY;
 extern const std::string NET_OUT_KEY;
+extern const std::string NET_OUT_GROUP_NAME_KEY;
+extern const std::string NET_OUT_GROUP_NEURONS_KEY;
 extern const std::string NET_MID_KEY;
 extern const std::string NET_DEGR_FACTOR_KEY;
 extern const std::string NET_MAX_START_WEIGHT_KEY;

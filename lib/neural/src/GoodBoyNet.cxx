@@ -31,8 +31,7 @@ GoodBoyNet::GoodBoyNet(
         m_defaultAlpha(p_defaultAlpha),
         m_generationFactor(p_defaultGenerationFactor),
         m_evolvingEnabled(p_evolvingEnabled)
-{
-}
+{}
 
 GoodBoyNet::~GoodBoyNet(){}
 
@@ -54,36 +53,89 @@ void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
     m_inputs[p_nInput]->FeedInput(p_inputVal);
 }
 
-void GoodBoyNet::CreateInputs(const std::vector<pos_t>& p_positions){
-    for(auto iter = p_positions.begin();
-            iter != p_positions.end();
-            ++iter)
-    {
-        std::shared_ptr<InputNeuron> newInp = 
-            std::make_shared<InputNeuron>();
-        newInp->SetPosition(*iter);
-        m_inputs.push_back(newInp);
+void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
+    const std::vector<pos_t>& p_positions)
+{
+    //If not found proceed
+    if(m_inputMap.find(p_groupName) == m_inputMap.end()){
+        m_inputMap[p_groupName] = std::vector<InputNeuron*>;
+        appendInputNeurons(p_groupName, p_positions);
+    }
+    else{
+        //TODO: Throw exception
     }
 }
 
-void GoodBoyNet::CreateOutputs(const std::vector<pos_t>& p_positions){
-    for(auto iter = p_positions.begin();
-            iter != p_positions.end();
-            ++iter)
-    {
-        ConnectableNeuron* newOutput = m_midNeuronPool.AllocElement();
-        newOutput->SetPosition(*iter);
-        m_outputs.push_back(newOutput);
-        m_lastOutputs.push_back(0);
+void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
+    const std::vector<pos_t>& p_positions)
+{
+    //If found proceed
+    if(m_inputMap.find(p_groupName) != m_inputMap.end()){
+        appendInputNeurons(p_groupName, p_positions);
+    }
+    else{
+        //TODO: Throw exception
     }
 }
 
-void GoodBoyNet::GetOutputs(std::vector<neuralVal_t>& p_outBuff) const{
+void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
+        const std::vectorneuralVal_t>& p_vals)
+{
+    auto inGroup = m_inputMap.find(p_groupName);
+    if(inGroup == m_inputMap.end()){
+        //TODO:Proper exception
+    }
+    if(p_vals.size() != inGroup->size()){
+        //TODO: Proper exception
+    }
+
+    auto iIter = inGroup->begin();
+    auto vIter = p_vals.begin();
+    while(iIter!= p_vals.end() && vIter != inGroup->end()){
+
+        *oIter++ = (*vIter++)->GetLastOutput();
+    }
+}
+
+void GoodBoyNet::CreateOutputGroup(const std::string p_groupName,
+    const std::vector<pos_t>& p_positions)
+{
+    //If not found proceed
+    if(m_outputMap.find(p_groupName) == m_outputMap.end()){
+        m_outputMap[p_groupName] = std::vector<ConnectableNeuron*>;
+        appendOutputNeurons(p_groupName, p_positions);
+    }
+    else{
+        //TODO: Throw exception
+    }
+}
+
+void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
+    const std::vector<pos_t>& p_positions)
+{
+    //If found proceed
+    if(m_outputMap.find(p_groupName) != m_outputMap.end()){
+        appendOutputNeurons(p_groupName, p_positions);
+    }
+    else{
+        //TODO: Throw exception
+    }
+}
+
+void GoodBoyNet::GetOutputGroupValues(std::string p_groupName,
+    std::vector<neuralVal_t>& p_outBuff) const
+{
+    auto outGroup = m_outputMap.find(p_groupName);
+    if(outGroup == m_outputMap.end()){
+        //TODO:Proper exception
+    }
+    if(p_outBuff.size() != outGroup->size()){
+        //TODO: Proper exception
+    }
+    auto vIter = outGroup->begin();
     auto oIter = p_outBuff.begin();
-    auto vIter = m_lastOutputs.begin();
-
-    while(oIter!= p_outBuff.end() && vIter != m_lastOutputs.end()){
-        *oIter++ = *vIter++;
+    while(oIter!= p_outBuff.end() && vIter != outGroup->end()){
+        *oIter++ = (*vIter++)->GetLastOutput();
     }
 }
 
@@ -99,13 +151,31 @@ json_t GoodBoyNet::GetJSON() const{
     json_t retJson;
 
     retJson[NET_INP_KEY] = json_t::array();
-    for(auto iter = m_inputs.begin(); iter != m_inputs.end(); ++iter){
-        retJson[NET_INP_KEY].push_back((*iter)->GetJSON());
+    for(auto iter = m_inputMap.begin(); iter != m_inputMap.end(); ++iter){
+        json_t inGroup;
+        inGroup[NET_INP_GROUP_NAME_KEY] = iter->getKey();
+        inGroup[NET_INP_GROUP_NEURONS_KEY] = iter->json_t::array();
+        for(auto neurIter = iter->getValue()->begin();
+                neurIter != iter->getValue()->end();
+                ++neurIter)
+        {
+            inGroup[NET_INP_GROUP_NEURONS_KEY].push_back(neurIter->GetJSON());
+        }
+        retJson[NET_INP_KEY].push_back(inGroup);
     }
 
     retJson[NET_OUT_KEY] = json_t::array();
     for(auto iter = m_outputs.begin(); iter != m_outputs.end(); ++iter){
-        retJson[NET_OUT_KEY].push_back((*iter)->GetJSON());
+        json_t outGroup;
+        outGroup[NET_OUT_GROUP_NAME_KEY] = iter->getKey();
+        outGroup[NET_OUT_GROUP_NEURONS_KEY] = iter->json_t::array();
+        for(auto neurIter = iter->getValue()->begin();
+                neurIter != neurIter->getValue()->end();
+                ++neurIter)
+        {
+            outGroup[NET_OUT_GROUP_NEURONS_KEY].push_back(neurIter->GetJSON());
+        }
+        retJson[NET_OUT_KEY].push_back(outGroup);
     }
 
     retJson[NET_MID_KEY] = json_t::array();
@@ -388,6 +458,32 @@ void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
                     *outNeuronPtr, 
                     *recvNeuronPtr));
         m_midNeurons.push_back(newNeuron);
+    }
+}
+
+void GoodBoyNet::appendInputNeurons(const std::string p_groupName,
+        const std::vector<pos_t>& p_positions)
+{
+    for(auto iter = p_positions.begin();
+            iter != p_positions.end();
+            ++iter)
+    {
+        InputNeuron* tmp = m_inputNeuronPool.AllocElement();
+        tmp->SetPosition(*iter);
+        m_inputMap[p_groupName].push_back(tmp);
+    }
+}
+
+void GoodBoyNet::appendOutputNeurons(const std::string p_groupName,
+        const std::vector<pos_t>& p_positions)
+{
+    for(auto iter = p_positions.begin();
+            iter != p_positions.end();
+            ++iter)
+    {
+        ConnectableNeuron* tmp = m_midNeuronPool.AllocElement();
+        tmp->SetPosition(*iter);
+        m_outputMap[p_groupName].push_back(tmp);
     }
 }
 

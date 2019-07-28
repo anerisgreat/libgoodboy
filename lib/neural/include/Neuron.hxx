@@ -19,6 +19,7 @@ class Neuron : public Resetable{
 
         //Output______________________________________
         neuralVal_t GetOutput();
+        neuralVal_t GetLastOutput() const;
         void ResetOutputFlag();
 
         //Evolving____________________________________

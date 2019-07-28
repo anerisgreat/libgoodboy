@@ -66,7 +66,11 @@ const std::string JSON_CONNECTION_ALPHA_KEY = "alpha";
 const std::string JSON_POS_KEY = "position";
 
 const std::string NET_INP_KEY = "inputs";
+const std::string NET_INP_GROUP_NAME_KEY = "input_group_name";
+const std::string NET_INP_GROUP_NEURONS_KEY = "input_group_neurons";
 const std::string NET_OUT_KEY = "outputs";
+const std::string NET_OUT_GROUP_NAME_KEY = "output_group_name";
+const std::string NET_OUT_GROUP_NEURONS_KEY = "output_group_neurons";
 const std::string NET_MID_KEY = "mid_neurons";
 const std::string NET_DEGR_FACTOR_KEY = "degredation_factor";
 const std::string NET_MAX_START_WEIGHT_KEY = "maximum_start_weight";
