@@ -4,10 +4,10 @@
 #include "libGoodBoyConfig.hxx"
 #include "NeuralGlobals.hxx"
 #include "Neuron.hxx"
-#include "NeuralConnectionPool.hxx"
-#include "ConnectableNeuronPool.hxx"
 #include "ConnectableNeuron.hxx" 
 #include "InputNeuron.hxx"
+#include "InputNeuronPool.hxx"
+#include "ConnectableNeuronPool.hxx"
 
 #include <vector>
 #include <memory>
@@ -60,6 +60,15 @@ class GoodBoyNet{
         void Evolve(neuralVal_t p_amount);
 
     private:
+
+        /*
+        //Helper_classes______________________________
+        class InputIterator{
+            public:
+                typedef iterator self_type;
+                typedef InputNeuron value_type;
+                typedef 
+        };*/
 
         //Methods_____________________________________
         void adjustWeights(neuralVal_t p_amount);

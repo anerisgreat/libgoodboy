@@ -1,5 +1,5 @@
-#ifndef CONNECTABLE_NEURON_POOL_HXX
-#define CONNECTABLE_NEURON_POOL_HXX
+#ifndef INPUT_NEURON_POOL_HXX
+#define INPUT_NEURON_POOL_HXX
 #include "ObjectPool.hxx"
 #include "InputNeuron.hxx"
 

@@ -39,26 +39,12 @@ void GoodBoyNet::Iter(){
     calcOutputs();
 }
 
-void GoodBoyNet::SetInputs(const std::vector<neuralVal_t>& p_inVec){
-    auto inputIter = p_inVec.begin();
-    auto neurIter = m_inputs.begin()++;
-    for(;inputIter != p_inVec.end() && neurIter != m_inputs.end();
-            ++inputIter, ++neurIter)
-    {
-        (*neurIter)->FeedInput(*inputIter);
-    }
-}
-
-void GoodBoyNet::SetInput(neuralSize_t p_nInput, neuralVal_t p_inputVal){
-    m_inputs[p_nInput]->FeedInput(p_inputVal);
-}
-
 void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
     //If not found proceed
     if(m_inputMap.find(p_groupName) == m_inputMap.end()){
-        m_inputMap[p_groupName] = std::vector<InputNeuron*>;
+        m_inputMap[p_groupName] = std::vector<InputNeuron*>();
         appendInputNeurons(p_groupName, p_positions);
     }
     else{
@@ -79,13 +65,13 @@ void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
 }
 
 void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
-        const std::vectorneuralVal_t>& p_vals)
+        const std::vector<neuralVal_t>& p_vals)
 {
     auto inGroup = m_inputMap.find(p_groupName);
     if(inGroup == m_inputMap.end()){
         //TODO:Proper exception
     }
-    if(p_vals.size() != inGroup->size()){
+    if(p_vals.size() != inGroup.value()->size()){
         //TODO: Proper exception
     }
 
