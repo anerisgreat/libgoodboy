@@ -42,6 +42,7 @@ void GoodBoyNet::Iter(){
 void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
+    /*
     //If not found proceed
     if(m_inputMap.find(p_groupName) == m_inputMap.end()){
         m_inputMap[p_groupName] = std::vector<InputNeuron*>();
@@ -50,11 +51,13 @@ void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
+    */
 }
 
 void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
+    /*
     //If found proceed
     if(m_inputMap.find(p_groupName) != m_inputMap.end()){
         appendInputNeurons(p_groupName, p_positions);
@@ -62,30 +65,33 @@ void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
+    */
 }
 
 void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
         const std::vector<neuralVal_t>& p_vals)
 {
+    /*
     auto inGroup = m_inputMap.find(p_groupName);
     if(inGroup == m_inputMap.end()){
         //TODO:Proper exception
     }
-    if(p_vals.size() != inGroup.value()->size()){
+    if(p_vals.size() != inGroup->second.size()){
         //TODO: Proper exception
     }
 
     auto iIter = inGroup->begin();
     auto vIter = p_vals.begin();
     while(iIter!= p_vals.end() && vIter != inGroup->end()){
-
-        *oIter++ = (*vIter++)->GetLastOutput();
+        *iIter++ = (*vIter++)->GetLastOutput();
     }
+    */
 }
 
 void GoodBoyNet::CreateOutputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
+    /*
     //If not found proceed
     if(m_outputMap.find(p_groupName) == m_outputMap.end()){
         m_outputMap[p_groupName] = std::vector<ConnectableNeuron*>;
@@ -94,11 +100,13 @@ void GoodBoyNet::CreateOutputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
+    */
 }
 
 void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
+    /*
     //If found proceed
     if(m_outputMap.find(p_groupName) != m_outputMap.end()){
         appendOutputNeurons(p_groupName, p_positions);
@@ -106,11 +114,13 @@ void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
+    */
 }
 
 void GoodBoyNet::GetOutputGroupValues(std::string p_groupName,
     std::vector<neuralVal_t>& p_outBuff) const
 {
+    /*
     auto outGroup = m_outputMap.find(p_groupName);
     if(outGroup == m_outputMap.end()){
         //TODO:Proper exception
@@ -123,11 +133,14 @@ void GoodBoyNet::GetOutputGroupValues(std::string p_groupName,
     while(oIter!= p_outBuff.end() && vIter != outGroup->end()){
         *oIter++ = (*vIter++)->GetLastOutput();
     }
+    */
 }
 
+/*
 neuralVal_t GoodBoyNet::GetOutput(neuralVal_t p_nOutput) const{
     return m_lastOutputs[p_nOutput];
 }
+*/
 
 neuralSize_t GoodBoyNet::GetMidSize() const{
     return m_midNeurons.size();

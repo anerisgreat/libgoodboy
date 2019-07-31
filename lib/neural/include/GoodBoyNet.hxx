@@ -8,6 +8,7 @@
 #include "InputNeuron.hxx"
 #include "InputNeuronPool.hxx"
 #include "ConnectableNeuronPool.hxx"
+#include "KeyedGroupCollection.hxx"
 
 #include <vector>
 #include <memory>
