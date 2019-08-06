@@ -30,17 +30,20 @@ template <class T> class KeyedGroupCollection{
 
         class iterator: public std::iterator<std::forward_iterator_tag, T*>{
             private:
-                groupMapIter_t m_mapIter;
-                groupVecIter_t m_vecIter;
+                groupMap_t*     m_map;
+                groupMapIter_t  m_mapIter;
+                groupVecIter_t  m_vecIter;
 
                 void incrementIterator(){
                     ++m_vecIter;
                     if(m_vecIter == m_mapIter->second->end()){
                         ++m_mapIter;
-                        if(m_mapIter != 
-                        m_vecIter = m_mapIter->second->begin();
+                        if(m_mapIter != m_map.end()){
+                            m_vecIter = m_mapIter->second->begin();
+                        }
                     }
                 }
+
             protected:
 
                 groupMapIter_t GetMapIter() const
@@ -52,12 +55,17 @@ template <class T> class KeyedGroupCollection{
                     return m_vecIter;
                 }
 
-                iterator(groupMapIter_t p_mapIter)
-                    :
-                        m_mapIter(p_mapIter),
-                        m_vecIter(p_mapIter->second->begin())
-                {}
+                groupMap_t GetMap() const{
+                    return m_map;
+                }
+
             public:
+                iterator(groupMap_t* p_map)
+                    :
+                        m_map(p_map),
+                        m_mapIter(p_map->begin()),
+                        m_vecIter(p_map->begin()->second->begin())
+                {}
 
                 iterator(const iterator& p_other)
                     :
@@ -66,7 +74,8 @@ template <class T> class KeyedGroupCollection{
                 {}
 
                 iterator& operator++(){
-                    
+                    incrementIterator();
+                    return *this;
                 }
 
         };
