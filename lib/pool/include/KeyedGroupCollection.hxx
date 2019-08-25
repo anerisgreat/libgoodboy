@@ -1,33 +1,25 @@
 #ifndef KEYED_GROUP_COLLECTION_HXX
 #define KEYED_GROUP_COLLECTION_HXX
 
-namespace LibGoodBoy{
-
-#include "Resetable.hxx"
-#include "ObjectPool.hxx"
-
 #include <map>
 #include <vector>
+#include <utility>
+#include <iostream>
+#include <stdio.h>
+
+namespace LibGoodBoy{
 
 template <class T> class KeyedGroupCollection{
 
-    typedef typename std::vector<T*>                    groupVec_t;
+    typedef typename std::vector<T>                     groupVec_t;
     typedef typename groupVec_t::iterator               groupVecIter_t;
-    typedef typename std::map<std::string, groupVec_t*> groupMap_t;
+    typedef typename std::map<std::string, groupVec_t>  groupMap_t;
     typedef typename groupMap_t::iterator               groupMapIter_t;
 
     private:
-        ObjectPoolBase<T>* m_allocator;
         groupMap_t m_groupMap;
 
-        void appendElements(const std::string p_groupName, size_t p_nElements){
-            for(size_t i = 0; i < p_nElements; ++i){
-                m_groupMap[p_groupName]->push_back(m_allocator.AllocElement());
-            }
-        }
-
     public:
-
         class iterator: public std::iterator<std::forward_iterator_tag, T*>{
             private:
                 groupMap_t*     m_map;
@@ -35,11 +27,13 @@ template <class T> class KeyedGroupCollection{
                 groupVecIter_t  m_vecIter;
 
                 void incrementIterator(){
-                    ++m_vecIter;
-                    if(m_vecIter == m_mapIter->second->end()){
-                        ++m_mapIter;
-                        if(m_mapIter != m_map.end()){
-                            m_vecIter = m_mapIter->second->begin();
+                    if(m_mapIter != m_map->end()){
+                        ++m_vecIter;
+                        if(m_vecIter == m_mapIter->second.end()){
+                            ++m_mapIter;
+                            if(m_mapIter != m_map->end()){
+                                m_vecIter = m_mapIter->second.begin();
+                            }
                         }
                     }
                 }
@@ -60,89 +54,87 @@ template <class T> class KeyedGroupCollection{
                 }
 
             public:
-                iterator(groupMap_t* p_map)
+                iterator(groupMap_t& p_map)
                     :
-                        m_map(p_map),
-                        m_mapIter(p_map->begin()),
-                        m_vecIter(p_map->begin()->second->begin())
-                {}
+                        m_map(&p_map)
+                {
+                    m_mapIter = p_map.begin();
+                    if(m_mapIter != p_map.end()){
+                        m_vecIter = m_mapIter->second.begin();
+                    }
+                }
 
                 iterator(const iterator& p_other)
                     :
                         m_mapIter(p_other.GetMapIter()),
-                        m_vecIter(p_other.GetVecIter())
+                        m_vecIter(p_other.GetVecIter()),
+                        m_map(p_other.GetMap())
                 {}
+
+                iterator(groupMap_t& p_map,
+                        bool p_isEnd)
+                    :
+                        m_map(&p_map)
+                {
+                    if(!p_isEnd){
+                        m_mapIter = p_map.begin();
+                        if(m_mapIter != p_map.end()){
+                            m_vecIter = m_mapIter->second.begin();
+                        }
+                    }
+                    else{
+                        m_mapIter = p_map.end();
+                    }
+                }
 
                 iterator& operator++(){
                     incrementIterator();
                     return *this;
                 }
 
+                bool operator == (const iterator& p_other) const{
+                    return this->m_mapIter == p_other.GetMapIter() && \
+                        ( (this->m_mapIter == m_map->end()) || \
+                        (this->m_vecIter == p_other.GetVecIter()) );
+                }
+
+                bool operator != (const iterator& p_other) const{
+                    return !(this->m_mapIter == p_other.GetMapIter() && \
+                        ((this->m_mapIter == m_map->end()) || \
+                        (this->m_vecIter == p_other.GetVecIter())));
+
+                    if(this->m_mapIter != p_other.GetMapIter())
+                        return true;
+                    if(this->m_vecIter != p_other.GetVecIter())
+                        return true;
+                    return false;
+                }
+
+                T& operator*() {return *m_vecIter;}
         };
-        tits;
 
-        KeyedGroupCollection(ObjectPoolBase<T>* p_allocator)
-            :
-                m_allocator(p_allocator)
-        {}
+        iterator begin(){ return iterator(m_groupMap); }
+        iterator end(){ return iterator(m_groupMap, true); }
 
-        void CreateGroup(const std::string p_groupName, size_t p_nElements){
-            if(m_groupMap.find(p_groupName) == m_groupMap.end()){
-                m_groupMap[p_groupName] = new std::vector<T*>();
-                appendElements(p_groupName, p_nElements);
-            }
-            else{
-                //TODO: throw exception
-            }
+        KeyedGroupCollection(){}
+
+        groupVec_t operator [](std::string key) const{
+            return m_groupMap[key];
         }
 
-        void AppendToGroup(const std::string p_groupName, size_t p_nElements){
-            if(m_groupMap.find(p_groupName) == m_groupMap.end()){
-                //TODO: throw exception
-            }
-            else{
-                appendElements(p_groupName, p_nElements);
-            }
+        groupVec_t& operator [](std::string key){
+            return m_groupMap[key];
         }
 
         void RemoveGroup(const std::string p_groupName){
-            for(auto iter = m_groupMap[p_groupName].begin();
-                    iter != m_groupMap[p_groupName].end();
-                    ++iter)
-            {
-                m_allocator->Release(*iter);
-            }
             delete(m_groupMap[p_groupName]);
             m_groupMap.remove(p_groupName); //TODO: check
         }
 
-        void RemoveElement(const std::string p_groupName, T* p_elementToRemove){
-            if(m_groupMap.find(p_groupName) == m_groupMap.end()){
-                //TODO: throw exception
-            }
-            auto findIter = m_groupMap[p_groupName].find(p_elementToRemove);
-            if(findIter == m_groupMap[p_groupName].end()){
-                //TODO: throw exception
-            }
-            m_allocator->Release(*findIter);
-            m_groupMap[p_groupName].erase(findIter);
-            if(m_groupMap[p_groupName].size() == 0)
-                RemoveGroup(p_groupName);
-        }
-
-        const std::vector<T*>* const GetGroup(
-                const std::string p_groupName,
-                size_t p_elementToRemove) const
-        {
-            auto findIter = m_groupMap[p_groupName].find(p_elementToRemove);
-            if(findIter == m_groupMap[p_groupName].end()){
-                //TODO: throw exception
-            }
-            return findIter->second;
-        }
 
 };
 
 }//End namespace
 
 #endif
+
