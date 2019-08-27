@@ -36,8 +36,8 @@ void runTest(){
 
     std::vector<pos_t> inpPos = {{-1, -1, 0}, {1, -1, 0}};
     std::vector<pos_t> outPos = {{0, 1, 1}, {0, 1, -1}};
-    gNet.CreateInputs(inpPos);
-    gNet.CreateOutputs(outPos);
+    gNet.CreateInputGroup("IN", inpPos);
+    gNet.CreateOutputGroup("OUT", outPos);
     std::vector<neuralVal_t> inputs(2);
     std::vector<neuralVal_t> outputs(2);
     neuralVal_t foodPos = RandInRange<neuralVal_t>(0, WORLD_SIZE);
@@ -55,9 +55,9 @@ void runTest(){
         }
 
         //Run ten iterations
-        gNet.SetInputs(inputs);
+        gNet.SetInputGroupValues("IN", inputs);
         gNet.Iter();
-        gNet.GetOutputs(outputs);
+        gNet.GetOutputGroupValues("OUT", outputs);
 
         float speed = outputs[0]-outputs[1];
         currentPos += speed;
@@ -99,10 +99,10 @@ void runTest(){
         std::cout << std::endl;
         if(iterNum % 1000 == 0){
             std::ofstream jsonstream("out.json");
-            jsonstream << gNet.jsonString();
+            jsonstream << gNet.GetJSONString();
             jsonstream.close();
         }
-        usleep(1);
+        usleep(1000);
     }
 }
 

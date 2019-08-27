@@ -25,12 +25,13 @@ def main(args):
         struct = {}
         struct['nodes'] = {}
         struct['edges'] = []
-        for inp in parsed['inputs']:
-            struct['nodes'][inp['uid']] = {}
-            struct['nodes'][inp['uid']]['location'] = inp['position']
-            struct['nodes'][inp['uid']]['color'] = 'r'
-            struct['nodes'][inp['uid']]['size'] = marksize * 4
-            struct['nodes'][inp['uid']]['alpha'] = 1
+        for group in parsed['inputs']:
+            for inp in group['input_group_neurons']:
+                struct['nodes'][inp['uid']] = {}
+                struct['nodes'][inp['uid']]['location'] = inp['position']
+                struct['nodes'][inp['uid']]['color'] = 'r'
+                struct['nodes'][inp['uid']]['size'] = marksize * 4
+                struct['nodes'][inp['uid']]['alpha'] = 1
         for inp in parsed['mid_neurons']:
             struct['nodes'][inp['uid']] = {}
             struct['nodes'][inp['uid']]['location'] = inp['position']
@@ -42,19 +43,20 @@ def main(args):
                 new_edge['source'] = conn['uid']
                 new_edge['target'] = inp['uid']
                 struct['edges'].append(new_edge)
-        for inp in parsed['outputs']:
-            struct['nodes'][inp['uid']] = {}
-            struct['nodes'][inp['uid']]['location'] = inp['position']
-            struct['nodes'][inp['uid']]['color'] = 'b'
-            struct['nodes'][inp['uid']]['size'] = marksize * 4
-            struct['nodes'][inp['uid']]['alpha'] = 1
-            for conn in inp['input_connections']:
-                new_edge = {}
-                new_edge['source'] = conn['uid']
-                new_edge['target'] = inp['uid']
-                new_edge['alpha'] = conn['alpha']
-                new_edge['weight'] = conn['weight']
-                struct['edges'].append(new_edge)
+        for group in parsed['outputs']:
+            for inp in group['output_group_neurons']:
+                struct['nodes'][inp['uid']] = {}
+                struct['nodes'][inp['uid']]['location'] = inp['position']
+                struct['nodes'][inp['uid']]['color'] = 'b'
+                struct['nodes'][inp['uid']]['size'] = marksize * 4
+                struct['nodes'][inp['uid']]['alpha'] = 1
+                for conn in inp['input_connections']:
+                    new_edge = {}
+                    new_edge['source'] = conn['uid']
+                    new_edge['target'] = inp['uid']
+                    new_edge['alpha'] = conn['alpha']
+                    new_edge['weight'] = conn['weight']
+                    struct['edges'].append(new_edge)
 
         uids = struct['nodes'].keys()
         pos = [node['location'] for node in struct['nodes'].values()]

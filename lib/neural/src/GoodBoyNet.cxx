@@ -42,7 +42,6 @@ void GoodBoyNet::Iter(){
 void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
-    /*
     //If not found proceed
     if(m_inputMap.find(p_groupName) == m_inputMap.end()){
         m_inputMap[p_groupName] = std::vector<InputNeuron*>();
@@ -51,13 +50,11 @@ void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
-    */
 }
 
 void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
-    /*
     //If found proceed
     if(m_inputMap.find(p_groupName) != m_inputMap.end()){
         appendInputNeurons(p_groupName, p_positions);
@@ -65,13 +62,11 @@ void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
-    */
 }
 
 void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
         const std::vector<neuralVal_t>& p_vals)
 {
-    /*
     auto inGroup = m_inputMap.find(p_groupName);
     if(inGroup == m_inputMap.end()){
         //TODO:Proper exception
@@ -80,33 +75,29 @@ void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
         //TODO: Proper exception
     }
 
-    auto iIter = inGroup->begin();
+    auto iIter = inGroup->second.begin();
     auto vIter = p_vals.begin();
-    while(iIter!= p_vals.end() && vIter != inGroup->end()){
-        *iIter++ = (*vIter++)->GetLastOutput();
+    while(iIter!= inGroup->second.end() && vIter != p_vals.end()){
+        (*iIter++)->FeedInput((*vIter++));
     }
-    */
 }
 
 void GoodBoyNet::CreateOutputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
-    /*
     //If not found proceed
     if(m_outputMap.find(p_groupName) == m_outputMap.end()){
-        m_outputMap[p_groupName] = std::vector<ConnectableNeuron*>;
+        m_outputMap[p_groupName] = std::vector<ConnectableNeuron*>();
         appendOutputNeurons(p_groupName, p_positions);
     }
     else{
         //TODO: Throw exception
     }
-    */
 }
 
 void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
     const std::vector<pos_t>& p_positions)
 {
-    /*
     //If found proceed
     if(m_outputMap.find(p_groupName) != m_outputMap.end()){
         appendOutputNeurons(p_groupName, p_positions);
@@ -114,26 +105,23 @@ void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
     else{
         //TODO: Throw exception
     }
-    */
 }
 
 void GoodBoyNet::GetOutputGroupValues(std::string p_groupName,
     std::vector<neuralVal_t>& p_outBuff) const
 {
-    /*
     auto outGroup = m_outputMap.find(p_groupName);
     if(outGroup == m_outputMap.end()){
         //TODO:Proper exception
     }
-    if(p_outBuff.size() != outGroup->size()){
+    if(p_outBuff.size() != outGroup->second.size()){
         //TODO: Proper exception
     }
-    auto vIter = outGroup->begin();
+    auto vIter = outGroup->second.begin();
     auto oIter = p_outBuff.begin();
-    while(oIter!= p_outBuff.end() && vIter != outGroup->end()){
+    while(oIter!= p_outBuff.end() && vIter != outGroup->second.end()){
         *oIter++ = (*vIter++)->GetLastOutput();
     }
-    */
 }
 
 /*
@@ -147,33 +135,34 @@ neuralSize_t GoodBoyNet::GetMidSize() const{
 }
 
 json_t GoodBoyNet::GetJSON() const{
-    /*
     json_t retJson;
 
     retJson[NET_INP_KEY] = json_t::array();
     for(auto iter = m_inputMap.begin(); iter != m_inputMap.end(); ++iter){
         json_t inGroup;
-        inGroup[NET_INP_GROUP_NAME_KEY] = iter->getKey();
-        inGroup[NET_INP_GROUP_NEURONS_KEY] = iter->json_t::array();
-        for(auto neurIter = iter->getValue()->begin();
-                neurIter != iter->getValue()->end();
+        inGroup[NET_INP_GROUP_NAME_KEY] = iter->first;
+        inGroup[NET_INP_GROUP_NEURONS_KEY] = json_t::array();
+        for(auto neurIter = iter->second.begin();
+                neurIter != iter->second.end();
                 ++neurIter)
         {
-            inGroup[NET_INP_GROUP_NEURONS_KEY].push_back(neurIter->GetJSON());
+            inGroup[NET_INP_GROUP_NEURONS_KEY].push_back(
+                    (*neurIter)->GetJSON());
         }
         retJson[NET_INP_KEY].push_back(inGroup);
     }
 
     retJson[NET_OUT_KEY] = json_t::array();
-    for(auto iter = m_outputs.begin(); iter != m_outputs.end(); ++iter){
+    for(auto iter = m_outputMap.begin(); iter != m_outputMap.end(); ++iter){
         json_t outGroup;
-        outGroup[NET_OUT_GROUP_NAME_KEY] = iter->getKey();
-        outGroup[NET_OUT_GROUP_NEURONS_KEY] = iter->json_t::array();
-        for(auto neurIter = iter->getValue()->begin();
-                neurIter != neurIter->getValue()->end();
+        outGroup[NET_OUT_GROUP_NAME_KEY] = iter->first;
+        outGroup[NET_OUT_GROUP_NEURONS_KEY] = json_t::array();
+        for(auto neurIter = iter->second.begin();
+                neurIter != iter->second.end();
                 ++neurIter)
         {
-            outGroup[NET_OUT_GROUP_NEURONS_KEY].push_back(neurIter->GetJSON());
+            outGroup[NET_OUT_GROUP_NEURONS_KEY].push_back(
+                    (*neurIter)->GetJSON());
         }
         retJson[NET_OUT_KEY].push_back(outGroup);
     }
@@ -209,17 +198,13 @@ json_t GoodBoyNet::GetJSON() const{
     }
 
     return retJson;
-    */
 }
 
-std::string GoodBoyNet::jsonString(){
-    /*
+std::string GoodBoyNet::GetJSONString(){
     return GetJSON().dump();
-    */
 }
 
 void GoodBoyNet::Evolve(neuralVal_t p_amount){
-    /*
     adjustWeights(p_amount);
     neuralSize_t numNewNeurons = numNeuronsToMake();
     if(numNewNeurons > 0){
@@ -227,12 +212,21 @@ void GoodBoyNet::Evolve(neuralVal_t p_amount){
         makeNewNeurons(numNewNeurons);
     }
 
-    resetOutputSums();
-    */
+    //Reset output sums
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetOutputSum();
+    }
+
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        (*iter)->ResetOutputSum();
+    }
+
+    for(auto iter = getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetOutputSum();
+    }
 }
 
 Neuron* GoodBoyNet::getOutNeuron(neuralVal_t p_maxSelectionWeight){
-    /*
     neuralVal_t outWeight = 
         RandInRange<neuralVal_t>(0, p_maxSelectionWeight);
     neuralVal_t outWeightAcc = 0;
@@ -244,28 +238,24 @@ Neuron* GoodBoyNet::getOutNeuron(neuralVal_t p_maxSelectionWeight){
         }
     }
 
-    for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
-        outWeightAcc+=calcOutNeuronWeight(iter->get());
+    for(auto iter=getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        outWeightAcc+=calcOutNeuronWeight(*iter);
         if(outWeightAcc > outWeight){
-            return (*iter).get();
+            return (*iter);
         }
     }
 
-    return m_inputs[m_inputs.size() - 1].get();
-    */
+    return NULL;
 }
 
 
 neuralVal_t GoodBoyNet::calcOutNeuronWeight(Neuron* p_n){
-    /*
     neuralSize_t noutputs = p_n->GetNumOutputs();
     neuralVal_t ret = (log(abs(p_n->GetOutputSum()) + 1))/(noutputs + 1);
     return ret;
-    */
 }
 
 ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
-    /*
     pos_t neuronPos = p_outNeuron->GetPosition();
 
     posscalar_t maxSelectionWeight = 0;
@@ -276,10 +266,7 @@ ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
         maxSelectionWeight += calcRecvNeuronWeight(*iter, neuronPos);
     }
 
-    for(auto iter = m_outputs.begin();
-            iter != m_outputs.end();
-            ++iter)
-    {
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
         maxSelectionWeight += calcRecvNeuronWeight(*iter, neuronPos);
     }
 
@@ -293,15 +280,15 @@ ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
         }
     }
 
-    for(auto iter=m_outputs.begin(); iter!=m_outputs.end(); ++iter){
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
         outWeightAcc += calcRecvNeuronWeight(*iter, neuronPos);
         if(outWeightAcc > outWeight){
             return *iter;
         }
     }
 
-    return m_outputs[m_outputs.size() - 1];
-    */
+    //TODO: throw exception
+    return NULL;
 }
 
 posscalar_t GoodBoyNet::calcRecvNeuronWeight(
@@ -315,118 +302,136 @@ posscalar_t GoodBoyNet::calcRecvNeuronWeight(
     return 1/(d*(ninputs + 1));
 }
 
+ConnectableNeuron* GoodBoyNet::getOutputAtIndex(neuralSize_t p_index){
+    neuralSize_t currentIndex = 0;
+    for(auto iter = m_outputMap.begin();
+            iter != m_outputMap.end();
+            ++iter)
+    {
+        if(currentIndex + iter->second.size() > p_index)
+            return iter->second[p_index - currentIndex];
+        else
+            currentIndex += iter->second.size();
+    }
+    //TODO: throw exception
+    return NULL;
+}
+
+neuralSize_t GoodBoyNet::getNumOutputs(){
+    neuralSize_t ret = 0;
+    for(auto iter = m_outputMap.begin();
+            iter != m_outputMap.end();
+            ++iter)
+    {
+        ret += iter->second.size();
+    }
+    return ret;
+}
+
+InputNeuron* GoodBoyNet::getInputAtIndex(neuralSize_t p_index){
+    neuralSize_t currentIndex = 0;
+    for(auto iter = m_inputMap.begin();
+            iter != m_inputMap.end();
+            ++iter)
+    {
+        if(currentIndex + iter->second.size() > p_index)
+            return iter->second[p_index - currentIndex];
+        else
+            currentIndex += iter->second.size();
+    }
+    //TODO: throw exception
+    return NULL;
+}
+
+neuralSize_t GoodBoyNet::getNumInputs(){
+    neuralSize_t ret = 0;
+    for(auto iter = m_inputMap.begin();
+            iter != m_inputMap.end();
+            ++iter)
+    {
+        ret += iter->second.size();
+    }
+    return ret;
+}
 void GoodBoyNet::adjustWeights(neuralVal_t p_amount){
-    /*
-    for(auto neurIter = m_midNeurons.begin();
-            neurIter != m_midNeurons.end();
-            ++neurIter)
-    {
-        (*neurIter)->Evolve(p_amount);
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        (*iter)->Evolve(p_amount);
     }
 
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->Evolve(p_amount);
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->Evolve(p_amount);
     }
 
-    for(auto neurIter = m_midNeurons.begin();
-            neurIter != m_midNeurons.end();
-            ++neurIter)
-    {
-        (*neurIter)->ResetContributionFlag();
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        (*iter)->ResetContributionFlag();
     }
 
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->ResetContributionFlag();
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetContributionFlag();
     }
-
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->ResetContributionFlag();
-    }
-    */
 }
 
 void GoodBoyNet::cleanup(){
-    /*
-    for(auto neurIter = m_inputs.begin();
-            neurIter != m_inputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->ForwardProbe();
+    for(auto iter = getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ForwardProbe();
     }
 
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->BackProbe();
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->BackProbe();
     }
 
     std::list<Neuron*> toPurge;
     std::list<ConnectableNeuron*> toPurgeAsConnectable;
-    for(auto neurIter = m_midNeurons.begin();
-            neurIter != m_midNeurons.end();
-            ++neurIter)
-    {
-        if(!(*neurIter)->GetWasFullyProbed()){
-            toPurge.push_back(*neurIter);
-            toPurgeAsConnectable.push_back(*neurIter);
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        if(!(*iter)->GetWasFullyProbed()){
+            toPurge.push_back(*iter);
+            toPurgeAsConnectable.push_back(*iter);
         }
-        (*neurIter)->ResetProbeFlag();
+        (*iter)->ResetProbeFlag();
     }
 
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->ResetProbeFlag();
-    }
-    for(auto neurIter = m_inputs.begin();
-            neurIter != m_inputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->ResetProbeFlag();
-    }
-    for(auto neurIter = m_midNeurons.begin();
-            neurIter != m_midNeurons.end();
-            ++neurIter)
-    {
-        (*neurIter)->PurgeConnections(toPurge);
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetProbeFlag();
     }
 
-    for(auto neurIter = m_outputs.begin();
-            neurIter != m_outputs.end();
-            ++neurIter)
-    {
-        (*neurIter)->PurgeConnections(toPurge);
+    for(auto iter = getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetProbeFlag();
     }
 
-    for(auto neurIter = toPurgeAsConnectable.begin();
-            neurIter != toPurgeAsConnectable.end();
-            ++neurIter)
-    {
-        m_midNeurons.remove(*neurIter);
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        (*iter)->PurgeConnections(toPurge);
     }
 
-    for(auto neurIter = toPurgeAsConnectable.begin();
-            neurIter != toPurgeAsConnectable.end();
-            ++neurIter)
-    {
-        m_midNeuronPool.Release(*neurIter);
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->PurgeConnections(toPurge);
     }
-    */
+
+    for(auto iter = toPurgeAsConnectable.begin();
+            iter != toPurgeAsConnectable.end();
+            ++iter)
+    {
+        m_midNeurons.remove(*iter);
+    }
+
+    for(auto iter = toPurgeAsConnectable.begin();
+            iter != toPurgeAsConnectable.end();
+            ++iter)
+    {
+        m_midNeuronPool.Release(*iter);
+    }
+}
+
+GoodBoyNet::groupIterator<InputNeuron*> GoodBoyNet::getInputNeuronIterator(){
+    return groupIterator<InputNeuron*>(m_inputMap);
+}
+
+GoodBoyNet::groupIterator<ConnectableNeuron*>
+    GoodBoyNet::getOutputNeuronIterator()
+{
+    return groupIterator<ConnectableNeuron*>(m_outputMap);
 }
 
 neuralSize_t GoodBoyNet::numNeuronsToMake(){
-    /*
     neuralVal_t val = RandInRange<neuralVal_t>(0,2);
     neuralSize_t ret = 0;
     while(val < m_generationFactor && val != 0){
@@ -435,26 +440,25 @@ neuralSize_t GoodBoyNet::numNeuronsToMake(){
     }
 
     return ret;
-    */
 }
 
 void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
-    /*
     //Getting max selection weight for output selection
     neuralVal_t maxSelectionWeight = 0;
     for(auto iter=m_midNeurons.begin(); iter!=m_midNeurons.end(); ++iter){
         maxSelectionWeight += calcOutNeuronWeight(*iter);
     }
-    for(auto iter=m_inputs.begin(); iter!=m_inputs.end(); ++iter){
-        maxSelectionWeight += calcOutNeuronWeight(iter->get());
+    for(auto iter=getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        maxSelectionWeight += calcOutNeuronWeight(*iter);
     }
 
     for(neuralSize_t i = 0; i < p_numNewNeurons; ++i){
-        neuralSize_t numOfRecv = m_midNeurons.size() + m_outputs.size();
-        neuralSize_t numOfOut = m_midNeurons.size() + m_inputs.size();
+        neuralSize_t numOfRecv = m_midNeurons.size() + getNumOutputs();
+        neuralSize_t numOfOut = m_midNeurons.size() + getNumInputs();
         ConnectableNeuron* recvNeuronPtr;
         Neuron* outNeuronPtr;
 
+        //TODO: activity based connection?
         neuralSize_t recIndex = RandInRange<neuralSize_t>(0, numOfRecv);
         if(recIndex < m_midNeurons.size()){
             auto iter = m_midNeurons.begin();
@@ -462,7 +466,7 @@ void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
             recvNeuronPtr = *iter;
         }
         else{
-            recvNeuronPtr = m_outputs[recIndex - m_midNeurons.size()];
+            recvNeuronPtr = getOutputAtIndex(recIndex - m_midNeurons.size());
         }
 
         outNeuronPtr = getOutNeuron(maxSelectionWeight);
@@ -477,13 +481,11 @@ void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
                     *recvNeuronPtr));
         m_midNeurons.push_back(newNeuron);
     }
-    */
 }
 
 void GoodBoyNet::appendInputNeurons(const std::string p_groupName,
         const std::vector<pos_t>& p_positions)
 {
-    /*
     for(auto iter = p_positions.begin();
             iter != p_positions.end();
             ++iter)
@@ -492,13 +494,11 @@ void GoodBoyNet::appendInputNeurons(const std::string p_groupName,
         tmp->SetPosition(*iter);
         m_inputMap[p_groupName].push_back(tmp);
     }
-    */
 }
 
 void GoodBoyNet::appendOutputNeurons(const std::string p_groupName,
         const std::vector<pos_t>& p_positions)
 {
-    /*
     for(auto iter = p_positions.begin();
             iter != p_positions.end();
             ++iter)
@@ -507,76 +507,30 @@ void GoodBoyNet::appendOutputNeurons(const std::string p_groupName,
         tmp->SetPosition(*iter);
         m_outputMap[p_groupName].push_back(tmp);
     }
-    */
 }
 
 void GoodBoyNet::calcOutputs(){
-    /*
     //Do this to make sure all inputs always update
-    for(auto iter = m_inputs.begin(); iter != m_inputs.end(); ++iter){
+    for(auto iter = getInputNeuronIterator(); !iter.IsEnd(); ++iter){
         (*iter)->GetOutput();
     }
 
-    auto oIter = m_outputs.begin();
-    auto lIter = m_lastOutputs.begin();
-
-    for(;oIter != m_outputs.end() && lIter != m_lastOutputs.end();
-            ++oIter, ++lIter)
-    {
-        *lIter = (*oIter)->GetOutput();
-    }
-    resetOutputFlag();
-    */
-}
-
-void GoodBoyNet::resetOutputFlag(){
-    /*
-    for(auto neurIter = m_outputs.begin(); 
-            neurIter != m_outputs.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputFlag();
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->GetOutput();
     }
 
-    for(auto neurIter = m_midNeurons.begin(); 
-            neurIter != m_midNeurons.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputFlag();
+    //Reset output flags
+    for(auto iter = getOutputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetOutputFlag();
     }
 
-    for(auto neurIter = m_inputs.begin(); 
-            neurIter != m_inputs.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputFlag();
-    }
-    */
-}
-
-void GoodBoyNet::resetOutputSums(){
-    /*
-    for(auto neurIter = m_outputs.begin(); 
-            neurIter != m_outputs.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputSum();
+    for(auto iter = m_midNeurons.begin(); iter != m_midNeurons.end(); ++iter){
+        (*iter)->ResetOutputFlag();
     }
 
-    for(auto neurIter = m_midNeurons.begin(); 
-            neurIter != m_midNeurons.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputSum();
+    for(auto iter = getInputNeuronIterator(); !iter.IsEnd(); ++iter){
+        (*iter)->ResetOutputFlag();
     }
-
-    for(auto neurIter = m_inputs.begin(); 
-            neurIter != m_inputs.end(); 
-            ++neurIter)
-    {
-        (*neurIter)->ResetOutputSum();
-    }
-    */
 }
 
 }//End namespace

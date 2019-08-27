@@ -1,7 +1,6 @@
 add_executable(${PROJECT_NAME}.Test
     MainTestAll.cxx
     TestObjectPool.cxx
-    TestKeyedGroupCollection.cxx
     )
 
 target_include_directories(${PROJECT_NAME}.Test
