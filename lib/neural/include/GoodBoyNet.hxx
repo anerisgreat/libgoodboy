@@ -10,14 +10,36 @@
 #include "ConnectableNeuronPool.hxx"
 
 #include <vector>
-#include <memory>
 #include <list>
 
 namespace LibGoodBoy{
 
+/*!
+ * @class This class represents a neural network utilizing the GoodBoy learning
+ *  technique.
+ */
 class GoodBoyNet{
     public:
         //Constructor & Destructor____________________
+        /*!
+         * @brief Constructs an empty GoodBoyNet
+         *
+         * @detail Constructs an empty GoodBoyNet with all the constant runtime
+         *  parameters it needs.
+         *
+         * @param[in] p_outputFilterTaps UNUSED
+         * @param[in] p_evolveFilterTaps UNUSED
+         *
+         * @param[in] p_degrFactor The degredation factor applied to all
+         *  neurons. The higher the parameter, the less the network will retain.
+         * @param[in] p_maxStartWeight The maximum valued weight a neuron's
+         *  connection will hold.
+         * @param[in] p_defaultAlpha The default alpha value any connection will
+         *  start with. The higher this value, the longer new neurons will last.
+         * @param[in] p_defaultGenerationFactor A value determining how likely
+         *  the network is to generate new neurons. The higher the value, the
+         *  more neurons will be generated at random.
+         */
         GoodBoyNet(
                 const std::vector<neuralVal_t>& p_outputFilterTaps,
                 const std::vector<neuralVal_t>& p_evolveFilterTaps,
@@ -28,10 +50,36 @@ class GoodBoyNet{
                 neuralVal_t p_defaultGenerationFactor,
 
                 bool p_evolvingEnabled);
+        /*!
+         * @brief Destructor for the GoodBoyNet class
+         *
+         * @detail Destructs a GoodBoyNet. There is no need for any cleanup
+         *  before calling this function.
+         */
         ~GoodBoyNet();
 
         //Runtime_____________________________________
+        /*!
+         * @brief Calculates the outputs of the network.
+         *
+         * @detail Given the updated inputs and last state of network,
+         *  calculates the next output.
+         */
         void Iter();
+        /*!
+         * @brief Evolves the network, creating neurons and changing
+         *  connections.
+         *
+         * @detail This function changes the network On each call,
+         *  the network creates new neurons and connects them based on previous
+         *  activity. Connections are then changed based on the parameter.
+         *
+         * @param p_amount Parameter determining the feedback from the
+         *  environment. A positive value will retain connections, keeping
+         *  current behavior. Negative feedback will degrade connections, aiding
+         *  change in the network.
+         */
+        void Evolve(neuralVal_t p_amount);
 
         //Input/output handling_______________________
         void CreateInputGroup(const std::string p_groupName,
@@ -56,8 +104,6 @@ class GoodBoyNet{
         //JSON________________________________________
         json_t GetJSON() const;
         std::string GetJSONString();
-
-        void Evolve(neuralVal_t p_amount);
 
     private:
         //Helper_classes______________________________
@@ -127,21 +173,11 @@ class GoodBoyNet{
                 T& operator*() {return *m_vecIter;}
         };
 
-        //Methods_____________________________________
+        //Runtime_____________________________________
         void adjustWeights(neuralVal_t p_amount);
         void cleanup(); //Erases all non-reachable neurons
-
-        groupIterator<InputNeuron*> getInputNeuronIterator();
-        groupIterator<ConnectableNeuron*> getOutputNeuronIterator();
-
         neuralSize_t numNeuronsToMake();
         void makeNewNeurons(neuralSize_t p_numNewNeurons);
-
-        void appendInputNeurons(const std::string p_groupName,
-                const std::vector<pos_t>& p_positions);
-        void appendOutputNeurons(const std::string p_groupName,
-                const std::vector<pos_t>& p_positions);
-
         Neuron* getOutNeuron(neuralVal_t p_maxSelectionWeight);
         neuralVal_t calcOutNeuronWeight(Neuron* p_n);
         ConnectableNeuron* getRecvNeuron(Neuron* p_outNeuron);
@@ -149,12 +185,19 @@ class GoodBoyNet{
             const ConnectableNeuron* p_recvNeuron, 
             pos_t p_outPos);
 
+        //Iterators___________________________________
+        groupIterator<InputNeuron*> getInputNeuronIterator();
+        groupIterator<ConnectableNeuron*> getOutputNeuronIterator();
+
+        //Input/output________________________________
+        void appendInputNeurons(const std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
+        void appendOutputNeurons(const std::string p_groupName,
+                const std::vector<pos_t>& p_positions);
         ConnectableNeuron*  getOutputAtIndex(neuralSize_t p_index);
         neuralSize_t        getNumOutputs();
         InputNeuron* getInputAtIndex(neuralSize_t p_index);
         neuralSize_t        getNumInputs();
-
-        void calcOutputs();
 
         //Members_____________________________________
         std::map<std::string, std::vector<InputNeuron*>>
