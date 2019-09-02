@@ -74,7 +74,7 @@ class GoodBoyNet{
          *  the network creates new neurons and connects them based on previous
          *  activity. Connections are then changed based on the parameter.
          *
-         * @param p_amount Parameter determining the feedback from the
+         * @param[in] p_amount Parameter determining the feedback from the
          *  environment. A positive value will retain connections, keeping
          *  current behavior. Negative feedback will degrade connections, aiding
          *  change in the network.
@@ -82,27 +82,119 @@ class GoodBoyNet{
         void Evolve(neuralVal_t p_amount);
 
         //Input/output handling_______________________
+        /*!
+         * @brief Creates input neurons in a group.
+         *
+         * @detail Creates an input group
+         *
+         * @param[in] p_groupName The name of the input group, used later to
+         *  access the values.
+         * @param[in] p_positions The positions of the input neurons in space.
+         */
         void CreateInputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
+        /*!
+         * @brief Appends new neurons to an existing input group.
+         *
+         * @detail Creates new input neurons and appends them to an existing
+         *  input group.
+         *
+         * @param[in] p_groupName the name of the group that the neurons should
+         *  be appended to.
+         * @param[in] p_positions the positions of the new input neurons in
+         *  space.
+         */
         void AppendToInputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
 
+        /*!
+         * @brief Sets the values of input neurons.
+         *
+         * @detail Sets the values of existing input neurons in a group to the
+         *  values given. This is the way values are inputted into the network
+         *  in real time.
+         *
+         * @param[in] p_groupName The name of the group to set the input values
+         *  to.
+         * @param[in] p_vals A vector containing the values to input to the
+         *  neurons. The vector must have the same number of elements in it as
+         *  neurons in the input group
+         */
         void SetInputGroupValues(const std::string p_groupName,
                 const std::vector<neuralVal_t>& p_vals);
 
+        /*!
+         * @brief Creates output neurons in a group.
+         *
+         * @detail Creates output neurons, being used to output the values of
+         *  the network. The end results of the calculations in the network
+         *  end up in these neurons.
+         *
+         * @param[in] p_groupName The name of the output group to which the
+         *  neurons will be assigned.
+         * @param[in] p_positions A vector containing the positions of the
+         *  neurons in space.
+         */
         void CreateOutputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
+        /*!
+         * @brief Creates output neurons in a group.
+         *
+         * @detail Creates output neurons, being used to output the values of
+         *  the network. The end results of the calculations in the network
+         *  end up in these neurons.
+         *
+         * @param[in] p_groupName The name of the output group to which the
+         *  neurons will be assigned.
+         * @param[in] p_positions A vector containing the positions of the
+         *  neurons in space.
+         */
         void AppendToOutputGroup(const std::string p_groupName,
                 const std::vector<pos_t>& p_positions);
 
+        /*!
+         * @brief Retrives the output values of the network.
+         *
+         * @detail Given an output group, retrives the output values of the
+         *  output neurons and copies them into a vector for use outside
+         *  the network.
+         *
+         * @param[in] p_groupName The name of the output group to retrieve
+         *  values from.
+         * @param[out] p_outBuff A vector to copy the values to. This vector
+         *  must have the same number of elements as the output group.
+         */
         void GetOutputGroupValues(std::string p_groupName,
                 std::vector<neuralVal_t>& p_outBuff) const;
 
         //Statistics__________________________________
+        /*!
+         * @brief Retrives the number of non input/output neurons.
+         */
         neuralSize_t GetMidSize() const;
 
         //JSON________________________________________
+        /*
+         * @brief Returns a JSON representing the structure of the network.
+         *
+         * @detial Returns a JSON descibing all the neurons and connections in
+         *  this network. The JSON also includes all parameters used to make
+         *  this network.
+         *
+         * @return json_t representing the network itself.
+         */
         json_t GetJSON() const;
+
+        /*!
+         * @brief Returns a JSON formatted string reperesnting the structure of
+         *  the network.
+         *
+         * @detail Returns a string containing a JSON describing the
+         *  neurons, connections and parameters dictating the behavior of this
+         *  network.
+         *
+         * @return std::string containing the JSON describing the network.
+         */
         std::string GetJSONString();
 
     private:
