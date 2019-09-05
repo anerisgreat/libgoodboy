@@ -1,6 +1,8 @@
 #include "GoodBoyNet.hxx"
 #include "NeuralUtils.hxx"
 
+#include <stdexcept>
+
 namespace LibGoodBoy{
 
 //Public_____________________________________________________________
@@ -91,7 +93,8 @@ void GoodBoyNet::CreateInputGroup(const std::string p_groupName,
         appendInputNeurons(p_groupName, p_positions);
     }
     else{
-        //TODO: Throw exception
+        throw std::invalid_argument("An input group with that name already " \
+                "exists!");
     }
 }
 
@@ -103,7 +106,7 @@ void GoodBoyNet::AppendToInputGroup(const std::string p_groupName,
         appendInputNeurons(p_groupName, p_positions);
     }
     else{
-        //TODO: Throw exception
+        throw std::invalid_argument("No input group with that name exists!");
     }
 }
 
@@ -112,10 +115,11 @@ void GoodBoyNet::SetInputGroupValues(const std::string p_groupName,
 {
     auto inGroup = m_inputMap.find(p_groupName);
     if(inGroup == m_inputMap.end()){
-        //TODO:Proper exception
+        throw std::invalid_argument("No input group with that name exists!");
     }
     if(p_vals.size() != inGroup->second.size()){
-        //TODO: Proper exception
+        throw std::invalid_argument("Number of values in input vector does "\
+                "not match number of neurons in input group!");
     }
 
     auto iIter = inGroup->second.begin();
@@ -134,7 +138,8 @@ void GoodBoyNet::CreateOutputGroup(const std::string p_groupName,
         appendOutputNeurons(p_groupName, p_positions);
     }
     else{
-        //TODO: Throw exception
+        throw std::invalid_argument("An output group with that name already " \
+                "exists!");
     }
 }
 
@@ -146,7 +151,7 @@ void GoodBoyNet::AppendToOutputGroup(const std::string p_groupName,
         appendOutputNeurons(p_groupName, p_positions);
     }
     else{
-        //TODO: Throw exception
+        throw std::invalid_argument("No input group with that name exists!");
     }
 }
 
@@ -155,10 +160,11 @@ void GoodBoyNet::GetOutputGroupValues(std::string p_groupName,
 {
     auto outGroup = m_outputMap.find(p_groupName);
     if(outGroup == m_outputMap.end()){
-        //TODO:Proper exception
+        throw std::invalid_argument("No output group with that name exists!");
     }
     if(p_outBuff.size() != outGroup->second.size()){
-        //TODO: Proper exception
+        throw std::invalid_argument("Number of values in output vector does "\
+                "not match number of neurons in input group!");
     }
     auto vIter = outGroup->second.begin();
     auto oIter = p_outBuff.begin();
@@ -340,17 +346,6 @@ void GoodBoyNet::makeNewNeurons(neuralSize_t p_numNewNeurons){
         ConnectableNeuron* recvNeuronPtr;
         Neuron* outNeuronPtr;
 
-        //TODO: activity based connection?
-        neuralSize_t recIndex = RandInRange<neuralSize_t>(0, numOfRecv);
-        if(recIndex < m_midNeurons.size()){
-            auto iter = m_midNeurons.begin();
-            std::advance(iter, recIndex);
-            recvNeuronPtr = *iter;
-        }
-        else{
-            recvNeuronPtr = getOutputAtIndex(recIndex - m_midNeurons.size());
-        }
-
         outNeuronPtr = getOutNeuron(maxSelectionWeight);
         recvNeuronPtr = getRecvNeuron(outNeuronPtr);
 
@@ -425,7 +420,8 @@ ConnectableNeuron* GoodBoyNet::getRecvNeuron(Neuron* p_outNeuron){
         }
     }
 
-    //TODO: throw exception
+    throw std::logic_error("An error occured while selecting a receiving "\
+            "neuron. This should never have happened.");
     return NULL;
 }
 
@@ -489,7 +485,8 @@ ConnectableNeuron* GoodBoyNet::getOutputAtIndex(neuralSize_t p_index){
         else
             currentIndex += iter->second.size();
     }
-    //TODO: throw exception
+    throw std::invalid_argument("Error while trying to find output at index. "\
+            "Invalid index.");
     return NULL;
 }
 
@@ -515,7 +512,8 @@ InputNeuron* GoodBoyNet::getInputAtIndex(neuralSize_t p_index){
         else
             currentIndex += iter->second.size();
     }
-    //TODO: throw exception
+    throw std::invalid_argument("Error while trying to find input at index. "\
+            "Invalid index.");
     return NULL;
 }
 
