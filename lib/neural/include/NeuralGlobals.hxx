@@ -1,5 +1,5 @@
-#ifndef NEURAL_CONFIG_HXX
-#define NEURAL_CONFIG_HXX
+#ifndef NEURAL_GLOBALS_HXX
+#define NEURAL_GLOBALS_HXX
 
 #include <nlohmann/json.hpp>
 #include <boost/uuid/uuid.hpp>

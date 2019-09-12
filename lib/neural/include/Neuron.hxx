@@ -49,8 +49,11 @@ class Neuron : public Resetable{
 
         //Properties__________________________________
         uuid_t GetUID();
+        void SetUID(uuid_t p_uid);
+
         virtual json_t GetJSON() const;
         std::string jsonString();
+        virtual void LoadFromJSON(json_t p_json);
 
         pos_t GetPosition() const;
         void SetPosition(pos_t p_pos);

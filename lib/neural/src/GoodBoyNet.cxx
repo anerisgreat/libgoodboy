@@ -34,6 +34,120 @@ GoodBoyNet::GoodBoyNet(
         m_evolvingEnabled(p_evolvingEnabled)
 {}
 
+GoodBoyNet::GoodBoyNet(json_t p_json)
+    :
+        m_midNeuronPool(
+                m_connectionPool,
+                p_json[NET_DEGR_FACTOR_KEY],
+                p_json[NET_MAX_START_WEIGHT_KEY],
+                p_json[NET_DEFAULT_ALPHA]
+        ),
+        m_degrFactor(p_json[NET_DEGR_FACTOR_KEY]),
+        m_maxStartWeight(p_json[NET_MAX_START_WEIGHT_KEY]),
+        m_defaultAlpha(p_json[NET_DEFAULT_ALPHA]),
+        m_generationFactor(p_json[NET_GEN_FACTOR]),
+        m_evolvingEnabled(p_json[NET_EVOLVE_ENABLED])
+{
+    for(auto iter = p_json[NET_OUT_FILT_TAPS_KEY].begin();
+            iter != p_json[NET_OUT_FILT_TAPS_KEY].end();
+            ++iter)
+    {
+        m_outputFilterTaps.push_back((*iter).get<neuralVal_t>());
+    }
+
+    std::map<std::string, Neuron*> allNeuronMap;
+    std::map<std::string, ConnectableNeuron*> connectableNeuronMap;
+    for(auto inGroupIter = p_json[NET_INP_KEY].begin();
+            inGroupIter != p_json[NET_INP_KEY].end();
+            ++inGroupIter)
+    {
+        //TODO: check group name
+        m_inputMap[(*inGroupIter)[NET_INP_GROUP_NAME_KEY]] = \
+            std::vector<InputNeuron*>();
+        for(auto inNeurIter = (*inGroupIter)[NET_INP_GROUP_NEURONS_KEY].begin();
+            inNeurIter != (*inGroupIter)[NET_INP_GROUP_NEURONS_KEY].end();
+            ++inNeurIter)
+        {
+            std::string uid = (*inNeurIter)[JSON_UID_KEY];
+            InputNeuron* newNeuron = m_inputNeuronPool.AllocElement();
+            newNeuron->LoadFromJSON(*inNeurIter);
+            m_inputMap[(*inGroupIter)[NET_INP_GROUP_NAME_KEY]].push_back(\
+                    newNeuron);
+            allNeuronMap[uid] = newNeuron;
+        }
+    }
+    for(auto outGroupIter = p_json[NET_OUT_KEY].begin();
+            outGroupIter != p_json[NET_OUT_KEY].end();
+            ++outGroupIter)
+    {
+        //TODO: check group name
+        m_outputMap[(*outGroupIter)[NET_OUT_GROUP_NAME_KEY]] = \
+            std::vector<ConnectableNeuron*>();
+        for(auto oNeurIter = (*outGroupIter)[NET_OUT_GROUP_NEURONS_KEY].begin();
+            oNeurIter != (*outGroupIter)[NET_OUT_GROUP_NEURONS_KEY].end();
+            ++oNeurIter)
+        {
+            std::string uid = (*oNeurIter)[JSON_UID_KEY];
+            ConnectableNeuron* newNeuron = m_midNeuronPool.AllocElement();
+            newNeuron->LoadFromJSON(*oNeurIter);
+            m_outputMap[(*outGroupIter)[NET_OUT_GROUP_NAME_KEY]].push_back(\
+                    newNeuron);
+            allNeuronMap[uid] = newNeuron;
+            connectableNeuronMap[uid] = newNeuron;
+        }
+    }
+    for(auto mNeurIter = p_json[NET_MID_KEY].begin();
+        mNeurIter != p_json[NET_MID_KEY].end();
+        ++mNeurIter)
+    {
+        std::string uid = (*mNeurIter)[JSON_UID_KEY];
+        ConnectableNeuron* newNeuron = m_midNeuronPool.AllocElement();
+        newNeuron->LoadFromJSON(*mNeurIter);
+        m_midNeurons.push_back(newNeuron);
+        allNeuronMap[uid] = newNeuron;
+        connectableNeuronMap[uid] = newNeuron;
+    }
+    for(auto outGroupIter = p_json[NET_OUT_KEY].begin();
+            outGroupIter != p_json[NET_OUT_KEY].end();
+            ++outGroupIter)
+    {
+        for(auto oNeurIter = (*outGroupIter)[NET_OUT_GROUP_NEURONS_KEY].begin();
+            oNeurIter != (*outGroupIter)[NET_OUT_GROUP_NEURONS_KEY].end();
+            ++oNeurIter)
+        {
+            for(auto conIter = (*oNeurIter)[JSON_INP_CONN_KEY].begin();
+                    conIter != (*oNeurIter)[JSON_INP_CONN_KEY].end();
+                    ++conIter)
+            {
+                neuralVal_t alpha = (*conIter)[JSON_CONNECTION_ALPHA_KEY];
+                neuralVal_t weight = (*conIter)[JSON_CONNECTION_WEIGHT_KEY];
+                Neuron* toConnect = allNeuronMap[(*conIter)[JSON_UID_KEY]];
+                ConnectableNeuron* connectable = \
+                    connectableNeuronMap[(*oNeurIter)[JSON_UID_KEY]];
+                connectable->Connect(toConnect, weight, alpha);
+            }
+
+        }
+    }
+    for(auto mNeurIter = p_json[NET_MID_KEY].begin();
+        mNeurIter != p_json[NET_MID_KEY].end();
+        ++mNeurIter)
+    {
+        for(auto conIter = (*mNeurIter)[JSON_INP_CONN_KEY].begin();
+                conIter != (*mNeurIter)[JSON_INP_CONN_KEY].end();
+                ++conIter)
+        {
+            neuralVal_t alpha = (*conIter)[JSON_CONNECTION_ALPHA_KEY];
+            neuralVal_t weight = (*conIter)[JSON_CONNECTION_WEIGHT_KEY];
+            Neuron* toConnect = allNeuronMap[(*conIter)[JSON_UID_KEY]];
+            ConnectableNeuron* connectable = \
+                connectableNeuronMap[(*mNeurIter)[JSON_UID_KEY]];
+            connectable->Connect(toConnect, weight, alpha);
+        }
+
+    }
+}
+
 GoodBoyNet::~GoodBoyNet(){}
 
 //Runtime______________________________________________________

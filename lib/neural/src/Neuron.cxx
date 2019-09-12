@@ -160,6 +160,10 @@ uuid_t Neuron::GetUID(){
     return m_uid;
 }
 
+void Neuron::SetUID(uuid_t p_uid){
+    m_uid = p_uid;
+}
+
 json_t Neuron::GetJSON() const{
     json_t retJSON;
     retJSON[JSON_UID_KEY] = boost::uuids::to_string(m_uid);
@@ -177,6 +181,16 @@ json_t Neuron::GetJSON() const{
     }
 
     return retJSON;
+}
+
+void Neuron::LoadFromJSON(json_t p_json){
+    //Does not load connections, that is up to the network
+    m_uid = boost::uuids::string_generator()(
+            p_json[JSON_UID_KEY].get<std::string>());
+    m_pos = std::valarray<posscalar_t>(p_json[JSON_POS_KEY].size());
+    for(neuralSize_t i = 0; i != p_json[JSON_POS_KEY].size(); ++i){
+        m_pos[i] = p_json[JSON_POS_KEY][i];
+    }
 }
 
 std::string Neuron::jsonString(){
@@ -202,3 +216,4 @@ pos_t Neuron::GetNeuronAveragePosition(const Neuron& p_a,
 }
 
 }//End namespace
+

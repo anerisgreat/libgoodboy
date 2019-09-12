@@ -51,6 +51,14 @@ class GoodBoyNet{
 
                 bool p_evolvingEnabled);
         /*!
+         * @brief Constructs a GoodBoyNet based on a JSON
+         *
+         * @detail Constructs a GoodBoyNet as described by the inputted JSON.
+         *
+         * @param[in] p_json The JSON describing the network.
+         */
+        GoodBoyNet(json_t p_json);
+        /*!
          * @brief Destructor for the GoodBoyNet class
          *
          * @detail Destructs a GoodBoyNet. There is no need for any cleanup
@@ -303,8 +311,8 @@ class GoodBoyNet{
         connectableNeuronPool_t m_midNeuronPool;
         inputNeuronPool_t  m_inputNeuronPool;
 
-        const std::vector<neuralVal_t> m_outputFilterTaps;
-        const std::vector<neuralVal_t> m_evolveFilterTaps;
+        std::vector<neuralVal_t> m_outputFilterTaps;
+        std::vector<neuralVal_t> m_evolveFilterTaps;
 
         neuralVal_t m_degrFactor;
         neuralVal_t m_maxStartWeight;
