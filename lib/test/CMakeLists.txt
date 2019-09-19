@@ -8,12 +8,12 @@ add_executable(${PROJECT_NAME}
     src/EatyWorld.cxx
     )
 
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(${PROJECT_NAME} PUBLIC
     ${${PROJECT_NAME}_INCLUDE_DIR}
     "${CMAKE_SOURCE_DIR}"
     )
 
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
     PUBLIC
     GoodBoy.Pool
     GoodBoy.Neural
