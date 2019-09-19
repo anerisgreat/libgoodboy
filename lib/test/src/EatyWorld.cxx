@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include "libGoodBoyConfig.hxx"
 
 using namespace LibGoodBoy;
 
@@ -107,5 +108,7 @@ void runTest(){
 }
 
 int main(int argc, char *argv[]){
+    std::cout << "Version: " << libGoodBoy_VERSION_MAJOR << "." \
+        << libGoodBoy_VERSION_MINOR << std::endl;
     runTest();
 }

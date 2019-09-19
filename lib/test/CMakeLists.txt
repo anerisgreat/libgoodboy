@@ -1,7 +1,7 @@
 project(GoodBoy.Test)
 
 set(${PROJECT_NAME}_INCLUDE_DIR
-    "${PROJECT_SOURCE_DIR}/include" CACHE TYPE STRING)
+    "${PROJECT_SOURCE_DIR}/include")
 
 add_executable(${PROJECT_NAME}
     #src/RepeaterTest.cxx
