@@ -7,7 +7,7 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 target_include_directories(${PROJECT_NAME} INTERFACE 
     ${${PROJECT_NAME}_INCLUDE_DIR}
-    "${CMAKE_SOURCE_DIR}"
+    "${CMAKE_BINARY_DIR}"
     )
 
 add_subdirectory(test)

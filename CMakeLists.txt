@@ -22,7 +22,7 @@ set (CMAKE_CXX_STANDARD 17)
 #Configuration file will be renamed to ProjectNameConfig.hxx
 configure_file (
     "${PROJECT_SOURCE_DIR}/Config.hxx.in"
-    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.hxx"
+    "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.hxx"
     )
 
 #Include directory
